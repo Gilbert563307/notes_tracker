@@ -1,6 +1,12 @@
 package com.notes_tracker.backend.security.presentation;
 
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.notes_tracker.backend.config.JwtTokenUtil;
 import com.notes_tracker.backend.security.application.AuthenticationService;
 import com.notes_tracker.backend.security.application.dto.UserDto;
@@ -8,8 +14,6 @@ import com.notes_tracker.backend.security.domain.User;
 import com.notes_tracker.backend.security.presentation.request.AuthenticationRequest;
 import com.notes_tracker.backend.security.presentation.request.RegisterRequest;
 import com.notes_tracker.backend.security.presentation.response.AuthResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,7 +33,6 @@ public class AuthenticationController {
 
         AuthResponse authResponse = new AuthResponse(
                 jwtToken,
-                jwtTokenUtil.getExpirationTime(),
                 UserDto.from(authenticatedUser)
         );
         return ResponseEntity.ok(authResponse);
