@@ -1,0 +1,15 @@
+services:
+  mongodb_tests:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: test-dbadmin
+      MONGO_INITDB_ROOT_PASSWORD: test-pwd
+      MONGO_INITDB_DATABASE: test-database
+    ports:
+      - 27017:27017
+    volumes:
+      - mongot_test_data:/data/db # Persist database files
+
+volumes:
+  mongot_test_data:
+    driver: local

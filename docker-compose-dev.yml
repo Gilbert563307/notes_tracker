@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    image: mongo:latest
+    env_file:
+      - ./backend/.env
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db # Persist database files
+    networks:
+      - mongodb_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+
+volumes:
+  mongodata:
+    driver: local
+
+networks:
+  mongodb_network:
+    driver: bridge
