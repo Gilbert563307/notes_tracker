@@ -9,6 +9,7 @@ export type AuthContextValue = {
   auth: AuthResponse | null;
   login: (auth: AuthResponse) => Promise<void>;
   logout: () => Promise<void>;
+  loading: boolean;
 };
 
 export const AuthProviderContext = createContext<AuthContextValue | undefined>(undefined);

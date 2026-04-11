@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from "react";
 
-import "../css/notificationv4.css";
+import "../notificationv4.css";
 import { notificationObserver } from "../observers/NotificationObserver";
 import { ALERT_TYPES } from "../constants";
 import type { NotificationDto } from "../domain/dto/NotificationDto";

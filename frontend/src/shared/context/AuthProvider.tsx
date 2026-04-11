@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AuthResponse } from "../../auth/controller/response/AuthResponse";
 import { UseCookieStorage } from "../helpers/UseCookieStorage";
 import { AUTH_STORAGE_KEYS, AuthProviderContext } from "./AuthProviderConfig";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   async function login(auth: AuthResponse) {
     const day = 24 * 60 * 60 * 1000;
@@ -19,6 +20,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     setAuth(auth);
   }
 
+  useEffect(() => {
+    async function loadAuth() {
+      const cookie = await new UseCookieStorage().readCookie(AUTH_STORAGE_KEYS.AUTH);
+      if (cookie) {
+        setAuth(JSON.parse(cookie.value));
+      }
+      setLoading(false);
+    }
+
+    loadAuth();
+  }, []);
+
   async function logout() {
     setAuth(null);
     const cookieStorage = new UseCookieStorage();
@@ -26,8 +39,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   }
 
   return (
-    <AuthProviderContext.Provider value={{ auth, login, logout }}>
-      {children}
-    </AuthProviderContext.Provider>
+    <AuthProviderContext.Provider value={{ auth, login, logout, loading }}>{children}</AuthProviderContext.Provider>
   );
 }
