@@ -1,15 +1,16 @@
 package com.notes_tracker.backend.security.application;
 
-import com.notes_tracker.backend.security.application.dto.UserDto;
-import com.notes_tracker.backend.security.data.UserRepository;
-import com.notes_tracker.backend.security.domain.User;
-import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
+import java.util.Optional;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.notes_tracker.backend.security.application.dto.UserDto;
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -23,7 +24,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = this.userRepository.findByEmailAddress(username);
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UserNotFoundException("User not found by provided email");
         }
         return new org.springframework.security.core.userdetails.User(user.get().getEmailAddress(), user.get().getPassword(), user.get().getAuthorities());
     }
@@ -32,7 +33,6 @@ public class UserService implements UserDetailsService {
         User user = this.getUserById(userId);
         return UserDto.from(user);
     }
-
 
     public UserDto updateUser(String userId, String emailAddress, String fireBaseUid, String displayName, String photoURL ) {
         User user = this.getUserById(userId);

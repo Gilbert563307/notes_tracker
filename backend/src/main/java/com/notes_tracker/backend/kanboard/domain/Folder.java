@@ -1,9 +1,11 @@
 package com.notes_tracker.backend.kanboard.domain;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import com.notes_tracker.backend.kanboard.presentation.exception.DomainException;
 
 @Document
 public class Folder {
@@ -17,26 +19,28 @@ public class Folder {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Folder(){
+    public Folder() {
 
     }
 
-    private Folder(Builder builder){
+    private Folder(Builder builder) {
         this.name = builder.name;
         this.userId = builder.userId;
         this.color = builder.color;
         this.archived = builder.archived;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
+        this.validate();
     }
+
     public void update(String name, String userId, String color, boolean archived) {
         this.name = name;
         this.userId = userId;
         this.color = color;
         this.archived = archived;
         this.updatedAt = LocalDateTime.now();
+        this.validate();
     }
-
 
     public String getId() {
         return id;
@@ -66,7 +70,7 @@ public class Folder {
         return updatedAt;
     }
 
-    public static class  Builder{
+    public static class Builder {
         private String name;
         private String userId;
         private String color;
@@ -94,8 +98,25 @@ public class Folder {
             return this;
         }
 
-        public Folder build(){
+        public Folder build() {
             return new Folder(this);
+        }
+    }
+
+    private void validate() {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new DomainException(
+                    "User information is missing or invalid.");
+        }
+
+        if (name == null || name.trim().isEmpty()) {
+            throw new DomainException(
+                    "Please enter a name for the folder.");
+        }
+
+        if (name.length() > 255) {
+            throw new DomainException(
+                    "Folder name is too long.");
         }
     }
 }

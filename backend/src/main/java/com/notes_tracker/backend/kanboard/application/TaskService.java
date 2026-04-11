@@ -1,12 +1,13 @@
 package com.notes_tracker.backend.kanboard.application;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 @Service
 public class TaskService {
@@ -52,6 +53,7 @@ public class TaskService {
     }
 
     public void deleteTask(String taskId) {
+        this.getTaskById(taskId);
         this.taskRepository.deleteById(taskId);
     }
 }
