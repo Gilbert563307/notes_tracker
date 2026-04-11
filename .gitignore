@@ -24,5 +24,6 @@ hs_err_pid*
 replay_pid*
 backend/src/main/resources/application.properties
 backend/.env
+backend/.env.dev
 frontend/.env
 backend/src/test/resources/application-test.properties

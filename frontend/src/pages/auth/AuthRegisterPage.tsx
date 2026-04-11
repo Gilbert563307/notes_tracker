@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
-
+import { Link, useNavigate } from "react-router";
+import { authController } from "../../features/auth/presentation/AuthController";
+import { RegisterRequest } from "../../features/auth/presentation/request/RegisterRequest";
 
 export default function AuthRegisterPage() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     displayName: "",
     emailAddress: "",
@@ -19,9 +22,14 @@ export default function AuthRegisterPage() {
     }));
   }
 
-  function handleSubmit(e: SubmitEvent) {
+  async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
-    
+    const response = await authController.register(
+      new RegisterRequest(form.displayName, form.emailAddress, form.password, form.passwordConfirm),
+    );
+    if (response.created) {
+      navigate("/auth/verify");
+    }
   }
 
   return (

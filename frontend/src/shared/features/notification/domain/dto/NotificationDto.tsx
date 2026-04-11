@@ -1,6 +1,5 @@
 import { ALERT_TYPES } from "../../constants";
 
-
 export class NotificationDto {
   readonly #message: string;
   readonly #type: number;
@@ -10,7 +9,7 @@ export class NotificationDto {
    * @param type - The severity/type of the alert.
    */
   constructor(message: string, type: number) {
-    this.validate(message, type);
+    this.validate(message);
     this.#message = message;
     this.#type = type;
   }
@@ -64,13 +63,9 @@ export class NotificationDto {
     }
   };
 
-  private validate(message: string, type: number): void {
+  private validate(message: string): void {
     if (typeof message !== "string") {
       throw new Error("Notification message must be a string.");
-    }
-
-    if (!(type in ALERT_TYPES)) {
-      throw new Error("Invalid notification type.");
     }
   }
 }

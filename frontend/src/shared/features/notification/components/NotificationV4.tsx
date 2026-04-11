@@ -5,7 +5,6 @@ import { notificationObserver } from "../observers/NotificationObserver";
 import { ALERT_TYPES } from "../constants";
 import type { NotificationDto } from "../domain/dto/NotificationDto";
 
-
 export default function NotificationV4() {
   const typeMap = {
     [ALERT_TYPES.INFO]: "text-info border-info",
@@ -24,12 +23,10 @@ export default function NotificationV4() {
    * Then the data will be passes as an array with
    *
    */
-  function next(data: Array<NotificationDto>) {
-    if (data.length === 1) {
-      const notification = data[0];
-      setNotification(notification.toJson());
-      articleRef.current?.focus();
-    }
+  function next(notification: NotificationDto) {
+    if (!notification) return;
+    setNotification(notification.toJson());
+    articleRef.current?.focus();
   }
 
   function closeNotification() {

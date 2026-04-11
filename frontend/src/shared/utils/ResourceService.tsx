@@ -9,7 +9,7 @@ export class ResourceService {
     this.#requestHandler = requestHandler;
   }
 
-  async create(token: string, data: unknown) {
+  async create(token: string, data: unknown): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .post()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
@@ -20,7 +20,7 @@ export class ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async read(token: string, id: string | number) {
+  async read(token: string, id: string | number): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .get()
       .url(this.#requestHandler.getBaseUrl() + this.#resource + `/${id}`)
@@ -30,7 +30,7 @@ export class ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async update(token: string, data: unknown) {
+  async update(token: string, data: unknown): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .put()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
@@ -41,7 +41,7 @@ export class ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async delete(token: string, id: string | number) {
+  async delete(token: string, id: string | number): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .delete()
       .url(this.#requestHandler.getBaseUrl() + this.#resource + `/${id}`)
@@ -51,8 +51,8 @@ export class ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async findAll(token: string){
-const request = new RequestHandler.RequestBuilder()
+  async findAll(token: string): Promise<Response> {
+    const request = new RequestHandler.RequestBuilder()
       .get()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
       .bearer(token)

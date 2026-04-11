@@ -1,8 +1,8 @@
+import type { UserDto } from "./domain/UserDto";
 
 
-export type RegisterRequest = {
-    displayName: string;
-    emailAddress: string;
-    password: string;
-    passwordConfirm: string;
-}
+export type CreateUserResponse = {
+  created: boolean;
+  message: string;
+  user: UserDto | null;
+};
