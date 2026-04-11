@@ -25,6 +25,10 @@ export class UserDto {
     return { id: this.id, displayName: this.displayName, photoURL: this.displayName };
   }
 
+  static from({ id, displayName, photoURL }: { id: string; displayName: string; photoURL: string }): UserDto {
+    return new UserDto.Builder().displayName(displayName).id(id).photoURL(photoURL).build();
+  }
+
   static Builder = class {
     private _id: string = "";
     private _displayName: string = "";
