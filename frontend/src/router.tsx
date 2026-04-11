@@ -8,16 +8,16 @@ import AuthProvider from "./shared/context/AuthProvider";
 import LandingPage from "./pages/LandingPage";
 import ProtectedRoute from "./shared/utils/ProtectedRoute";
 import AuthVerifyPage from "./pages/auth/AuthVerifyPage";
-import AuthPage from "./pages/auth/AuthPage";
 import GuestRoute from "./shared/utils/GuestRoute";
 import Application from "./Application";
+import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 
 const routes = [
   {
     path: "/",
     element: (
       <AuthProvider>
-        <Application/>
+        <Application />
       </AuthProvider>
     ),
     children: [
@@ -55,10 +55,10 @@ const routes = [
         ),
       },
       {
-        path: "/auth",
+        path: "/auth/register",
         element: (
           <GuestRoute>
-            <AuthPage />
+            <AuthRegisterPage />
           </GuestRoute>
         ),
       },
