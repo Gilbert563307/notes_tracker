@@ -1,9 +1,12 @@
 package com.notes_tracker.backend.kanboard.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import com.notes_tracker.backend.kanboard.presentation.exception.DomainException;
 
@@ -16,6 +19,9 @@ public class Folder {
     private String userId;
     private String color;
     private boolean archived;
+
+    @DocumentReference(lazy = true)
+    private List<DriveFile> driveFiles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -28,6 +34,7 @@ public class Folder {
         this.userId = builder.userId;
         this.color = builder.color;
         this.archived = builder.archived;
+        this.driveFiles = builder.files;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
         this.validate();
@@ -62,6 +69,19 @@ public class Folder {
         return archived;
     }
 
+    public List<DriveFile> getDriveFiles() {
+        return driveFiles;
+    }
+
+    public void addDriveFileToFolder(DriveFile file){
+        this.driveFiles = driveFiles;
+    }
+
+    public void removeDriveFile(DriveFile fileToRemove){
+        List<DriveFile> updatedDriveFiles = this.driveFiles.stream().filter(file -> !file.getId().equals(fileToRemove.getId())).toList();
+        this.driveFiles = updatedDriveFiles;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -75,6 +95,7 @@ public class Folder {
         private String userId;
         private String color;
         private boolean archived;
+        private List<DriveFile> files = new ArrayList<>();
         private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -95,6 +116,11 @@ public class Folder {
 
         public Builder archived(boolean archived) {
             this.archived = archived;
+            return this;
+        }
+
+        public Builder files(List<DriveFile> files) {
+            this.files = files;
             return this;
         }
 

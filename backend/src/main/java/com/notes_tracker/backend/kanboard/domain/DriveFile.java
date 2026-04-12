@@ -18,7 +18,6 @@ public class DriveFile {
     @Id
     private String id;
     private String name;
-    private String folderId;
     private String userId;
     private String size;
     private String type;
@@ -31,9 +30,8 @@ public class DriveFile {
     }
     
     private DriveFile(Builder builder){
-        this.validate(builder.name, builder.folderId, builder.userId, builder.size, builder.type);
+        this.validate(builder.name,  builder.userId, builder.size, builder.type);
         this.name = builder.name;
-        this.folderId = builder.folderId;
         this.userId = builder.userId;
         this.size = builder.size;
         this.type = builder.type;
@@ -42,10 +40,9 @@ public class DriveFile {
         this.updatedAt = builder.updatedAt;
     }
 
-    public void update(String name, String folderId, String userId, String size, String type, boolean archived) {
-        this.validate(name, folderId, userId, size, type);
+    public void update(String name,  String userId, String size, String type, boolean archived) {
+        this.validate(name, userId, size, type);
         this.name = name;
-        this.folderId = folderId;
         this.userId = userId;
         this.size = size;
         this.type = type;
@@ -59,10 +56,6 @@ public class DriveFile {
 
     public String getName() {
         return name;
-    }
-
-    public String getFolderId() {
-        return folderId;
     }
 
     public String getUserId() {
@@ -91,7 +84,6 @@ public class DriveFile {
     
     public static class Builder{
         private String name;
-        private String folderId;
         private String userId;
         private String size;
         private String type;
@@ -105,10 +97,6 @@ public class DriveFile {
             return this;
         }
 
-        public Builder folderId(String folderId) {
-            this.folderId = folderId;
-            return this;
-        }
 
         public Builder userId(String userId) {
             this.userId = userId;
@@ -135,14 +123,10 @@ public class DriveFile {
         }
     }
 
-    private void validate(String name, String folderId, String userId, String size, String type) {
+    private void validate(String name,  String userId, String size, String type) {
 
         if (name == null || name.trim().isEmpty()) {
             throw new DomainException("Please enter a name for the file.");
-        }
-
-        if (folderId == null) {
-            throw new DomainException("The folder information is missing or invalid. Please select a valid folder.");
         }
 
         if (userId == null || userId.trim().isEmpty()) {

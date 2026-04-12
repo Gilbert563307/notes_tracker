@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import com.notes_tracker.backend.kanboard.presentation.exception.DomainException;
 
 @Document
 public class KanBoard {
-
     @Id
     private String id;
     private String name;
@@ -22,8 +21,11 @@ public class KanBoard {
     private boolean collaborative;
     private String imageUrl;
 
-    //https://spring.io/blog/2021/11/29/spring-data-mongodb-relation-modelling
-    @DBRef
+    // https://bootify.io/mongodb/document-reference-in-spring-boot-mongodb.html
+    // https://docs.spring.io/spring-data/mongodb/reference/mongodb/mapping/mapping.html
+    @DocumentReference(lazy = true) // Applied at the field to indicate it is to be stored as a pointer to another
+                                    // document. This can be a single value (the id by default), or a Document
+                                    // provided via a converter.
     private List<Task> tasks;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -85,7 +87,7 @@ public class KanBoard {
         return imageUrl;
     }
 
-    public List<Task> getTasks(){
+    public List<Task> getTasks() {
         return this.tasks;
     }
 
@@ -95,6 +97,16 @@ public class KanBoard {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void assignTask(Task task) {
+        this.tasks.add(task);
+    }
+
+    public void removeTask(Task taskToRemove) {
+        List<Task> updatedTaskList = this.tasks.stream().filter(task -> !task.getId().equals(taskToRemove.getId()))
+                .toList();
+        this.tasks = updatedTaskList;
     }
 
     public static class Builder {

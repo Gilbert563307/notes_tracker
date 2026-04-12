@@ -72,7 +72,6 @@ class DriveFileControllerIntegrationTests {
         // Arrange: Seed database directly via repository
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
-                .folderId("folder-1")
                 .userId("user-1")
                 .size("100")
                 .type("PDF")
@@ -90,7 +89,6 @@ class DriveFileControllerIntegrationTests {
     void updateFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
-                .folderId("folder-1")
                 .userId("user-1")
                 .size("100")
                 .type("PDF")
@@ -113,7 +111,6 @@ class DriveFileControllerIntegrationTests {
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("updated.pdf"))
-                .andExpect(jsonPath("$.folderId").value("folder-2"))
                 .andExpect(jsonPath("$.userId").value("user-2"))
                 .andExpect(jsonPath("$.size").value("200"))
                 .andExpect(jsonPath("$.archived").value(true));
@@ -124,7 +121,6 @@ class DriveFileControllerIntegrationTests {
     void deleteFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
-                .folderId("folder-1")
                 .userId("user-1")
                 .size("100")
                 .type("PDF")

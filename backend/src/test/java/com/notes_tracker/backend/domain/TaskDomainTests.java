@@ -1,9 +1,11 @@
 package com.notes_tracker.backend.domain;
 
-import com.notes_tracker.backend.kanboard.domain.Task;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.notes_tracker.backend.kanboard.domain.Task;
 
 public class TaskDomainTests {
 
@@ -11,7 +13,7 @@ public class TaskDomainTests {
     void shouldBuildValidTask() {
         Task task = new Task.Builder()
                 .title("Test Task")
-                .kanBoardId("board-1")
+                // .kanBoardId("board-1")
                 .description("desc")
                 .priority(1)
                 .assigneId("user-1")
@@ -19,7 +21,7 @@ public class TaskDomainTests {
 
         assertNotNull(task);
         assertEquals("Test Task", task.getTitle());
-        assertEquals("board-1", task.getKanBoardId());
+        // assertEquals("board-1", task.getKanBoardId());
         assertEquals(Task.TaskStatus.TODO, task.getStatus());
         assertNotNull(task.getCreatedAt());
         assertNotNull(task.getUpdatedAt());
@@ -29,10 +31,10 @@ public class TaskDomainTests {
     void shouldUpdateTask() {
         Task task = new Task.Builder()
                 .title("Old")
-                .kanBoardId("1")
+                // .kanBoardId("1")
                 .build();
 
-        task.updateTask("New", "2", "desc", Task.TaskStatus.DOING, 2, "user", false);
+        task.updateTask("New", "desc", Task.TaskStatus.DOING, 2, "user", false);
 
         assertEquals("New", task.getTitle());
         assertEquals(Task.TaskStatus.DOING, task.getStatus());
@@ -42,7 +44,7 @@ public class TaskDomainTests {
     void shouldArchiveTask() {
         Task task = new Task.Builder()
                 .title("Test")
-                .kanBoardId("1")
+                // .kanBoardId("1")
                 .build();
 
         task.archiveTask();

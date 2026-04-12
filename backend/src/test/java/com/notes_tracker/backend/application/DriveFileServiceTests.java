@@ -21,7 +21,6 @@ public class DriveFileServiceTests {
 
         DriveFile file = new DriveFile.Builder()
                 .name("file.pdf")
-                .folderId("1")
                 .userId("user")
                 .size("100")
                 .type("PDF")
@@ -41,7 +40,6 @@ public class DriveFileServiceTests {
 
         DriveFile file = new DriveFile.Builder()
                 .name("old.pdf")
-                .folderId("1")
                 .userId("user")
                 .size("100")
                 .type("PDF")

@@ -3,6 +3,7 @@ package com.notes_tracker.backend.application;
 
 import com.notes_tracker.backend.kanboard.application.FolderService;
 import com.notes_tracker.backend.kanboard.application.dto.FolderDto;
+import com.notes_tracker.backend.kanboard.data.DriveFileRepository;
 import com.notes_tracker.backend.kanboard.data.FolderRepository;
 import com.notes_tracker.backend.kanboard.domain.Folder;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,8 @@ public class FolderServiceTests {
     @Test
     void createFolder() {
         FolderRepository repo = mock(FolderRepository.class);
-        FolderService service = new FolderService(repo);
+        DriveFileRepository driveRepo = mock(DriveFileRepository.class);
+        FolderService service = new FolderService(repo,driveRepo);
 
         Folder folder = new Folder.Builder()
                 .name("Folder")
@@ -35,7 +37,8 @@ public class FolderServiceTests {
     @Test
     void updateFolder() {
         FolderRepository repo = mock(FolderRepository.class);
-        FolderService service = new FolderService(repo);
+        DriveFileRepository driveRepo = mock(DriveFileRepository.class);
+        FolderService service = new FolderService(repo,driveRepo);
 
         Folder folder = new Folder.Builder()
                 .name("Old")

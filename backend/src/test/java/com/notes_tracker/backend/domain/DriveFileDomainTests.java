@@ -12,7 +12,6 @@ public class DriveFileDomainTests {
     void shouldBuildValidFile() {
         DriveFile file = new DriveFile.Builder()
                 .name("file.pdf")
-                .folderId("folder-1")
                 .userId("user-1")
                 .size("1024")
                 .type("PDF")
@@ -29,7 +28,6 @@ public class DriveFileDomainTests {
         assertThrows(IllegalArgumentException.class, () -> {
             new DriveFile.Builder()
                     .name("file.pdf")
-                    .folderId("1")
                     .userId("user")
                     .size(String.valueOf(200 * 1024 * 1024)) // 200MB
                     .type("PDF")
@@ -42,7 +40,6 @@ public class DriveFileDomainTests {
         assertThrows(IllegalArgumentException.class, () -> {
             new DriveFile.Builder()
                     .name("file.exe")
-                    .folderId("1")
                     .userId("user")
                     .size("100")
                     .type("EXE")
@@ -54,7 +51,6 @@ public class DriveFileDomainTests {
     void shouldUpdateFile() {
         DriveFile file = new DriveFile.Builder()
                 .name("old.pdf")
-                .folderId("1")
                 .userId("user")
                 .size("100")
                 .type("PDF")

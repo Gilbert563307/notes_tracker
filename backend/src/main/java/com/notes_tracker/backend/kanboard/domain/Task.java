@@ -20,7 +20,7 @@ public class Task {
 
     @Id
     private String id;
-    private String kanBoardId;
+    // private String kanBoardId;
     private String title;
     private String description;
     private TaskStatus status;
@@ -36,7 +36,7 @@ public class Task {
 
     private Task(Builder builder) {
         this.title = builder.title;
-        this.kanBoardId = builder.kanBoardId;
+        // this.kanBoardId = builder.kanBoardId;
         this.description = builder.description;
         this.status = builder.status;
         this.priority = builder.priority;
@@ -48,10 +48,10 @@ public class Task {
         this.validate();
     }
 
-    public void updateTask(String title, String kanBoardId, String description, TaskStatus status, int priority,
+    public void updateTask(String title,  String description, TaskStatus status, int priority,
             String assigneId, boolean archived) {
         this.title = title;
-        this.kanBoardId = kanBoardId;
+        // this.kanBoardId = kanBoardId;
         this.description = description;
         this.status = status;
         this.priority = priority;
@@ -69,13 +69,13 @@ public class Task {
         this.assigneId = assigneId;
     }
 
-    public void assignTaskToNewKanBoard(String kanBoardId) {
-        this.kanBoardId = kanBoardId;
-    }
+    // public void assignTaskToNewKanBoard(String kanBoardId) {
+    //     this.kanBoardId = kanBoardId;
+    // }
 
-    public String getKanBoardId() {
-        return kanBoardId;
-    }
+    // public String getKanBoardId() {
+    //     return kanBoardId;
+    // }
 
     public String getId() {
         return id;
@@ -114,7 +114,7 @@ public class Task {
     }
 
     public static class Builder {
-        private String kanBoardId;
+        // private String kanBoardId;
         private String title;
         private String description;
         private TaskStatus status = TaskStatus.TODO;
@@ -124,10 +124,10 @@ public class Task {
         private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime updatedAt = LocalDateTime.now();
 
-        public Builder kanBoardId(String kanBoardId) {
-            this.kanBoardId = kanBoardId;
-            return this;
-        }
+        // public Builder kanBoardId(String kanBoardId) {
+        //     this.kanBoardId = kanBoardId;
+        //     return this;
+        // }
 
         public Builder title(String title) {
             this.title = title;

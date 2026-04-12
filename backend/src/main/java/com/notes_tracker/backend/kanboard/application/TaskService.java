@@ -41,7 +41,7 @@ public class TaskService {
         Task task = this.getTaskById(taskDto.id());
         task.updateTask(
                 taskDto.title(),
-                taskDto.kanBoardId(),
+                // taskDto.kanBoardId(),
                 taskDto.description(),
                 taskDto.status(),
                 taskDto.priority(),
