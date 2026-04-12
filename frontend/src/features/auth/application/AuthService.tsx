@@ -18,13 +18,13 @@ export class AuthService {
 
   async authenticate(authenticateRequest: AuthenticateRequest): Promise<{
     notification: NotificationDto;
-    token: string | null;
-    user: UserDto | null;
+    auth: AuthResponse | null;
+    authenticated: boolean;
   }> {
     try {
       const request = new RequestHandler.RequestBuilder()
         .post()
-        .url(this.#requestHandler.getBaseUrl() + this.#resource + "/login")
+        .url(this.#requestHandler.getBaseUrl() + this.#resource)
         .content(authenticateRequest.toJson())
         .build();
 
@@ -33,46 +33,39 @@ export class AuthService {
       if (!response.ok) {
         return {
           notification: new NotificationDto.Builder().danger().message("Invalid email or password").build(),
-          token: null,
-          user: null,
+          auth: null,
+          authenticated: false,
         };
       }
 
-      const data = await response.json();
+      const data: { token: string; user: { id: string; displayName: string; photoURL: string } } =
+        await response.json();
       if (!data.token || !data.user) {
         return {
           notification: new NotificationDto.Builder()
             .danger()
             .message("Unexpected server response, please contact administrator")
             .build(),
-          token: null,
-          user: null,
+          auth: null,
+          authenticated: false,
         };
       }
 
-      const auth = new AuthResponse.Builder().token(data?.token).user(data?.user).build();
-
-      const day = 24 * 60 * 60 * 1000;
-      const cookie = new UseCookieStorage.CookieBuilder()
-        .name(AUTH_STORAGE_KEYS.AUTH)
-        .value(JSON.stringify(auth.toJson()))
-        .expires(Date.now() + day)
-        .build();
-
-      await UseCookieStorage.createCookie(cookie);
+      const userDto = UserDto.from(data.user);
+      const auth = new AuthResponse.Builder().token(data?.token).user(userDto).build();
 
       return {
         notification: new NotificationDto.Builder().success().message("You are now logged in").build(),
-        token: data.token,
-        user: UserDto.from(data.user),
+        auth: auth,
+        authenticated: true,
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
 
       return {
         notification: new NotificationDto.Builder().danger().message(message).build(),
-        token: null,
-        user: null,
+        auth: null,
+        authenticated: false,
       };
     }
   }
@@ -90,15 +83,17 @@ export class AuthService {
       const response = await this.#requestHandler.perform(request);
 
       if (!response.ok) {
+        const data = await response.json();
         return {
           notification: new NotificationDto.Builder()
             .danger()
-            .message("Something went wrong while trying to create your account")
+            .message(data.message || "Something went wrong while trying to create your account")
             .build(),
           created: false,
           user: null,
         };
       }
+      //TODO add return type
       const data = await response.json();
       return {
         created: true,

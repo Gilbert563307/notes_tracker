@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record DriveFileDto(
         String id,
         String name,
-        String folderId,
+//        String folderId,
         String userId,
         String size,
         String type,
@@ -20,7 +20,7 @@ public record DriveFileDto(
         return new DriveFileDto(
                 file.getId(),
                 file.getName(),
-                file.getFolderId(),
+//                file.getFolderId(),
                 file.getUserId(),
                 file.getSize(),
                 file.getType(),
@@ -34,7 +34,7 @@ public record DriveFileDto(
     public DriveFile toDomain() {
         return new DriveFile.Builder()
                 .name(this.name)
-                .folderId(this.folderId)
+//                .folderId(this.folderId)
                 .userId(this.userId)
                 .size(this.size)
                 .type(this.type)

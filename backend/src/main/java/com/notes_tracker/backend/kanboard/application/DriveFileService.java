@@ -42,7 +42,7 @@ public class DriveFileService {
 
         file.update(
                 dto.name(),
-                dto.folderId(),
+//                dto.folderId(),
                 dto.userId(),
                 dto.size(),
                 dto.type(),

@@ -2,6 +2,8 @@ import React from "react";
 import { Outlet } from "react-router";
 import { useAuthProvider } from "../context/AuthProviderConfig";
 import { useApplicationContext } from "../context/ApplicationProviderConfig";
+import "./css/defaultlayout.css";
+import NavBar from "../../features/navigation/presentation/components/NavBar";
 
 export default function DefaultLayout() {
   const { auth } = useAuthProvider();
@@ -12,8 +14,8 @@ export default function DefaultLayout() {
         <article className="aside-article-header">
           <h1 className="stats-tracker-h1">Tasks - Tracker</h1>
           <p>
-            <span className="text-body-secondary user-welcome">Welcome,</span>{" "}
-            <b className="fw-medium user-name">{auth?.getUser().getDisplayName()}</b>{" "}
+            <span className="text-body-secondary user-welcome">Welcome, </span>
+            <b className="fw-medium user-name">{auth?.getUser()?.getDisplayName()}</b>
           </p>
           <NavBar />
         </article>

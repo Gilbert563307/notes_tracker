@@ -1,23 +1,25 @@
 package com.notes_tracker.backend.security.application;
 
-import com.notes_tracker.backend.security.data.UserRepository;
-import com.notes_tracker.backend.security.domain.User;
-import com.notes_tracker.backend.security.presentation.exception.PasswordDoestNotMatchException;
-import com.notes_tracker.backend.security.presentation.exception.UserAlreadyExistsByEmailException;
-import com.notes_tracker.backend.security.presentation.request.RegisterRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
+import com.notes_tracker.backend.security.presentation.exception.PasswordDoestNotMatchException;
+import com.notes_tracker.backend.security.presentation.exception.UserAlreadyExistsByEmailException;
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
+import com.notes_tracker.backend.security.presentation.request.RegisterRequest;
 
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private  final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationService(UserRepository userRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(UserRepository userRepository, AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
@@ -27,18 +29,16 @@ public class AuthenticationService {
         this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         email,
-                        password
-                )
-        );
+                        password));
         return this.userRepository.findByEmailAddress(email)
-                .orElseThrow();
+                .orElseThrow(() -> new UserNotFoundException("User not found by provided email"));
     }
 
     public User register(RegisterRequest request) {
-        if(this.userRepository.existsByEmailAddress(request.emailAddress())){
+        if (this.userRepository.existsByEmailAddress(request.emailAddress())) {
             throw new UserAlreadyExistsByEmailException("Email address is already in use, try a different one");
         }
-        if(!request.password().equals(request.passwordConfirm())){
+        if (!request.password().equals(request.passwordConfirm())) {
             throw new PasswordDoestNotMatchException("The password and password confirmation must be identical.");
         }
 
@@ -51,4 +51,3 @@ public class AuthenticationService {
         return this.userRepository.save(user);
     }
 }
-

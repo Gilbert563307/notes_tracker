@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { UseCookieStorage } from "../utils/UseCookieStorage";
 import { AUTH_STORAGE_KEYS, AuthProviderContext } from "./AuthProviderConfig";
-import type { AuthResponse } from "../../features/auth/presentation/response/AuthResponse";
+import { AuthResponse, type AuthResponseCookie } from "../../features/auth/presentation/response/AuthResponse";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthResponse | null>(null);
@@ -23,8 +23,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     async function loadAuth() {
       const cookie = await new UseCookieStorage().readCookie(AUTH_STORAGE_KEYS.AUTH);
-      if (cookie) {
-        setAuth(JSON.parse(cookie.value));
+      if (cookie && cookie.value) {
+        const parsedData: AuthResponseCookie = JSON.parse(cookie.value);
+        setAuth(AuthResponse.from(parsedData));
+        console.log(auth);
       }
       setLoading(false);
     }
