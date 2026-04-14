@@ -1,23 +1,28 @@
 package com.notes_tracker.backend.presentation;
 
 
-import tools.jackson.databind.ObjectMapper;
-import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
-import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
-import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
+import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
+import com.notes_tracker.backend.kanboard.domain.KanBoard;
+
+import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -45,7 +50,7 @@ public class KanBoardControllerIntegrationTests {
                 null, "New Board", "user-1", "green", false, true, "img.png", null, null
         );
 
-        mockMvc.perform(post("/kanBoard")
+        mockMvc.perform(post("/kanboard")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -64,7 +69,7 @@ public class KanBoardControllerIntegrationTests {
                 .color("purple")
                 .build());
 
-        mockMvc.perform(get("/kanBoard/" + saved.getId()))
+        mockMvc.perform(get("/kanboard/" + saved.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.name").value("Persistent Board"))
@@ -83,7 +88,7 @@ public class KanBoardControllerIntegrationTests {
                 saved.getId(), "Updated Name", "user-1", "blue", true, true, "new-img.png", null, null
         );
 
-        mockMvc.perform(put("/kanBoard")
+        mockMvc.perform(put("/kanboard")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
@@ -99,7 +104,7 @@ public class KanBoardControllerIntegrationTests {
                 .userId("user-1")
                 .build());
 
-        mockMvc.perform(delete("/kanBoard/" + saved.getId()))
+        mockMvc.perform(delete("/kanboard/" + saved.getId()))
                 .andExpect(status().isOk());
 
         assertFalse(repository.findById(saved.getId()).isPresent());
@@ -111,7 +116,7 @@ public class KanBoardControllerIntegrationTests {
         repository.save(new KanBoard.Builder().name("Board 1").userId("user-1").build());
         repository.save(new KanBoard.Builder().name("Board 2").userId("user-1").build());
 
-        mockMvc.perform(get("/kanBoard")
+        mockMvc.perform(get("/kanboard")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -121,7 +126,7 @@ public class KanBoardControllerIntegrationTests {
 
     @Test
     void shouldReturnUnauthorizedWhenNoUser() throws Exception {
-        mockMvc.perform(get("/kanBoard"))
+        mockMvc.perform(get("/kanboard"))
                 .andExpect(status().isForbidden()); // Or isForbidden() depending on your SecurityConfig
     }
 }

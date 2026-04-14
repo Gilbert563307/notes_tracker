@@ -1,8 +1,6 @@
-import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
-import { UseCookieStorage } from "../../../shared/utils/UseCookieStorage";
-import { UserDto } from "../domain/UserDto";
+import { User } from "../domain/User";
 import type { AuthenticateRequest } from "../presentation/request/AuthenticateRequest";
 import type { RegisterRequest } from "../presentation/request/RegisterRequest";
 import { AuthResponse } from "../presentation/response/AuthResponse";
@@ -51,8 +49,8 @@ export class AuthService {
         };
       }
 
-      const userDto = UserDto.from(data.user);
-      const auth = new AuthResponse.Builder().token(data?.token).user(userDto).build();
+      const user = User.from(data.user);
+      const auth = new AuthResponse.Builder().token(data?.token).user(user).build();
 
       return {
         notification: new NotificationDto.Builder().success().message("You are now logged in").build(),
@@ -72,7 +70,7 @@ export class AuthService {
 
   async create(
     registerRequest: RegisterRequest,
-  ): Promise<{ notification: NotificationDto; created: boolean; user: UserDto | null }> {
+  ): Promise<{ notification: NotificationDto; created: boolean; user: User | null }> {
     try {
       const request = new RequestHandler.RequestBuilder()
         .post()
@@ -101,7 +99,7 @@ export class AuthService {
           .success()
           .message("Your account has been created successfully. Please visit the login page to continue.")
           .build(),
-        user: UserDto.from(data),
+        user: User.from(data),
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";

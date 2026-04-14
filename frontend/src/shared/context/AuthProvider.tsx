@@ -10,6 +10,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   async function login(auth: AuthResponse) {
     const day = 24 * 60 * 60 * 1000;
 
+    //TODO AUTH SHOULD BE ALSO IN COOKIE
     const cookie = new UseCookieStorage.CookieBuilder()
       .name(AUTH_STORAGE_KEYS.AUTH)
       .value(JSON.stringify(auth.toJson()))
@@ -26,7 +27,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (cookie && cookie.value) {
         const parsedData: AuthResponseCookie = JSON.parse(cookie.value);
         setAuth(AuthResponse.from(parsedData));
-        console.log(auth);
       }
       setLoading(false);
     }

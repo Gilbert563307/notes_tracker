@@ -1,4 +1,4 @@
-export class UserDto {
+export class User {
   private id: string;
   private displayName: string;
   private photoURL: string;
@@ -25,8 +25,9 @@ export class UserDto {
     return { id: this.id, displayName: this.displayName, photoURL: this.displayName };
   }
 
-  static from({ id, displayName, photoURL }: { id: string; displayName: string; photoURL: string }): UserDto {
-    return new UserDto.Builder().displayName(displayName).id(id).photoURL(photoURL).build();
+  //TODO REMOVE IN THE FUTURE THIS METHOD SHOULD NOT BELONG HERE
+  static from({ id, displayName, photoURL }: { id: string; displayName: string; photoURL: string }): User {
+    return new User.Builder().displayName(displayName).id(id).photoURL(photoURL).build();
   }
 
   static Builder = class {
@@ -49,8 +50,8 @@ export class UserDto {
       return this;
     }
 
-    build() {
-      return new UserDto(this._id, this._displayName, this._photoURL);
+    build(): User {
+      return new User(this._id, this._displayName, this._photoURL);
     }
   };
 }

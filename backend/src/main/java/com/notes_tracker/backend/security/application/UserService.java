@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.notes_tracker.backend.security.application.dto.UserDto;
@@ -34,7 +35,7 @@ public class UserService implements UserDetailsService {
         return UserDto.from(user);
     }
 
-    public UserDto updateUser(String userId, String emailAddress, String fireBaseUid, String displayName, String photoURL ) {
+    public UserDto updateUser(String userId, String emailAddress, String fireBaseUid, String displayName, String photoURL) {
         User user = this.getUserById(userId);
 
         user.update(
@@ -58,5 +59,17 @@ public class UserService implements UserDetailsService {
     private User getUserById(String userId) {
         return this.userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with provided id"));
+    }
+
+    public void initWithMockUser() {
+        Optional<User> user = this.userRepository.findByDisplayName("MOCK_USER");
+        if (user.isEmpty()) {
+            this.userRepository.save(
+                    new User.Builder()
+                            .displayName("MOCK_USER")
+                            .emailAddress("mockuser@gmail.com")
+                            .password(new BCryptPasswordEncoder().encode("password"))
+                            .build());
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { UserDto } from "../../domain/UserDto";
+import { User } from "../../domain/User";
 
 export type AuthResponseCookie = {
   token: string;
@@ -7,9 +7,9 @@ export type AuthResponseCookie = {
 
 export class AuthResponse {
   private token: string | null;
-  private user: UserDto | null;
+  private user: User | null;
 
-  private constructor(token: string | null, user: UserDto | null) {
+  private constructor(token: string | null, user: User | null) {
     this.token = token;
     this.user = user;
   }
@@ -32,21 +32,21 @@ export class AuthResponse {
     if (!cookie.token || !cookie.user) {
       throw new Error("The user or token are null");
     }
-    return new AuthResponse(cookie.token, UserDto.from(cookie.user));
+    return new AuthResponse(cookie.token, User.from(cookie.user));
   }
 
   static Builder = class {
     private _token: string | null = null;
-    private _user: UserDto | null = null;
+    private _user: User | null = null;
 
     token(token: string) {
       this._token = token;
       return this;
     }
 
-    user(user: UserDto) {
-      if (!(user instanceof UserDto)) {
-        throw new Error("The provided user must be an instance of the UserDto");
+    user(user: User) {
+      if (!(user instanceof User)) {
+        throw new Error("The provided user must be an instance of the User");
       }
       this._user = user;
       return this;

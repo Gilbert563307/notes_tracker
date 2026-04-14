@@ -11,6 +11,8 @@ import AuthVerifyPage from "./pages/auth/AuthVerifyPage";
 import GuestRoute from "./shared/utils/GuestRoute";
 import Application from "./Application";
 import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
+import SettingsPage from "./pages/settings/SettingsPage";
+import ReadKanBoardPage from "./pages/kanboards/ReadKanBoardPage";
 
 const routes = [
   {
@@ -39,6 +41,14 @@ const routes = [
         ),
       },
       {
+        path: "/kanboards/read/:kanBoardId",
+        element: (
+          <ProtectedRoute>
+            <ReadKanBoardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/kanboards/create",
         element: (
           <ProtectedRoute>
@@ -51,6 +61,26 @@ const routes = [
         element: (
           <ProtectedRoute>
             <UpdateKanBoardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/tasks",
+        element: "hello tasks",
+      },
+      {
+        path: "/folders",
+        element: "hello folders",
+      },
+      {
+        path: "/drive",
+        element: "hello drive",
+      },
+      {
+        path: "/settings",
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
           </ProtectedRoute>
         ),
       },

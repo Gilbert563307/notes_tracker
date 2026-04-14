@@ -1,4 +1,4 @@
-import type { UserDto } from "./domain/UserDto";
+import type { UserDto } from "./domain/User";
 
 
 export type CreateUserResponse = {
