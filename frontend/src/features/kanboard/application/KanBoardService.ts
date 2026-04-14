@@ -36,12 +36,13 @@ export class KanBoardService extends ResourceService {
       if (!response.ok) {
         const data = await response.json();
         return {
-          notification: new NotificationDto.Builder().danger().message("Invalid email or password").build(),
+          notification: new NotificationDto.Builder().danger().message(data?.message).build(),
           boards: [],
         };
       }
 
-      console.log(response);
+      const data = await response.json();
+
       return {
         boards: [],
         notification: new NotificationDto.Builder().build(),

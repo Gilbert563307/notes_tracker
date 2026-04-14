@@ -2,7 +2,7 @@ import React from "react";
 import { createBrowserRouter } from "react-router";
 import ErrorPage from "./pages/ErrorPage";
 import CreateKanBoardPage from "./pages/kanboards/CreateKanBoardPage";
-import ListKanBoardsPage from "./pages/kanboards/ListKanBoardsPage";
+
 import UpdateKanBoardPage from "./pages/kanboards/UpdateKanBoardPage";
 import AuthProvider from "./shared/context/AuthProvider";
 import LandingPage from "./pages/LandingPage";
@@ -13,6 +13,7 @@ import Application from "./Application";
 import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import ReadKanBoardPage from "./pages/kanboards/ReadKanBoardPage";
+import ListKanBoardsPage from "./pages/kanboards/ListKanBoardsPage";
 
 const routes = [
   {

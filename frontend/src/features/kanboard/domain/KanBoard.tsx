@@ -1,8 +1,20 @@
-// Assuming Task and DomainException exist
-import { Task } from "./Task";
+import type { Task } from "./Task";
+
+type KanBoardProps = {
+  id?: string;
+  name: string;
+  userId: string;
+  color?: string;
+  archived: boolean;
+  collaborative: boolean;
+  imageUrl?: string;
+  tasks: Task[];
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export class KanBoard {
-  id?: string;
+  private id?: string;
   private name: string;
   private userId: string;
   private color?: string;
@@ -13,28 +25,17 @@ export class KanBoard {
   private createdAt: Date;
   private updatedAt: Date;
 
-  constructor() {
-    this.name = builder.name;
-    this.userId = builder.userId;
-    this.color = builder.color;
-    this.archived = builder.archived;
-    this.collaborative = builder.collaborative;
-    this.imageUrl = builder.imageUrl;
-    this.tasks = builder.tasks;
-    this.createdAt = builder.createdAt;
-    this.updatedAt = builder.updatedAt;
-    this.validate();
-  }
-
-  update(name: string, userId: string, color: string, archived: boolean, collaborative: boolean, imageUrl: string) {
-    this.name = name;
-    this.userId = userId;
-    this.color = color;
-    this.archived = archived;
-    this.collaborative = collaborative;
-    this.imageUrl = imageUrl;
-    this.updatedAt = new Date();
-    this.validate();
+  private constructor(props: KanBoardProps) {
+    this.id = props.id;
+    this.name = props.name;
+    this.userId = props.userId;
+    this.color = props.color;
+    this.archived = props.archived;
+    this.collaborative = props.collaborative;
+    this.imageUrl = props.imageUrl;
+    this.tasks = props.tasks;
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
   }
 
   getUserId(): string {
@@ -77,30 +78,81 @@ export class KanBoard {
     return this.createdAt;
   }
 
-  assignTask(task: Task): void {
-    this.tasks.push(task);
+  // assignTask(task: Task): void {
+  //   this.tasks.push(task);
+  // }
+
+  // removeTask(taskToRemove: Task): void {
+  //   this.tasks = this.tasks.filter((task) => task.getId() !== taskToRemove.getId());
+  // }
+
+  toJson() {
+    return {
+      id: this.id,
+      name: this.name,
+      userId: this.userId,
+      color: this.color,
+      archived: this.archived,
+      collaborative: this.collaborative,
+      imageUrl: this.imageUrl,
+      tasks: this.tasks.map((task) => task.toJson()),
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 
-  removeTask(taskToRemove: Task): void {
-    this.tasks = this.tasks.filter((task) => task.getId() !== taskToRemove.getId());
+  toCreateJson() {
+    return {
+      name: this.name,
+      userId: this.userId,
+      color: this.color,
+      archived: this.archived,
+      collaborative: this.collaborative,
+      imageUrl: this.imageUrl,
+    };
   }
 
-  
-  /**
-   * Description placeholder
-   * @type {Builder}
-   * @class 
-   */
+  private validate(): void {
+    if (!this.name || this.name.trim().length === 0) {
+      throw new Error("Board name is required.");
+    }
+
+    if (!this.userId || this.userId.trim().length === 0) {
+      throw new Error("User ID is required.");
+    }
+  }
+
+  static from(props: KanBoardProps): KanBoard {
+    return new KanBoard.Builder()
+      .id(props.id)
+      .name(props.name)
+      .userId(props.userId)
+      .color(props.color)
+      .archived(props.archived)
+      .collaborative(props.collaborative)
+      .imageUrl(props.imageUrl)
+      .tasks(props.tasks)
+      .createdAt(props.createdAt)
+      .updatedAt(props.updatedAt)
+      .build();
+  }
+
   static Builder = class {
-    #name: string;
-    #userId: string;
-    #color: string;
+    #id?: string;
+    #name: string = "";
+    #userId: string = "";
+    #color?: string;
     #archived: boolean = false;
     #collaborative: boolean = false;
-    #imageUrl: string;
+    #imageUrl?: string;
     #tasks: Task[] = [];
-    #createdAt: Date = new Date();
-    #updatedAt: Date = new Date();
+    #createdAt: Date;
+    #updatedAt: Date;
+
+    id(id: string): this {
+      this.#id = id;
+      return this;
+    }
 
     name(name: string): this {
       this.#name = name;
@@ -136,28 +188,30 @@ export class KanBoard {
       this.#tasks = tasks;
       return this;
     }
+
+    createdAt(date: Date): this {
+      this.#createdAt = date;
+      return this;
+    }
+
+    updatedAt(date: Date): this {
+      this.#updatedAt = date;
+      return this;
+    }
+
     build(): KanBoard {
       return new KanBoard({
-            name: this.#name,
-            userId: this.#userId,
-            color: this.#color,
-            archived: this.#archived,
-            name: this.#name,
-            name: this.#name,
-            name: this.#name,
-            name: this.#name,
+        id: this.#id,
+        name: this.#name,
+        userId: this.#userId,
+        color: this.#color,
+        archived: this.#archived,
+        collaborative: this.#collaborative,
+        imageUrl: this.#imageUrl,
+        tasks: this.#tasks,
+        createdAt: this.#createdAt,
+        updatedAt: this.#updatedAt,
       });
     }
   };
-
-  private validate(): void {
-    if (!this.name || this.name.trim().length === 0) {
-      throw new Error("Board name is required.");
-    }
-
-    if (!this.userId || this.userId.trim().length === 0) {
-      throw new Error("User ID is required.");
-    }
-  }
 }
-

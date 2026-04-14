@@ -1,7 +1,13 @@
-import React from 'react'
+import React from "react";
 
 export default function CreateKanBoardPage() {
+  function onSubmit(data: { name: string; color: string }) {}
+
   return (
-    <div>CreateKanBoardPage</div>
-  )
+    <KanboardForm
+      onSubmit={onSubmit}
+      board={new KanBoardDto(null, null, null, null, null, null, null, null)}
+      submitButtonValue="create"
+    />
+  );
 }

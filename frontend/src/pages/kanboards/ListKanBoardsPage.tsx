@@ -1,6 +1,7 @@
 import useGetKanBoardsHook from "../../features/kanboard/presentation/hooks/useGetKanBoardsHook";
 import useSetPageTitleHook from "../../shared/hooks/useSetPageTitleHook";
 import { Link } from "react-router";
+import "../../features/kanboard/presentation/css/listkanboardspage.css";
 
 export default function ListKanBoardsPage() {
   useSetPageTitleHook({ title: "Kanban" });
