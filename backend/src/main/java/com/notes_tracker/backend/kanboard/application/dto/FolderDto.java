@@ -26,13 +26,4 @@ public record FolderDto(
         );
     }
 
-    // Optional (if used for create/update)
-    public Folder toDomain() {
-        return new Folder.Builder()
-                .name(this.name)
-                .userId(this.userId)
-                .color(this.color)
-                .archived(this.archived)
-                .build();
-    }
 }

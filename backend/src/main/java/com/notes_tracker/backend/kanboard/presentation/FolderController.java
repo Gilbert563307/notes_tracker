@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,28 +20,28 @@ public class FolderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<FolderDto>> getFolders(Pageable pageable) {
-        return ResponseEntity.ok(folderService.getFolders(pageable));
+    public ResponseEntity<Page<FolderDto>> getFolders(Pageable pageable, Authentication authentication) {
+        return ResponseEntity.ok(folderService.getFolders(pageable,authentication));
     }
 
     @PostMapping
-    public ResponseEntity<FolderDto> createFolder(@RequestBody FolderDto dto) {
-        FolderDto created = folderService.createFolder(dto);
+    public ResponseEntity<FolderDto> createFolder(@RequestBody FolderDto dto, Authentication authentication) {
+        FolderDto created = folderService.createFolder(dto,authentication);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{folderId}")
-    public ResponseEntity<FolderDto> getFolder(@PathVariable String folderId) {
-        return ResponseEntity.ok(folderService.getFolder(folderId));
+    public ResponseEntity<FolderDto> getFolder(@PathVariable String folderId, Authentication authentication) {
+        return ResponseEntity.ok(folderService.getFolder(folderId,authentication));
     }
 
     @PutMapping
-    public ResponseEntity<FolderDto> updateFolder(@RequestBody FolderDto dto) {
-        return ResponseEntity.ok(folderService.updateFolder(dto));
+    public ResponseEntity<FolderDto> updateFolder(@RequestBody FolderDto dto, Authentication authentication) {
+        return ResponseEntity.ok(folderService.updateFolder(dto,authentication));
     }
 
     @DeleteMapping("/{folderId}")
-    public void deleteFolder(@PathVariable String folderId) {
-        folderService.deleteFolder(folderId);
+    public void deleteFolder(@PathVariable String folderId, Authentication authentication) {
+        folderService.deleteFolder(folderId,authentication);
     }
 }

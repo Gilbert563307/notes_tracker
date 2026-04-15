@@ -53,7 +53,7 @@ class DriveFileControllerIntegrationTests {
                 null
         );
 
-        mockMvc.perform(post("/driveFile")
+        mockMvc.perform(post("/drivefile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -78,7 +78,7 @@ class DriveFileControllerIntegrationTests {
                 .build());
 
         // Act & Assert
-        mockMvc.perform(get("/driveFile/{id}", saved.getId()))
+        mockMvc.perform(get("/drivefile/{id}", saved.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.name").value("file.pdf"));
@@ -106,7 +106,7 @@ class DriveFileControllerIntegrationTests {
                 null
         );
 
-        mockMvc.perform(put("/driveFile")
+        mockMvc.perform(put("/drivefile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
@@ -127,7 +127,7 @@ class DriveFileControllerIntegrationTests {
                 .build());
 
 
-        mockMvc.perform(delete("/driveFile/{id}", saved.getId()))
+        mockMvc.perform(delete("/drivefile/{id}", saved.getId()))
                 .andExpect(status().isOk());
 
 //        mockMvc.perform(get("/driveFile/{id}", created.id()))

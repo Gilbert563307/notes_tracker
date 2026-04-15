@@ -21,6 +21,12 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     *
+     * @param username the username (is the user email) identifying the user whose data is required.
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = this.userRepository.findByEmailAddress(username);
@@ -71,5 +77,13 @@ public class UserService implements UserDetailsService {
                             .password(new BCryptPasswordEncoder().encode("password"))
                             .build());
         }
+    }
+
+    public String getUserIdByDisplayName(String displayName) {
+        Optional<User> user = this.userRepository.findByDisplayName(displayName);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("user not found by provided display name");
+        }
+        return user.get().getId();
     }
 }

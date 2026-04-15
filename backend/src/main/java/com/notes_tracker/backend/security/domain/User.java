@@ -21,6 +21,7 @@ public class User  implements UserDetails {
     @Id
     private String id;
     private String fireBaseUid;
+    @Indexed(unique = true)
     private String displayName;
     @Indexed(unique = true)
     private String emailAddress;

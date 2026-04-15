@@ -21,6 +21,7 @@ public class Task {
     @Id
     private String id;
     // private String kanBoardId;
+    private String userId;
     private String title;
     private String description;
     private TaskStatus status;
@@ -37,6 +38,7 @@ public class Task {
     private Task(Builder builder) {
         this.title = builder.title;
         // this.kanBoardId = builder.kanBoardId;
+        this.userId = builder.userId;
         this.description = builder.description;
         this.status = builder.status;
         this.priority = builder.priority;
@@ -77,6 +79,11 @@ public class Task {
     //     return kanBoardId;
     // }
 
+
+    public String getUserId() {
+        return userId;
+    }
+
     public String getId() {
         return id;
     }
@@ -115,6 +122,7 @@ public class Task {
 
     public static class Builder {
         // private String kanBoardId;
+        private String userId;
         private String title;
         private String description;
         private TaskStatus status = TaskStatus.TODO;
@@ -128,6 +136,11 @@ public class Task {
         //     this.kanBoardId = kanBoardId;
         //     return this;
         // }
+
+        public Builder userId(String userId) {
+            this.userId = userId;
+            return this;
+        }
 
         public Builder title(String title) {
             this.title = title;

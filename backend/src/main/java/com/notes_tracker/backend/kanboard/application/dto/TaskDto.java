@@ -47,16 +47,4 @@ public record TaskDto(
                 task.getUpdatedAt()
         ));
     }
-
-    public Task toDomain() {
-        return new Task.Builder()
-//                .kanBoardId(this.kanBoardId)
-                .title(this.title)
-                .description(this.description)
-                .status(this.status)
-                .priority(this.priority)
-                .assigneId(this.assigneId)
-                .archived(this.archived)
-                .build();
-    }
 }

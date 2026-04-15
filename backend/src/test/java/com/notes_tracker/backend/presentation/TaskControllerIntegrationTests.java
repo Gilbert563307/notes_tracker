@@ -42,7 +42,7 @@ public class TaskControllerIntegrationTests {
 
         TaskDto dto = new TaskDto(
                 null,
-                "board-1",
+//                "board-1",
                 "Task A",
                 "desc",
                 Task.TaskStatus.TODO,
@@ -72,7 +72,7 @@ public class TaskControllerIntegrationTests {
         Task created = repository.save(
                 new Task.Builder()
                         .title("Task A")
-                        .kanBoardId("board-1")
+//                        .kanBoardId("board-1")
                         .build()
         );
 
@@ -89,13 +89,13 @@ public class TaskControllerIntegrationTests {
         Task saved = repository.save(
                 new Task.Builder()
                         .title("Old")
-                        .kanBoardId("board-1")
+//                        .kanBoardId("board-1")
                         .build()
         );
 
         TaskDto updateDto = new TaskDto(
                 saved.getId(),
-                "board-1",
+//                "board-1",
                 "Updated",
                 "new desc",
                 Task.TaskStatus.DONE,
@@ -122,7 +122,7 @@ public class TaskControllerIntegrationTests {
         Task saved = repository.save(
                 new Task.Builder()
                         .title("Task A")
-                        .kanBoardId("board-1")
+//                        .kanBoardId("board-1")
                         .build()
         );
 
@@ -138,12 +138,12 @@ public class TaskControllerIntegrationTests {
 
         repository.save(new Task.Builder()
                 .title("Task 1")
-                .kanBoardId("board-1")
+//                .kanBoardId("board-1")
                 .build());
 
         repository.save(new Task.Builder()
                 .title("Task 2")
-                .kanBoardId("board-1")
+//                .kanBoardId("board-1")
                 .build());
 
         mockMvc.perform(get("/task"))

@@ -30,15 +30,4 @@ public record DriveFileDto(
         );
     }
 
-    // Optional (only if used as input DTO)
-    public DriveFile toDomain() {
-        return new DriveFile.Builder()
-                .name(this.name)
-//                .folderId(this.folderId)
-                .userId(this.userId)
-                .size(this.size)
-                .type(this.type)
-                .archived(this.archived)
-                .build();
-    }
 }

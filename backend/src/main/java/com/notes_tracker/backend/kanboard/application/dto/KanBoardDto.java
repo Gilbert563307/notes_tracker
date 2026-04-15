@@ -30,14 +30,4 @@ public record KanBoardDto(
         );
     }
 
-    public KanBoard toDomain() {
-        return new KanBoard.Builder()
-                .name(this.name)
-                .userId(this.userId)
-                .color(this.color)
-                .archived(this.archived)
-                .collaborative(this.collaborative)
-                .imageUrl(this.imageUrl)
-                .build();
-    }
 }
