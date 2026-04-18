@@ -5,10 +5,14 @@ import com.notes_tracker.backend.kanboard.application.FolderService;
 import com.notes_tracker.backend.kanboard.application.dto.FolderDto;
 import com.notes_tracker.backend.kanboard.data.FolderRepository;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,18 +27,35 @@ public class FolderServiceIntegrationTests {
     @Autowired
     FolderRepository repository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @AfterEach
     void cleanup() {
         repository.deleteAll();
+        this.userRepository.deleteAll();
     }
 
+
+    User savedUser;
+    @BeforeEach
+    void init() {
+        this.savedUser = this.userRepository.save(new User.Builder()
+                .displayName("mock-user")
+                .emailAddress("john@example.com")
+                .password("securePassword123")
+                .build());
+    }
+
+
     @Test
+    @WithMockUser("mock-user")
     void createFolder() {
         FolderDto dto = new FolderDto(
                 null,
                 "Folder A",
-                "user-1",
-                "blue",
+                this.savedUser.getId(),
+                "#8888",
                 false,
                 null,
                 null
@@ -44,22 +65,23 @@ public class FolderServiceIntegrationTests {
 
         assertNotNull(result.id());
         assertEquals("Folder A", result.name());
-        assertEquals("user-1", result.userId());
-        assertEquals("blue", result.color());
+        assertEquals( this.savedUser.getId(), result.userId());
+        assertEquals("#8888", result.color());
         assertFalse( result.archived());
     }
 
     @Test
+    @WithMockUser("mock-user")
     void updateAndPersistFolder() {
         FolderDto created = folderService.createFolder(new FolderDto(
-                null, "Old", "user-1", "red", false, null, null
+                null, "Old",  this.savedUser.getId(), "#000", false, null, null
         ));
 
         folderService.updateFolder(new FolderDto(
                 created.id(),
                 "New",
-                "user-2",
-                "green",
+                this.savedUser.getId(),
+                "#55555",
                 true,
                 null,
                 null
@@ -68,18 +90,19 @@ public class FolderServiceIntegrationTests {
         FolderDto fetched = folderService.getFolder(created.id());
 
         assertEquals("New", fetched.name());
-        assertEquals("user-2", fetched.userId());
-        assertEquals("green", fetched.color());
+        assertEquals( this.savedUser.getId(), fetched.userId());
+        assertEquals("#55555", fetched.color());
         assertTrue(fetched.archived());
     }
 
     @Test
+    @WithMockUser("mock-user")
     void getFolderById() {
         FolderDto created = folderService.createFolder(new FolderDto(
                 null,
                 "Folder A",
-                "user-1",
-                "blue",
+                this.savedUser.getId(),
+                "#00000",
                 true,
                 null,
                 null
@@ -89,18 +112,19 @@ public class FolderServiceIntegrationTests {
 
         assertNotNull(fetched);
         assertEquals("Folder A", fetched.name());
-        assertEquals("user-1", fetched.userId());
-        assertEquals("blue", fetched.color());
+        assertEquals( this.savedUser.getId(), fetched.userId());
+        assertEquals("#00000", fetched.color());
         assertTrue(fetched.archived());
     }
 
     @Test
+    @WithMockUser("mock-user")
     void deleteFolder() {
         FolderDto created = folderService.createFolder(new FolderDto(
                 null,
                 "Folder A",
-                "user-1",
-                "blue",
+                this.savedUser.getId(),
+                "#00000",
                 false,
                 null,
                 null

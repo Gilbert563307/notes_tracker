@@ -6,10 +6,14 @@ import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,12 +28,27 @@ public class TaskServiceIntegrationTests {
     @Autowired
     TaskRepository taskRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @AfterEach
     void cleanup() {
-        taskRepository.deleteAll();
+        this.taskRepository.deleteAll();
+        this.userRepository.deleteAll();
+    }
+
+    User savedUser;
+    @BeforeEach
+    void init() {
+        this.savedUser = this.userRepository.save(new User.Builder()
+                .displayName("mock-user")
+                .emailAddress("john@example.com")
+                .password("securePassword123")
+                .build());
     }
 
     @Test
+    @WithMockUser("mock-user")
     void createTask() {
         TaskDto dto = new TaskDto(
                 null,
@@ -59,21 +78,26 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
+    @WithMockUser("mock-user")
     void createAndFetchTask() {
-        TaskDto created = taskService.createTask(new TaskDto(
-                null, "Task B", "desc",
-                Task.TaskStatus.DOING, 2, "user-1", false, null, null
-        ));
+        Task created = this.taskRepository.save(
+                new Task.Builder().title("Task B")
+                        .description("desc")
+                        .userId(savedUser.getId())
+                        .assigneId(savedUser.getId())
+                        .build()
+        );
 
-        TaskDto fetched = taskService.getTask(created.id());
 
-        assertEquals(created.id(), fetched.id());
+        TaskDto fetched = taskService.getTask(created.getId());
+
+        assertEquals(created.getId(), fetched.id());
 
         assertEquals("Task B", fetched.title());
         assertEquals("desc", fetched.description());
-        assertEquals(Task.TaskStatus.DOING, fetched.status());
-        assertEquals(2, fetched.priority());
-        assertEquals("user-1", fetched.assigneId());
+        assertEquals(Task.TaskStatus.TODO, fetched.status());
+        assertEquals(0, fetched.priority());
+        assertEquals(savedUser.getId(), fetched.assigneId());
         assertFalse(fetched.archived());
 
         assertNotNull(fetched.createdAt());
@@ -81,14 +105,17 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
+    @WithMockUser("mock-user")
     void updateTaskAndVerifyPersistence() {
-        TaskDto created = taskService.createTask(new TaskDto(
-                null, "board-1", "desc",
-                Task.TaskStatus.TODO, 1, "user-1", false, null, null
-        ));
+        Task created = this.taskRepository.save(
+                new Task.Builder().title("Task B")
+                        .description("desc")
+                        .userId(savedUser.getId())
+                        .build()
+        );
 
         taskService.updateTask(new TaskDto(
-                created.id(),
+                created.getId(),
                 "Updated",
                 "new desc",
                 Task.TaskStatus.DONE,
@@ -99,7 +126,7 @@ public class TaskServiceIntegrationTests {
                 null
         ));
 
-        TaskDto fetched = taskService.getTask(created.id());
+        TaskDto fetched = taskService.getTask(created.getId());
 
         assertEquals("Updated", fetched.title());
         assertEquals("new desc", fetched.description());
@@ -113,29 +140,27 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
+    @WithMockUser("mock-user")
     void getTaskById() {
-        TaskDto created = taskService.createTask(new TaskDto(
-                null,
-                "Task A",
-                "desc",
-                Task.TaskStatus.TODO,
-                1,
-                "user-1",
-                false,
-                null,
-                null
-        ));
+        Task created = this.taskRepository.save(
+                new Task.Builder().title("Task A")
+                        .description("desc")
+                        .userId(savedUser.getId())
+                        .assigneId(savedUser.getId())
+                        .priority(1)
+                        .build()
+        );
 
-        TaskDto fetched = taskService.getTask(created.id());
+        TaskDto fetched = taskService.getTask(created.getId());
 
         assertNotNull(fetched);
 
-        assertEquals(created.id(), fetched.id());
+        assertEquals(created.getId(), fetched.id());
         assertEquals("Task A", fetched.title());
         assertEquals("desc", fetched.description());
         assertEquals(Task.TaskStatus.TODO, fetched.status());
         assertEquals(1, fetched.priority());
-        assertEquals("user-1", fetched.assigneId());
+        assertEquals(savedUser.getId(), fetched.assigneId());
         assertFalse(fetched.archived());
 
         assertNotNull(fetched.createdAt());
@@ -143,23 +168,21 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
+    @WithMockUser("mock-user")
     void deleteTask() {
-        TaskDto created = taskService.createTask(new TaskDto(
-                null,
-                "Task A",
-                "desc",
-                Task.TaskStatus.TODO,
-                1,
-                "user-1",
-                false,
-                null,
-                null
-        ));
+        Task created = this.taskRepository.save(
+                new Task.Builder().title("Task A")
+                        .description("desc")
+                        .userId(savedUser.getId())
+                        .assigneId(savedUser.getId())
+                        .priority(1)
+                        .build()
+        );
 
-        taskService.deleteTask(created.id());
+        taskService.deleteTask(created.getId());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            taskService.getTask(created.id());
+            taskService.getTask(created.getId());
         });
     }
 }

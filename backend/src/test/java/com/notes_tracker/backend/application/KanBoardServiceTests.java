@@ -6,6 +6,7 @@ import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.security.application.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 
@@ -19,16 +20,20 @@ public class KanBoardServiceTests {
     private final UserService userService = mock(UserService.class);
     private final KanBoardService service = new KanBoardService(this.repo, userService);
 
+    @BeforeEach
+    void init(){
+        when(userService.getUserIdByAuthentication()).thenReturn("user-1");
+    }
+
     @Test
     void createBoard() {
 
         KanBoard board = new KanBoard.Builder()
                 .name("Board")
-                .userId("user")
+                .userId("user-1")
                 .build();
 
         when(this.repo.save(any())).thenReturn(board);
-
         KanBoardDto result = this.service.createBoard(KanBoardDto.from(board));
 
         assertEquals("Board", result.name());
@@ -49,7 +54,7 @@ public class KanBoardServiceTests {
                         "1",
                         "Board",
                         "user-1",
-                        "blue",
+                        "#11211",
                         false,
                         true,
                         "img.png",
@@ -60,7 +65,7 @@ public class KanBoardServiceTests {
 
         assertEquals("Board", updated.name());
         assertEquals("user-1", updated.userId());
-        assertEquals("blue", updated.color());
+        assertEquals("#11211", updated.color());
         assertTrue(updated.collaborative());
         assertEquals("img.png", updated.imageUrl());
         assertFalse(updated.archived());

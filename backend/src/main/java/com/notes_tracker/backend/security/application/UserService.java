@@ -81,17 +81,17 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public String getUserIdByDisplayName(String displayName) {
+    private String getUserIdByDisplayName(String displayName) {
         Optional<User> user = this.userRepository.findByDisplayName(displayName);
         if (user.isEmpty()) {
-            throw new UserNotFoundException("user not found by provided display name");
+            throw new UserNotFoundException("User not found by provided display name" + displayName);
         }
         return user.get().getId();
     }
 
     // https://www.youtube.com/watch?v=mt7wR0CujHo  1:34:10
-    public String getUserIdByAuthentication(){
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((User)authentication.getPrincipal()).getId();
+    public String getUserIdByAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return this.getUserIdByDisplayName(authentication.getName());
     }
 }

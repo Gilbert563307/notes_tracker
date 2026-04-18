@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.notes_tracker.backend.security.application.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,12 +25,18 @@ public class TaskServiceTests {
     private final UserService userService = mock(UserService.class);
     private final  TaskService service = new TaskService(this.repo, this.userService);
 
+    @BeforeEach
+    void init(){
+        when(userService.getUserIdByAuthentication()).thenReturn("user-1");
+    }
+
     @Test
     void createTask() {
         
         Task task = new Task.Builder()
                 .title("Test")
                 // .kanBoardId("1")
+                .userId("user-1")
                 .build();
 
         when(repo.save(any(Task.class))).thenReturn(task);
@@ -47,6 +54,7 @@ public class TaskServiceTests {
         Task task = new Task.Builder()
                 .title("Test")
                 // .kanBoardId("1")
+                .userId("user-1")
                 .build();
 
         when(repo.findById("1")).thenReturn(Optional.of(task));
@@ -62,8 +70,9 @@ public class TaskServiceTests {
         
 
         Task task = new Task.Builder()
-                .title("Old")
+                .title("Old3")
                 // .kanBoardId("1")
+                .userId("user-1")
                 .build();
 
         when(repo.findById("1")).thenReturn(Optional.of(task));
@@ -72,7 +81,7 @@ public class TaskServiceTests {
         TaskDto updated = service.updateTask(
                 new TaskDto(
                         "1",
-                        "new",
+                        "neww",
                         "desc",
                         Task.TaskStatus.DOING,
                         2,
@@ -83,7 +92,7 @@ public class TaskServiceTests {
                 )
         );
 
-        assertEquals("New", updated.title());
+        assertEquals("neww", updated.title());
         assertEquals("desc", updated.description());
         assertEquals(Task.TaskStatus.DOING, updated.status());
         assertEquals(2, updated.priority());
