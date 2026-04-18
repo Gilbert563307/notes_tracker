@@ -6,9 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FolderRepository extends MongoRepository<Folder, String> {
     Page<Folder> findAllByUserId(String userId, Pageable pageable);
-    Folder findFolderByIdAndUserId(String id, String userId);
-    void deleteFolderByIdAndUserId(String id, String userId);
+    long deleteByIdInAndUserId(List<String> ids, String userId);
 }

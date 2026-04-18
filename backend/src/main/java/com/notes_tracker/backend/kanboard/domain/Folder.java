@@ -93,8 +93,8 @@ public class Folder {
     public static class Builder {
         private String name;
         private String userId;
-        private String color;
-        private boolean archived;
+        private String color = "#000000";
+        private boolean archived = false;
         private List<DriveFile> files = new ArrayList<>();
         private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime updatedAt = LocalDateTime.now();
@@ -130,19 +130,23 @@ public class Folder {
     }
 
     private void validate() {
-        if (userId == null || userId.trim().isEmpty()) {
+        if (this.userId == null || this.userId.trim().isEmpty()) {
             throw new DomainException(
                     "User information is missing or invalid.");
         }
 
-        if (name == null || name.trim().isEmpty()) {
+        if (this.name == null || this.name.trim().isEmpty()) {
             throw new DomainException(
                     "Please enter a name for the folder.");
         }
-
-        if (name.length() > 255) {
+        if (this.name.length() > 255) {
             throw new DomainException(
                     "Folder name is too long.");
+        }
+
+        if(!this.color.contains("#")){
+            throw new DomainException(
+                    "Folder colour is invalid must be of hex code.");
         }
     }
 }

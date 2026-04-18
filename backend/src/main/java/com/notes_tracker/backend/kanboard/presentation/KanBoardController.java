@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,28 +30,31 @@ public class KanBoardController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<KanBoardDto>> getBoards(Pageable pageable,Authentication authentication) {
-        return ResponseEntity.ok(kanBoardService.getBoards(pageable,authentication));
+    public ResponseEntity<Page<KanBoardDto>> getBoards(Pageable pageable) {
+        return ResponseEntity.ok(kanBoardService.getBoards(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<KanBoardDto> createBoard(@RequestBody KanBoardDto dto, Authentication authentication) {
-        KanBoardDto created = kanBoardService.createBoard(dto,authentication);
+    public ResponseEntity<KanBoardDto> createBoard(@RequestBody KanBoardDto dto) {
+        KanBoardDto created = kanBoardService.createBoard(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<KanBoardDto> getBoard(@PathVariable String boardId, Authentication authentication) {
-        return ResponseEntity.ok(kanBoardService.getBoard(boardId,authentication));
+    @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")
+    public ResponseEntity<KanBoardDto> getBoard(@PathVariable String boardId) {
+        return ResponseEntity.ok(kanBoardService.getBoard(boardId));
     }
 
     @PutMapping
-    public ResponseEntity<KanBoardDto> updateBoard(@RequestBody KanBoardDto dto, Authentication authentication) {
-        return ResponseEntity.ok(kanBoardService.updateBoard(dto,authentication));
+    @PreAuthorize("@kanBoardService.isKanBoardOwner(#dto.id())")
+    public ResponseEntity<KanBoardDto> updateBoard(@RequestBody KanBoardDto dto) {
+        return ResponseEntity.ok(kanBoardService.updateBoard(dto));
     }
 
     @DeleteMapping("/{boardId}")
-    public void deleteBoard(@PathVariable String boardId,Authentication authentication) {
-        kanBoardService.deleteBoard(boardId,authentication);
+    @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")
+    public void deleteBoard(@PathVariable String boardId) {
+        kanBoardService.deleteBoard(boardId);
     }
 }

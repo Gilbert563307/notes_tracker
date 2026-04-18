@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,28 +21,31 @@ public class DriveFileController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DriveFileDto>> getFiles(Pageable pageable, Authentication authentication) {
-        return ResponseEntity.ok(driveFileService.getFiles(pageable, authentication));
+    public ResponseEntity<Page<DriveFileDto>> getFiles(Pageable pageable) {
+        return ResponseEntity.ok(driveFileService.getFiles(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<DriveFileDto> createFile(@RequestBody DriveFileDto dto, Authentication authentication) {
-        DriveFileDto created = driveFileService.createFile(dto, authentication);
+    public ResponseEntity<DriveFileDto> createFile(@RequestBody DriveFileDto dto) {
+        DriveFileDto created = driveFileService.createFile(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{fileId}")
-    public ResponseEntity<DriveFileDto> getFile(@PathVariable String fileId,Authentication authentication) {
-        return ResponseEntity.ok(driveFileService.getFile(fileId, authentication));
+    @PreAuthorize("@driveFileService.isDriveFileOwner(#fileId)")
+    public ResponseEntity<DriveFileDto> getFile(@PathVariable String fileId) {
+        return ResponseEntity.ok(driveFileService.getFile(fileId));
     }
 
     @PutMapping
-    public ResponseEntity<DriveFileDto> updateFile(@RequestBody DriveFileDto dto, Authentication authentication) {
-        return ResponseEntity.ok(driveFileService.updateFile(dto, authentication));
+    @PreAuthorize("@driveFileService.isDriveFileOwner(#dto.id())")
+    public ResponseEntity<DriveFileDto> updateFile(@RequestBody DriveFileDto dto) {
+        return ResponseEntity.ok(driveFileService.updateFile(dto));
     }
 
     @DeleteMapping("/{fileId}")
-    public void deleteFile(@PathVariable String fileId, Authentication authentication) {
-        driveFileService.deleteFile(fileId, authentication);
+    @PreAuthorize("@driveFileService.isDriveFileOwner(#fileId)")
+    public void deleteFile(@PathVariable String fileId) {
+        driveFileService.deleteFile(fileId);
     }
 }

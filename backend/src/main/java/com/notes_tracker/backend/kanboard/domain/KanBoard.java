@@ -104,17 +104,16 @@ public class KanBoard {
     }
 
     public void removeTask(Task taskToRemove) {
-        List<Task> updatedTaskList = this.tasks.stream().filter(task -> !task.getId().equals(taskToRemove.getId()))
+        this.tasks = this.tasks.stream().filter(task -> !task.getId().equals(taskToRemove.getId()))
                 .toList();
-        this.tasks = updatedTaskList;
     }
 
     public static class Builder {
         private String name;
         private String userId;
-        private String color;
-        private boolean archived;
-        private boolean collaborative;
+        private String color = "#000000";
+        private boolean archived = false;
+        private boolean collaborative = false;
         private String imageUrl;
         private List<Task> tasks = new ArrayList<>();
         private LocalDateTime createdAt = LocalDateTime.now();
@@ -161,12 +160,17 @@ public class KanBoard {
     }
 
     private void validate() {
-        if (name == null || name.trim().isEmpty()) {
+        if (this.name == null || this.name.trim().isEmpty()) {
             throw new DomainException("Board name is required.");
         }
 
-        if (userId == null || userId.trim().isEmpty()) {
+        if (this.userId == null || this.userId.trim().isEmpty()) {
             throw new DomainException("User ID is required.");
+        }
+
+        if(!this.color.contains("#")){
+            throw new DomainException(
+                    "Kanboard colour is invalid must be of hex code.");
         }
     }
 }

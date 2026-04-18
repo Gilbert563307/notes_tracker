@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FolderService {
 
@@ -25,14 +27,14 @@ public class FolderService {
         this.userService = userService;
     }
 
-    public Page<FolderDto> getFolders(Pageable pageable, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public Page<FolderDto> getFolders(Pageable pageable) {
+        String userId = this.userService.getUserIdByAuthentication();
         return folderRepository.findAllByUserId(userId, pageable)
                 .map(FolderDto::from);
     }
 
-    public FolderDto createFolder(FolderDto dto, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public FolderDto createFolder(FolderDto dto) {
+        String userId = this.userService.getUserIdByAuthentication();
         Folder folder = this.folderRepository.save(
                 new Folder.Builder()
                 .name(dto.name())
@@ -43,18 +45,19 @@ public class FolderService {
         return FolderDto.from(folder);
     }
 
-    public FolderDto getFolder(String folderId, Authentication authentication) {
-        Folder folder = this.getFolderById(folderId, authentication);
+    public FolderDto getFolder(String folderId) {
+        Folder folder = this.getFolderById(folderId);
         return FolderDto.from(folder);
     }
 
-    public void assignDriveFileToFolder(String folderId, String driveFileId, Authentication authentication) {
-        Folder folder = this.getFolderById(folderId, authentication);
-        folder.addDriveFileToFolder(this.getDriveFileById(driveFileId, authentication));
+    //also needs pre authorize check
+    public void assignDriveFileToFolder(String folderId, String driveFileId) {
+        Folder folder = this.getFolderById(folderId);
+        folder.addDriveFileToFolder(this.getDriveFileById(driveFileId));
     }
 
-    public FolderDto updateFolder(FolderDto dto, Authentication authentication) {
-        Folder folder = getFolderById(dto.id(), authentication);
+    public FolderDto updateFolder(FolderDto dto) {
+        Folder folder = getFolderById(dto.id());
         folder.update(
                 dto.name(),
                 dto.userId(),
@@ -65,22 +68,19 @@ public class FolderService {
         return FolderDto.from(folder);
     }
 
-    public void deleteFolder(String folderId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        this.folderRepository.deleteFolderByIdAndUserId(folderId, userId);
+    public void deleteFolder(String folderId) {
+        this.folderRepository.deleteById(folderId);
     }
 
-    private Folder getFolderById(String folderId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        Folder folder =  this.folderRepository.findFolderByIdAndUserId(folderId, userId);
-        if (folder == null) {
-            throw new ResourceNotFoundException("Folder not found");
-        }
+    private Folder getFolderById(String folderId) {
+        Folder folder =  this.folderRepository.findById(folderId)
+                .orElseThrow(() -> new  ResourceNotFoundException("Folder not found"));
         return folder;
     }
 
-    private DriveFile getDriveFileById(String driveFileId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    private DriveFile getDriveFileById(String driveFileId) {
+        String userId = this.userService.getUserIdByAuthentication();
+        //TODO WHEN AUTHORIZE CHECK IS DONE FIX:
         DriveFile driveFile =  this.driveFileRepository.findDriveFileByIdAndUserId(driveFileId, userId);
         if (driveFile == null) {
             throw new ResourceNotFoundException("Folder not found");
@@ -88,7 +88,16 @@ public class FolderService {
         return driveFile;
     }
 
-    private String getCurrentAuthenticatedUserId(Authentication authentication) {
-        return this.userService.getUserIdByDisplayName(authentication.getName());
+    public void deleteByIdIn(List<String> ids){
+        String userId = this.userService.getUserIdByAuthentication();
+        this.folderRepository.deleteByIdInAndUserId(ids, userId);
+    }
+
+    public boolean isFolderOwner(final String id) {
+        final String userId = this.userService.getUserIdByAuthentication();
+        final Folder folder = this.folderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+        //does drive file equal to current auth user
+        return folder.getUserId().equals(userId);
     }
 }

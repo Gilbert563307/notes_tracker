@@ -7,8 +7,9 @@ import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoun
 import com.notes_tracker.backend.security.application.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class DriveFileService {
@@ -21,41 +22,38 @@ public class DriveFileService {
         this.userService = userService;
     }
 
-    public Page<DriveFileDto> getFiles(Pageable pageable, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public Page<DriveFileDto> getFiles(Pageable pageable) {
+        String userId = this.userService.getUserIdByAuthentication();
         return this.driveFileRepository.findAllByUserId(userId, pageable)
                 .map(DriveFileDto::from);
     }
 
-    public DriveFileDto createFile(DriveFileDto dto, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public DriveFileDto createFile(DriveFileDto dto) {
+        String userId = this.userService.getUserIdByAuthentication();
         DriveFile file = this.driveFileRepository.save(
                 new DriveFile.Builder()
-                .name(dto.name())
-                .userId(userId)
-                .size(dto.size())
-                .type(dto.type())
-                .archived(dto.archived())
-                .build());
+                        .name(dto.name())
+                        .userId(userId)
+                        .size(dto.size())
+                        .type(dto.type())
+                        .archived(dto.archived())
+                        .build());
         return DriveFileDto.from(file);
     }
 
-    public DriveFileDto getFile(String fileId, Authentication authentication) {
-        DriveFile file = getFileById(fileId, authentication);
+    public DriveFileDto getFile(String fileId) {
+        DriveFile file = getFileById(fileId);
         return DriveFileDto.from(file);
     }
 
-    private DriveFile getFileById(String fileId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        DriveFile driveFile = this.driveFileRepository.findDriveFileByIdAndUserId(fileId, userId);
-        if (driveFile == null){
-            throw  new ResourceNotFoundException("File not found");
-        }
+    private DriveFile getFileById(String fileId) {
+        DriveFile driveFile = this.driveFileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
         return  driveFile;
     }
 
-    public DriveFileDto updateFile(DriveFileDto dto, Authentication authentication) {
-        DriveFile file = getFileById(dto.id(), authentication);
+    public DriveFileDto updateFile(DriveFileDto dto) {
+        DriveFile file = getFileById(dto.id());
         file.update(
                 dto.name(),
                 dto.userId(),
@@ -67,12 +65,20 @@ public class DriveFileService {
         return DriveFileDto.from(file);
     }
 
-    public void deleteFile(String fileId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        this.driveFileRepository.deleteKanBoardByIdAndUserId(fileId, userId);
+    public void deleteFile(String fileId) {
+        this.driveFileRepository.deleteById(fileId);
     }
 
-    private String getCurrentAuthenticatedUserId(Authentication authentication) {
-        return this.userService.getUserIdByDisplayName(authentication.getName());
+    public void deleteByIdIn(List<String> ids){
+        String userId = this.userService.getUserIdByAuthentication();
+        this.driveFileRepository.deleteByIdInAndUserId(ids, userId);
+    }
+
+    public boolean isDriveFileOwner(final String driveFileId) {
+        final String userId = this.userService.getUserIdByAuthentication();
+        final DriveFile driveFile = this.driveFileRepository.findById(driveFileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+        //does drive file equal to current auth user
+        return driveFile.getUserId().equals(userId);
     }
 }

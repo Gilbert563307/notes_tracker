@@ -6,9 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TaskRepository extends MongoRepository<Task, String> {
     Page<Task> findAllByUserId(String userId, Pageable pageable);
-    Task findTaskByIdAndUserId(String id, String userId);
-    void deleteTaskByIdAndUserId(String id, String userId);
+    long deleteByIdInAndUserId(List<String> ids, String userId);
 }

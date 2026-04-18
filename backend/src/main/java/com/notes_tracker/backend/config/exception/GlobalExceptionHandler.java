@@ -3,6 +3,7 @@ package com.notes_tracker.backend.config.exception;
 import com.notes_tracker.backend.security.presentation.exception.UserAlreadyExistsByEmailException;
 import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,5 +45,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody ErrorResponse handleUserNotFoundExceptionException(UserNotFoundException ex) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public @ResponseBody ErrorResponse handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "You are not unauthorized to perform this operation");
     }
 }

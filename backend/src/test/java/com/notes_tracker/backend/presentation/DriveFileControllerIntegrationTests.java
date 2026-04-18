@@ -44,7 +44,6 @@ class DriveFileControllerIntegrationTests {
         DriveFileDto request = new DriveFileDto(
                 null,
                 "file.pdf",
-                "folder-1",
                 "user-1",
                 "100",
                 "PDF",
@@ -59,7 +58,6 @@ class DriveFileControllerIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name").value("file.pdf"))
-                .andExpect(jsonPath("$.folderId").value("folder-1"))
                 .andExpect(jsonPath("$.userId").value("user-1"))
                 .andExpect(jsonPath("$.size").value("100"))
                 .andExpect(jsonPath("$.type").value("PDF"))
@@ -97,7 +95,6 @@ class DriveFileControllerIntegrationTests {
         DriveFileDto update = new DriveFileDto(
                 saved.getId(),
                 "updated.pdf",
-                "folder-2",
                 "user-2",
                 "200",
                 "PDF",

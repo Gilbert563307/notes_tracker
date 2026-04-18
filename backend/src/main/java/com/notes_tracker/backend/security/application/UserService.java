@@ -2,6 +2,8 @@ package com.notes_tracker.backend.security.application;
 
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -85,5 +87,11 @@ public class UserService implements UserDetailsService {
             throw new UserNotFoundException("user not found by provided display name");
         }
         return user.get().getId();
+    }
+
+    // https://www.youtube.com/watch?v=mt7wR0CujHo  1:34:10
+    public String getUserIdByAuthentication(){
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ((User)authentication.getPrincipal()).getId();
     }
 }

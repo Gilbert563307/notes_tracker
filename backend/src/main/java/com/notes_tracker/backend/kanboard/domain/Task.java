@@ -16,7 +16,7 @@ public class Task {
         DONE
     }
 
-    private static final int MIN_TITLE_LENGTH = 4;
+    public static final int MIN_TITLE_LENGTH = 4;
 
     @Id
     private String id;
@@ -182,6 +182,11 @@ public class Task {
         if (this.title == null || this.title.isBlank()) {
             throw new DomainException("Please enter a title for the task.");
         }
+
+        if (this.userId == null || this.userId.isBlank()) {
+            throw new DomainException("Please assign this task to a user.");
+        }
+
         if (this.title.length() < MIN_TITLE_LENGTH) {
             throw new DomainException(
                     "The task title must be at least " + MIN_TITLE_LENGTH + " characters long.");
@@ -192,10 +197,10 @@ public class Task {
             throw new DomainException("Please select a valid task status.");
         }
 
-        // Assignee Check
-        if (this.assigneId == null || this.assigneId.isBlank()) {
-            throw new DomainException("Please assign this task to a user.");
-        }
+//        // Assignee Check
+//        if (this.assigneId == null || this.assigneId.isBlank()) {
+//            throw new DomainException("Please assign this task to a user.");
+//        }
     }
 
 }

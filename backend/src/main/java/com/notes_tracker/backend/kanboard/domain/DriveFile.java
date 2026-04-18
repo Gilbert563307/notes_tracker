@@ -40,7 +40,7 @@ public class DriveFile {
         this.updatedAt = builder.updatedAt;
     }
 
-    public void update(String name,  String userId, String size, String type, boolean archived) {
+    public void update(String name, String userId, String size, String type, boolean archived) {
         this.validate(name, userId, size, type);
         this.name = name;
         this.userId = userId;
@@ -87,16 +87,14 @@ public class DriveFile {
         private String userId;
         private String size;
         private String type;
-        private boolean archived;
+        private boolean archived = false;
         private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime updatedAt = LocalDateTime.now();;
-
 
         public Builder name(String name) {
             this.name = name;
             return this;
         }
-
 
         public Builder userId(String userId) {
             this.userId = userId;
@@ -144,6 +142,7 @@ public class DriveFile {
                 throw new DomainException("File size too large. Maximum size is 100MB");
             }
         } catch (NumberFormatException e) {
+            System.out.println(e.getMessage());
             throw new DomainException("Invalid file size format. Expected a numeric string.");
         }
 

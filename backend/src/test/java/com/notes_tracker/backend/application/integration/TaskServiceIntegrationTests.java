@@ -33,7 +33,6 @@ public class TaskServiceIntegrationTests {
     void createTask() {
         TaskDto dto = new TaskDto(
                 null,
-                "board-1",
                 "Task A",
                 "desc",
                 Task.TaskStatus.TODO,
@@ -49,7 +48,6 @@ public class TaskServiceIntegrationTests {
         assertNotNull(result.id());
 
         assertEquals("Task A", result.title());
-        assertEquals("board-1", result.kanBoardId());
         assertEquals("desc", result.description());
         assertEquals(Task.TaskStatus.TODO, result.status());
         assertEquals(1, result.priority());
@@ -63,7 +61,7 @@ public class TaskServiceIntegrationTests {
     @Test
     void createAndFetchTask() {
         TaskDto created = taskService.createTask(new TaskDto(
-                null, "board-1", "Task B", "desc",
+                null, "Task B", "desc",
                 Task.TaskStatus.DOING, 2, "user-1", false, null, null
         ));
 
@@ -72,7 +70,6 @@ public class TaskServiceIntegrationTests {
         assertEquals(created.id(), fetched.id());
 
         assertEquals("Task B", fetched.title());
-        assertEquals("board-1", fetched.kanBoardId());
         assertEquals("desc", fetched.description());
         assertEquals(Task.TaskStatus.DOING, fetched.status());
         assertEquals(2, fetched.priority());
@@ -86,13 +83,12 @@ public class TaskServiceIntegrationTests {
     @Test
     void updateTaskAndVerifyPersistence() {
         TaskDto created = taskService.createTask(new TaskDto(
-                null, "board-1", "Old", "desc",
+                null, "board-1", "desc",
                 Task.TaskStatus.TODO, 1, "user-1", false, null, null
         ));
 
         taskService.updateTask(new TaskDto(
                 created.id(),
-                "board-1",
                 "Updated",
                 "new desc",
                 Task.TaskStatus.DONE,
@@ -120,7 +116,6 @@ public class TaskServiceIntegrationTests {
     void getTaskById() {
         TaskDto created = taskService.createTask(new TaskDto(
                 null,
-                "board-1",
                 "Task A",
                 "desc",
                 Task.TaskStatus.TODO,
@@ -137,7 +132,6 @@ public class TaskServiceIntegrationTests {
 
         assertEquals(created.id(), fetched.id());
         assertEquals("Task A", fetched.title());
-        assertEquals("board-1", fetched.kanBoardId());
         assertEquals("desc", fetched.description());
         assertEquals(Task.TaskStatus.TODO, fetched.status());
         assertEquals(1, fetched.priority());
@@ -152,7 +146,6 @@ public class TaskServiceIntegrationTests {
     void deleteTask() {
         TaskDto created = taskService.createTask(new TaskDto(
                 null,
-                "board-1",
                 "Task A",
                 "desc",
                 Task.TaskStatus.TODO,

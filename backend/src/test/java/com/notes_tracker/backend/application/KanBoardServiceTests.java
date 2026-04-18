@@ -5,7 +5,9 @@ import com.notes_tracker.backend.kanboard.application.KanBoardService;
 import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
+import com.notes_tracker.backend.security.application.UserService;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
@@ -13,29 +15,27 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class KanBoardServiceTests {
+    private final KanBoardRepository repo = mock(KanBoardRepository.class);
+    private final UserService userService = mock(UserService.class);
+    private final KanBoardService service = new KanBoardService(this.repo, userService);
 
     @Test
     void createBoard() {
-        KanBoardRepository repo = mock(KanBoardRepository.class);
-        KanBoardService service = new KanBoardService(repo);
 
         KanBoard board = new KanBoard.Builder()
                 .name("Board")
                 .userId("user")
                 .build();
 
-        when(repo.save(any())).thenReturn(board);
+        when(this.repo.save(any())).thenReturn(board);
 
-        KanBoardDto result = service.createBoard(KanBoardDto.from(board));
+        KanBoardDto result = this.service.createBoard(KanBoardDto.from(board));
 
         assertEquals("Board", result.name());
     }
 
     @Test
     void updateBoard() {
-        KanBoardRepository repo = mock(KanBoardRepository.class);
-        KanBoardService service = new KanBoardService(repo);
-
         KanBoard board = new KanBoard.Builder()
                 .name("Old")
                 .userId("user")

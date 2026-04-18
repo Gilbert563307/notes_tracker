@@ -2,6 +2,7 @@ package com.notes_tracker.backend.kanboard.application;
 
 import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
+import com.notes_tracker.backend.kanboard.domain.Folder;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
 import com.notes_tracker.backend.security.application.UserService;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class KanBoardService {
@@ -21,14 +24,14 @@ public class KanBoardService {
         this.userService = userService;
     }
 
-    public Page<KanBoardDto> getBoards(Pageable pageable, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public Page<KanBoardDto> getBoards(Pageable pageable) {
+        String userId = this.userService.getUserIdByAuthentication();
         return kanBoardRepository.findAllByUserId(userId, pageable)
                 .map(KanBoardDto::from);
     }
 
-    public KanBoardDto createBoard(KanBoardDto dto, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public KanBoardDto createBoard(KanBoardDto dto) {
+        String userId = this.userService.getUserIdByAuthentication();
         KanBoard kanBoardToCreate = new KanBoard.Builder()
                 .name(dto.name())
                 .userId(userId)
@@ -41,26 +44,20 @@ public class KanBoardService {
         return KanBoardDto.from(board);
     }
 
-    public KanBoardDto getBoard(String boardId, Authentication authentication) {
-        KanBoard board = getBoardById(boardId, authentication);
+    public KanBoardDto getBoard(String boardId) {
+        KanBoard board = getBoardById(boardId);
         return KanBoardDto.from(board);
     }
 
-    private KanBoard getBoardById(String boardId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        KanBoard kanBoard = kanBoardRepository.findKanBoardByIdAndUserId(boardId, userId);
-        if (kanBoard == null) {
-            throw new ResourceNotFoundException("KanBoard not found");
-        }
+    private KanBoard getBoardById(String boardId) {
+        KanBoard kanBoard = kanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException("KanBoard not found"));
         return kanBoard;
     }
 
-    private String getCurrentAuthenticatedUserId(Authentication authentication) {
-        return this.userService.getUserIdByDisplayName(authentication.getName());
-    }
 
-    public KanBoardDto updateBoard(KanBoardDto dto, Authentication authentication) {
-        KanBoard board = getBoardById(dto.id(), authentication);
+    public KanBoardDto updateBoard(KanBoardDto dto) {
+        KanBoard board = getBoardById(dto.id());
 
         board.update(
                 dto.name(),
@@ -75,8 +72,20 @@ public class KanBoardService {
         return KanBoardDto.from(board);
     }
 
-    public void deleteBoard(String boardId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        kanBoardRepository.deleteKanBoardByIdAndUserId(boardId,userId);
+    public void deleteBoard(String boardId) {
+        kanBoardRepository.deleteById(boardId);
+    }
+
+    public void deleteByIdIn(List<String> ids){
+        String userId = this.userService.getUserIdByAuthentication();
+        this.kanBoardRepository.deleteByIdInAndUserId(ids, userId);
+    }
+
+    public boolean isKanBoardOwner(final String id) {
+        final String userId = this.userService.getUserIdByAuthentication();
+        final KanBoard kanBoard = this.kanBoardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Kanboard not found"));
+        //does drive file equal to current auth user
+        return kanBoard.getUserId().equals(userId);
     }
 }

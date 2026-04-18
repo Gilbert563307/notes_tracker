@@ -6,6 +6,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import com.notes_tracker.backend.security.application.UserService;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -18,12 +20,13 @@ import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
 
 public class TaskServiceTests {
+    private final TaskRepository repo =mock(TaskRepository.class);
+    private final UserService userService = mock(UserService.class);
+    private final  TaskService service = new TaskService(this.repo, this.userService);
 
     @Test
     void createTask() {
-        TaskRepository repo = mock(TaskRepository.class);
-        TaskService service = new TaskService(repo);
-
+        
         Task task = new Task.Builder()
                 .title("Test")
                 // .kanBoardId("1")
@@ -40,8 +43,6 @@ public class TaskServiceTests {
 
     @Test
     void getTask() {
-        TaskRepository repo = mock(TaskRepository.class);
-        TaskService service = new TaskService(repo);
 
         Task task = new Task.Builder()
                 .title("Test")
@@ -58,8 +59,7 @@ public class TaskServiceTests {
 
     @Test
     void updateTask() {
-        TaskRepository repo = mock(TaskRepository.class);
-        TaskService service = new TaskService(repo);
+        
 
         Task task = new Task.Builder()
                 .title("Old")
@@ -72,8 +72,7 @@ public class TaskServiceTests {
         TaskDto updated = service.updateTask(
                 new TaskDto(
                         "1",
-                        "2",
-                        "New",
+                        "new",
                         "desc",
                         Task.TaskStatus.DOING,
                         2,

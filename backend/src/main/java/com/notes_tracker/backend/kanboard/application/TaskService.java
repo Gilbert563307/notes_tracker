@@ -3,13 +3,14 @@ package com.notes_tracker.backend.kanboard.application;
 import com.notes_tracker.backend.security.application.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
+
+import java.util.List;
 
 @Service
 public class TaskService {
@@ -22,13 +23,13 @@ public class TaskService {
         this.userService = userService;
     }
 
-    public Page<TaskDto> getTasks(Pageable pageable, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public Page<TaskDto> getTasks(Pageable pageable) {
+        String userId = this.userService.getUserIdByAuthentication();
         return TaskDto.fromTaskList(this.taskRepository.findAllByUserId(userId, pageable));
     }
 
-    public TaskDto createTask(TaskDto taskDto, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
+    public TaskDto createTask(TaskDto taskDto) {
+        String userId = this.userService.getUserIdByAuthentication();
         Task task = this.taskRepository.save(
                 new Task.Builder()
                         .userId(userId)
@@ -42,22 +43,18 @@ public class TaskService {
         return TaskDto.from(task);
     }
 
-    public TaskDto getTask(String taskId, Authentication authentication) {
-        Task task = this.getTaskById(taskId, authentication);
+    public TaskDto getTask(String taskId) {
+        Task task = this.getTaskById(taskId);
         return TaskDto.from(task);
     }
 
-    private Task getTaskById(String taskId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        Task task = this.taskRepository.findTaskByIdAndUserId(taskId, userId);
-        if (task == null) {
-            throw new ResourceNotFoundException("Task not found by provided id");
-        }
+    private Task getTaskById(String taskId) {
+        Task task = this.taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task not found by provided id"));
         return task;
     }
 
-    public TaskDto updateTask(TaskDto taskDto, Authentication authentication) {
-        Task task = this.getTaskById(taskDto.id(), authentication);
+    public TaskDto updateTask(TaskDto taskDto) {
+        Task task = this.getTaskById(taskDto.id());
         task.updateTask(
                 taskDto.title(),
                 taskDto.description(),
@@ -70,12 +67,20 @@ public class TaskService {
         return TaskDto.from(task);
     }
 
-    public void deleteTask(String taskId, Authentication authentication) {
-        String userId = this.getCurrentAuthenticatedUserId(authentication);
-        this.taskRepository.deleteTaskByIdAndUserId(taskId, userId);
+    public void deleteTask(String taskId) {
+        this.taskRepository.deleteById(taskId);
     }
 
-    private String getCurrentAuthenticatedUserId(Authentication authentication) {
-        return this.userService.getUserIdByDisplayName(authentication.getName());
+    public void deleteByIdIn(List<String> ids){
+        String userId = this.userService.getUserIdByAuthentication();
+        this.taskRepository.deleteByIdInAndUserId(ids, userId);
+    }
+
+    public boolean isTaskOwner(final String id) {
+        final String userId = this.userService.getUserIdByAuthentication();
+        final Task task = this.taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        //does drive file equal to current auth user
+        return task.getUserId().equals(userId);
     }
 }
