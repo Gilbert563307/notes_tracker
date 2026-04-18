@@ -184,7 +184,7 @@ public class Task {
         }
 
         if (this.userId == null || this.userId.isBlank()) {
-            throw new DomainException("Please assign this task to a user.");
+            throw new DomainException("The owner of this task cannot be null.");
         }
 
         if (this.title.length() < MIN_TITLE_LENGTH) {

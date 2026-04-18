@@ -63,7 +63,7 @@ public class TaskDomainTests {
                     .title("Test")
                     .build();
         });
-        String expectedMessage = "Please assign this task to a user.";
+        String expectedMessage = "The owner of this task cannot be null";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

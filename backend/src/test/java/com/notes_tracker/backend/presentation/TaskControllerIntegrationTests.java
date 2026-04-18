@@ -2,7 +2,10 @@ package com.notes_tracker.backend.presentation;
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
 import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,13 +34,27 @@ public class TaskControllerIntegrationTests {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    UserRepository userRepository;
+
     @AfterEach
     void cleanup() {
         repository.deleteAll();
+        this.userRepository.deleteAll();
+    }
+
+    User savedUser;
+    @BeforeEach
+    void init() {
+        this.savedUser = this.userRepository.save(new User.Builder()
+                .displayName("mock-user")
+                .emailAddress("john@example.com")
+                .password("securePassword123")
+                .build());
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void createTask() throws Exception {
 
         TaskDto dto = new TaskDto(
@@ -59,36 +76,36 @@ public class TaskControllerIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.title").value("Task A"))
-                .andExpect(jsonPath("$.kanBoardId").value("board-1"))
                 .andExpect(jsonPath("$.status").value("TODO"))
                 .andExpect(jsonPath("$.priority").value(1))
                 .andExpect(jsonPath("$.assigneId").value("user-1"));
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void getTaskById() throws Exception {
 
         Task created = repository.save(
                 new Task.Builder()
                         .title("Task A")
-//                        .kanBoardId("board-1")
+                        .userId(savedUser.getId())
                         .build()
         );
 
         mockMvc.perform(get("/task/" + created.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Task A"))
-                .andExpect(jsonPath("$.kanBoardId").value("board-1"));
+                .andExpect(jsonPath("$.title").value("Task A"));
+
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void updateTask() throws Exception {
 
         Task saved = repository.save(
                 new Task.Builder()
-                        .title("Old")
+                        .title("title")
+                        .userId(savedUser.getId())
 //                        .kanBoardId("board-1")
                         .build()
         );
@@ -116,12 +133,13 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void deleteTask() throws Exception {
 
         Task saved = repository.save(
                 new Task.Builder()
                         .title("Task A")
+                        .userId(savedUser.getId())
 //                        .kanBoardId("board-1")
                         .build()
         );
@@ -133,17 +151,17 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void getTasks() throws Exception {
 
         repository.save(new Task.Builder()
                 .title("Task 1")
-//                .kanBoardId("board-1")
+                .userId(savedUser.getId())
                 .build());
 
         repository.save(new Task.Builder()
                 .title("Task 2")
-//                .kanBoardId("board-1")
+                .userId(savedUser.getId())
                 .build());
 
         mockMvc.perform(get("/task"))

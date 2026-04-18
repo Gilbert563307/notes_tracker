@@ -1,6 +1,8 @@
 package com.notes_tracker.backend.presentation;
 
 import com.notes_tracker.backend.kanboard.domain.Folder;
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import tools.jackson.databind.ObjectMapper;
 import com.notes_tracker.backend.kanboard.application.dto.FolderDto;
@@ -32,18 +34,24 @@ class FolderControllerIntegrationTests {
     @Autowired
     private FolderRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void cleanup() {
         repository.deleteAll();
+        this.userRepository.deleteAll();
     }
 
+    User savedUser;
+
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void createFolder() throws Exception {
         FolderDto request = new FolderDto(
                 null,
                 "Folder A",
-                "user-1",
+                savedUser.getId(),
                 "blue",
                 false,
                 null,
@@ -56,17 +64,17 @@ class FolderControllerIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name").value("Folder A"))
-                .andExpect(jsonPath("$.userId").value("user-1"))
+                .andExpect(jsonPath("$.userId").value(savedUser.getId()))
                 .andExpect(jsonPath("$.color").value("blue"))
                 .andExpect(jsonPath("$.archived").value(false));
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void getFolderById() throws Exception {
         Folder created = this.repository.save( new Folder.Builder()
                 .name("Folder A")
-                .userId("user-1")
+                .userId(savedUser.getId())
                 .color("blue")
                 .build());
 
@@ -77,21 +85,21 @@ class FolderControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void updateFolder() throws Exception {
 
         Folder created = this.repository.save( new Folder.Builder()
                 .name("My Folder")
-                .userId("user-1")
-                .color("blue")
+                .userId(savedUser.getId())
+                .color("#32222")
                 .build());
 
 
         FolderDto update = new FolderDto(
                 created.getId(),
                 "Updated Name",
-                "user-2",
-                "green",
+                savedUser.getId(),
+                "#0000",
                 true,
                 null,
                 null
@@ -102,18 +110,18 @@ class FolderControllerIntegrationTests {
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Updated Name"))
-                .andExpect(jsonPath("$.userId").value("user-2"))
-                .andExpect(jsonPath("$.color").value("green"))
+                .andExpect(jsonPath("$.userId").value(savedUser.getId()))
+                .andExpect(jsonPath("$.color").value("#0000"))
                 .andExpect(jsonPath("$.archived").value(true));
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+    @WithMockUser("mock-user")
     void deleteFolder() throws Exception {
         Folder created = this.repository.save( new Folder.Builder()
                 .name("My Folder")
-                .userId("user-1")
-                .color("blue")
+                .userId(savedUser.getId())
+                .color("#44444")
                 .build());
 
         mockMvc.perform(delete("/folder/{id}", created.getId()))

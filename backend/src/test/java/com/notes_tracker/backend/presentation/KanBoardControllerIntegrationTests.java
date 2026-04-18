@@ -1,8 +1,12 @@
 package com.notes_tracker.backend.presentation;
 
 
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,16 +42,30 @@ public class KanBoardControllerIntegrationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void cleanup() {
         repository.deleteAll();
+        this.userRepository.deleteAll();
+    }
+
+    User savedUser;
+    @BeforeEach
+    void init() {
+        this.savedUser = this.userRepository.save(new User.Builder()
+                .displayName("mock-user")
+                .emailAddress("john@example.com")
+                .password("securePassword123")
+                .build());
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void createBoard() throws Exception {
         KanBoardDto dto = new KanBoardDto(
-                null, "New Board", "user-1", "green", false, true, "img.png", null, null
+                null, "New Board", savedUser.getId(), "#11111", false, true, "img.png", null, null
         );
 
         mockMvc.perform(post("/kanboard")
@@ -56,36 +74,36 @@ public class KanBoardControllerIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("New Board"))
-                .andExpect(jsonPath("$.color").value("green"))
+                .andExpect(jsonPath("$.color").value("#11111"))
                 .andExpect(jsonPath("$.collaborative").value(true));
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void getBoardById() throws Exception {
         KanBoard saved = repository.save(new KanBoard.Builder()
                 .name("Persistent Board")
-                .userId("user-1")
-                .color("purple")
+                .userId(savedUser.getId())
+                .color("#00000")
                 .build());
 
         mockMvc.perform(get("/kanboard/" + saved.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.name").value("Persistent Board"))
-                .andExpect(jsonPath("$.color").value("purple"));
+                .andExpect(jsonPath("$.color").value("#00000"));
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void updateBoard() throws Exception {
         KanBoard saved = repository.save(new KanBoard.Builder()
                 .name("Old Name")
-                .userId("user-1")
+                .userId(savedUser.getId())
                 .build());
 
         KanBoardDto updateDto = new KanBoardDto(
-                saved.getId(), "Updated Name", "user-1", "blue", true, true, "new-img.png", null, null
+                saved.getId(), "Updated Name", savedUser.getId(), "#4444", true, true, "new-img.png", null, null
         );
 
         mockMvc.perform(put("/kanboard")
@@ -97,11 +115,11 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void deleteBoard() throws Exception {
         KanBoard saved = repository.save(new KanBoard.Builder()
                 .name("To Be Deleted")
-                .userId("user-1")
+                .userId(savedUser.getId())
                 .build());
 
         mockMvc.perform(delete("/kanboard/" + saved.getId()))
@@ -111,10 +129,10 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void getBoardsWithPagination() throws Exception {
-        repository.save(new KanBoard.Builder().name("Board 1").userId("user-1").build());
-        repository.save(new KanBoard.Builder().name("Board 2").userId("user-1").build());
+        repository.save(new KanBoard.Builder().name("Board 1").userId(savedUser.getId()).build());
+        repository.save(new KanBoard.Builder().name("Board 2").userId(savedUser.getId()).build());
 
         mockMvc.perform(get("/kanboard")
                         .param("page", "0")
