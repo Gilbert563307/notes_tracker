@@ -29,8 +29,11 @@ public class SecurityConfiguration {
 
     private final JwtFilter jwtFilter;
 
-    @Value("${cors.allowed.origins}")
-    private String corsAllowedOrigins;
+    @Value("${cors.allowed.origins.localhost}")
+    private String corsAllowedOriginsLocalhost;
+
+    @Value("${cors.allowed.origins.production}")
+    private String corsAllowedOriginsProduction;
 
     public SecurityConfiguration(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
@@ -62,7 +65,7 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(this.corsAllowedOrigins));
+        configuration.setAllowedOrigins(List.of(this.corsAllowedOriginsLocalhost, this.corsAllowedOriginsProduction));
         configuration.setAllowedMethods(List.of("HEAD","OPTIONS","GET","POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 
