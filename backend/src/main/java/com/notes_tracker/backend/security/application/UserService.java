@@ -2,6 +2,7 @@ package com.notes_tracker.backend.security.application;
 
 import java.util.Optional;
 
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -81,10 +82,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private String getUserIdByDisplayName(String displayName) {
-        Optional<User> user = this.userRepository.findByDisplayName(displayName);
+    private String getUserIdByEmail(String email) {
+        Optional<User> user = this.userRepository.findByEmailAddress(email);
         if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found by provided display name " + displayName);
+            throw new UserNotFoundAuthorizationException("User not found by provided email" + email);
         }
         return user.get().getId();
     }
@@ -92,6 +93,7 @@ public class UserService implements UserDetailsService {
     // https://www.youtube.com/watch?v=mt7wR0CujHo  1:34:10
     public String getUserIdByAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return this.getUserIdByDisplayName(authentication.getName());
+        //this returns the email
+        return this.getUserIdByEmail(authentication.getName());
     }
 }

@@ -2,6 +2,7 @@ package com.notes_tracker.backend.config.exception;
 
 import com.notes_tracker.backend.security.presentation.exception.PasswordDoestNotMatchException;
 import com.notes_tracker.backend.security.presentation.exception.UserAlreadyExistsByEmailException;
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
 import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -58,6 +59,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody ErrorResponse handlePasswordDoestNotMatchException(PasswordDoestNotMatchException ex) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(value = UserNotFoundAuthorizationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public @ResponseBody ErrorResponse handleUserNotFoundAuthorizationException(UserNotFoundAuthorizationException ex) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),  ex.getMessage());
     }
 
 }

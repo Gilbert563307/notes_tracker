@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,7 @@ public class DriveFileServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void createFile() {
         DriveFileDto dto = new DriveFileDto(
                 null,
@@ -73,7 +74,7 @@ public class DriveFileServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void updateAndPersistFile() {
         DriveFileDto created = driveFileService.createFile(new DriveFileDto(
                 null, "old.pdf",  this.savedUser.getId(),
@@ -102,7 +103,7 @@ public class DriveFileServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void getFileById() {
         DriveFileDto created = driveFileService.createFile(new DriveFileDto(
                 null,
@@ -126,7 +127,7 @@ public class DriveFileServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void deleteFile() {
         DriveFileDto created = driveFileService.createFile(new DriveFileDto(
                 null,

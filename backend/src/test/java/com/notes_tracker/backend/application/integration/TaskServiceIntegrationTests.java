@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,7 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+   @WithMockUser("john@example.com")
     void createTask() {
         TaskDto dto = new TaskDto(
                 null,
@@ -78,7 +79,7 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+   @WithMockUser("john@example.com")
     void createAndFetchTask() {
         Task created = this.taskRepository.save(
                 new Task.Builder().title("Task B")
@@ -105,7 +106,7 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+   @WithMockUser("john@example.com")
     void updateTaskAndVerifyPersistence() {
         Task created = this.taskRepository.save(
                 new Task.Builder().title("Task B")
@@ -140,7 +141,7 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+   @WithMockUser("john@example.com")
     void getTaskById() {
         Task created = this.taskRepository.save(
                 new Task.Builder().title("Task A")
@@ -168,7 +169,7 @@ public class TaskServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+   @WithMockUser("john@example.com")
     void deleteTask() {
         Task created = this.taskRepository.save(
                 new Task.Builder().title("Task A")

@@ -49,7 +49,7 @@ public class FolderServiceIntegrationTests {
 
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void createFolder() {
         FolderDto dto = new FolderDto(
                 null,
@@ -71,7 +71,7 @@ public class FolderServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+         @WithMockUser("john@example.com")
     void updateAndPersistFolder() {
         FolderDto created = folderService.createFolder(new FolderDto(
                 null, "Old",  this.savedUser.getId(), "#000", false, null, null
@@ -96,7 +96,7 @@ public class FolderServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+         @WithMockUser("john@example.com")
     void getFolderById() {
         FolderDto created = folderService.createFolder(new FolderDto(
                 null,
@@ -118,7 +118,7 @@ public class FolderServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+         @WithMockUser("john@example.com")
     void deleteFolder() {
         FolderDto created = folderService.createFolder(new FolderDto(
                 null,

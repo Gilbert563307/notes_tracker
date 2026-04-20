@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
@@ -54,7 +55,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void createTask() throws Exception {
 
         TaskDto dto = new TaskDto(
@@ -82,7 +83,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void getTaskById() throws Exception {
 
         Task created = repository.save(
@@ -99,7 +100,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void updateTask() throws Exception {
 
         Task saved = repository.save(
@@ -133,7 +134,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void deleteTask() throws Exception {
 
         Task saved = repository.save(
@@ -151,7 +152,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void getTasks() throws Exception {
 
         repository.save(new Task.Builder()

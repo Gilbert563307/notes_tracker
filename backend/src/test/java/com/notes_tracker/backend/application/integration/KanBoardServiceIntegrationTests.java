@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,7 @@ public class KanBoardServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void createBoard() {
         KanBoardDto dto = new KanBoardDto(
                 null,
@@ -78,7 +79,7 @@ public class KanBoardServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void updateAndPersistBoard() {
         KanBoard created = this.repository.save(
                 new KanBoard.Builder()
@@ -114,7 +115,7 @@ public class KanBoardServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void getBoardById() {
         KanBoardDto created = kanBoardService.createBoard(new KanBoardDto(
                 null,
@@ -145,7 +146,7 @@ public class KanBoardServiceIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithMockUser("john@example.com")
     void deleteBoard() {
         KanBoardDto created = kanBoardService.createBoard(new KanBoardDto(
                 null,

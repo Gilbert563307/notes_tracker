@@ -7,6 +7,7 @@ import com.notes_tracker.backend.kanboard.domain.DriveFile;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.security.test.context.support.WithUserDetails;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void createFile() throws Exception {
         DriveFileDto request = new DriveFileDto(
                 null,
@@ -83,7 +84,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void getFileById() throws Exception {
         // Arrange: Seed database directly via repository
         DriveFile saved = repository.save(new DriveFile.Builder()
@@ -101,7 +102,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void updateFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
@@ -132,7 +133,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void deleteFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")

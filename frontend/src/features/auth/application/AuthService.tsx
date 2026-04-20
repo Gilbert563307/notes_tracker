@@ -29,16 +29,11 @@ export class AuthService {
       const response = await this.#requestHandler.perform(request);
 
       if (!response.ok) {
-        let message: string;
-        try {
-          const data = response.json();
-          message = data?.message;
-        } catch (error) {
-          message = "Something went wrong while trying to authenticate your request";
-        }
-
         return {
-          notification: new NotificationDto.Builder().danger().message(message).build(),
+          notification: new NotificationDto.Builder()
+            .danger()
+            .message("Something went wrong while trying to authenticate your request, check your credentials otherwise contact the administrator")
+            .build(),
           auth: null,
           authenticated: false,
         };

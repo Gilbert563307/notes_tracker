@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -62,7 +63,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void createBoard() throws Exception {
         KanBoardDto dto = new KanBoardDto(
                 null, "New Board", savedUser.getId(), "#11111", false, true, "img.png", null, null
@@ -79,7 +80,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void getBoardById() throws Exception {
         KanBoard saved = repository.save(new KanBoard.Builder()
                 .name("Persistent Board")
@@ -95,7 +96,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void updateBoard() throws Exception {
         KanBoard saved = repository.save(new KanBoard.Builder()
                 .name("Old Name")
@@ -115,7 +116,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void deleteBoard() throws Exception {
         KanBoard saved = repository.save(new KanBoard.Builder()
                 .name("To Be Deleted")
@@ -129,7 +130,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser("mock-user")
+    @WithUserDetails("john@example.com")
     void getBoardsWithPagination() throws Exception {
         repository.save(new KanBoard.Builder().name("Board 1").userId(savedUser.getId()).build());
         repository.save(new KanBoard.Builder().name("Board 2").userId(savedUser.getId()).build());
