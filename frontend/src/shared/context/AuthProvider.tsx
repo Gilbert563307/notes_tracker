@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { UseCookieStorage } from "../utils/UseCookieStorage";
 import { AUTH_STORAGE_KEYS, AuthProviderContext } from "./AuthProviderConfig";
-import { AuthResponse, type AuthResponseCookie } from "../../features/auth/presentation/response/AuthResponse";
+import { AuthResponse, type AuthResponseCookie } from "../../features/auth/application/response/AuthResponse";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<AuthResponse | null>(null);

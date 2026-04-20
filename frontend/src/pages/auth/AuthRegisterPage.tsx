@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { authController } from "../../features/auth/presentation/AuthController";
-import { RegisterRequest } from "../../features/auth/presentation/request/RegisterRequest";
+import { RegisterRequest } from "../../features/auth/application/request/RegisterRequest";
 
 export default function AuthRegisterPage() {
   const navigate = useNavigate();

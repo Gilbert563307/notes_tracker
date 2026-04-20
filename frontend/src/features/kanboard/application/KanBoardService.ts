@@ -3,7 +3,7 @@ import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import { UseCookieStorage } from "../../../shared/utils/UseCookieStorage";
 import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
-import type { AuthResponseCookie } from "../../auth/presentation/response/AuthResponse";
+import type { AuthResponseCookie } from "../../auth/application/response/AuthResponse";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {

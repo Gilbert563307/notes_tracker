@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./auth.css";
 import { Link, useNavigate } from "react-router";
 import { authController } from "../../features/auth/presentation/AuthController";
-import { AuthenticateRequest } from "../../features/auth/presentation/request/AuthenticateRequest";
+import { AuthenticateRequest } from "../../features/auth/application/request/AuthenticateRequest";
 import { useAuthProvider } from "../../shared/context/AuthProviderConfig";
 
 type FormType = {

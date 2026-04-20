@@ -1,8 +1,8 @@
 import type { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import { AuthService, authService } from "../application/AuthService";
-import type { AuthenticateRequest } from "./request/AuthenticateRequest";
-import type { RegisterRequest } from "./request/RegisterRequest";
+import type { AuthenticateRequest } from "../application/request/AuthenticateRequest";
+import type { RegisterRequest } from "../application/request/RegisterRequest";
 
 class AuthController {
   #authService;

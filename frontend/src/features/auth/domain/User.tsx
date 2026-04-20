@@ -7,6 +7,7 @@ export class User {
     this.id = id;
     this.displayName = displayName;
     this.photoURL = photoURL;
+    this.validate();
   }
 
   getId() {
@@ -22,12 +23,22 @@ export class User {
   }
 
   toJson(): { id: string; displayName: string; photoURL: string } {
-    return { id: this.id, displayName: this.displayName, photoURL: this.displayName };
+    return { id: this.id, displayName: this.displayName, photoURL: this.photoURL };
   }
 
   //TODO REMOVE IN THE FUTURE THIS METHOD SHOULD NOT BELONG HERE
   static from({ id, displayName, photoURL }: { id: string; displayName: string; photoURL: string }): User {
     return new User.Builder().displayName(displayName).id(id).photoURL(photoURL).build();
+  }
+
+  private validate() {
+    if (this.id == null || this.id.trim() === "") {
+      throw new Error("User id is required");
+    }
+
+    if (this.displayName == null || this.displayName.trim() === "") {
+      throw new Error("Display name is required");
+    }
   }
 
   static Builder = class {

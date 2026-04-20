@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { AuthResponse } from "../../features/auth/presentation/response/AuthResponse";
+import type { AuthResponse } from "../../features/auth/application/response/AuthResponse";
 
 export const AUTH_STORAGE_KEYS = {
   AUTH: "AUTH",

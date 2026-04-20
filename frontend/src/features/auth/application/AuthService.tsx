@@ -1,9 +1,9 @@
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import { User } from "../domain/User";
-import type { AuthenticateRequest } from "../presentation/request/AuthenticateRequest";
-import type { RegisterRequest } from "../presentation/request/RegisterRequest";
-import { AuthResponse } from "../presentation/response/AuthResponse";
+import type { AuthenticateRequest } from "./request/AuthenticateRequest";
+import type { RegisterRequest } from "./request/RegisterRequest";
+import { AuthResponse } from "./response/AuthResponse";
 
 export class AuthService {
   #resource: string;
@@ -29,8 +29,16 @@ export class AuthService {
       const response = await this.#requestHandler.perform(request);
 
       if (!response.ok) {
+        let message: string;
+        try {
+          const data = response.json();
+          message = data?.message;
+        } catch (error) {
+          message = "Something went wrong while trying to authenticate your request";
+        }
+
         return {
-          notification: new NotificationDto.Builder().danger().message("Invalid email or password").build(),
+          notification: new NotificationDto.Builder().danger().message(message).build(),
           auth: null,
           authenticated: false,
         };
