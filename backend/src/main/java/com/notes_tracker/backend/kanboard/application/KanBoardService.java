@@ -1,17 +1,16 @@
 package com.notes_tracker.backend.kanboard.application;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
-import com.notes_tracker.backend.kanboard.domain.Folder;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
 import com.notes_tracker.backend.security.application.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class KanBoardService {

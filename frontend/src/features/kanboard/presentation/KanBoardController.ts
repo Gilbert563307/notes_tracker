@@ -1,7 +1,7 @@
 import type { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import { KanBoardService, kanBoardService } from "../application/KanBoardService";
-
+import type { CreateKanBoardRequest } from "../application/request/CreateKanBoardRequest";
 
 export class KanBoardController {
   #kanBoardService: KanBoardService;
@@ -16,6 +16,12 @@ export class KanBoardController {
     return response;
   }
 
+  async createKanBoard(request: CreateKanBoardRequest) {
+    const response = await this.#kanBoardService.createKanBoard(request);
+    // this.#setMessageToUser(response.notification);
+    return response;
+  }
+
   #setMessageToUser(notification: NotificationDto) {
     if (notification.getMessage() === "") return;
     notificationObserver.add(notification);
@@ -23,4 +29,4 @@ export class KanBoardController {
 }
 
 const kanBoardController = new KanBoardController(kanBoardService);
-export {kanBoardController}
+export { kanBoardController };

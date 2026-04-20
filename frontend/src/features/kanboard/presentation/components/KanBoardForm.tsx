@@ -34,7 +34,7 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue }: Kan
   }, [board]);
 
   return (
-    <article className="create-kanban-article">
+    <article className="create-kanban-article mx-2">
       <form className="d-flex flex-column g-3" onSubmit={handleSubmit(onSubmit)}>
         {/* start name  */}
         <div className="col-12 mb-2">

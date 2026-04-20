@@ -31,7 +31,7 @@ export default function DeleteKanBoardButton({kanBoardId}: string) {
       </button>
       <Show>
         <Show.When isTrue={deleteModal}>
-          <BS5Modal
+          {/* <BS5Modal
             modal_id="delete_kanboard_modal"
             modal_label="delete_kanboard_modal"
             modal_title="Are you sure you want to delete this kan board?"
@@ -44,9 +44,9 @@ export default function DeleteKanBoardButton({kanBoardId}: string) {
             modalSize={MODAL_SIZES.NONE}
             saveChangesTitle="Delete"
             saveChangesClass={4}
-          />
+          /> */}
         </Show.When>
-      </ShoW>
+      </Show>
     </React.Fragment>
   );
 }

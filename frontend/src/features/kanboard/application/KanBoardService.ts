@@ -4,6 +4,8 @@ import { UseCookieStorage } from "../../../shared/utils/UseCookieStorage";
 import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import type { AuthResponseCookie } from "../../auth/application/response/AuthResponse";
+import type { CreateKanBoardRequest } from "./request/CreateKanBoardRequest";
+import { KanBoardMapper } from "./mapper/KanBoardMapper";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {
@@ -18,9 +20,13 @@ export class KanBoardService extends ResourceService {
     this.#cookieStorage = cookieStorage;
   }
 
+  async #getCookie(): Promise<string | null> {
+    return await this.#cookieStorage.readCookieValue(AUTH_STORAGE_KEYS.AUTH);
+  }
+
   async getKanBoards(): Promise<{ boards: Array<T>; notification: NotificationDto }> {
     try {
-      const cookie = await this.#cookieStorage.readCookieValue(AUTH_STORAGE_KEYS.AUTH);
+      const cookie = await this.#getCookie();
       if (cookie === null) {
         return {
           boards: [],
@@ -54,6 +60,15 @@ export class KanBoardService extends ResourceService {
         boards: [],
       };
     }
+  }
+
+  async createKanBoard(request: CreateKanBoardRequest) {
+    try {
+      const cookie = await this.#getCookie();
+
+      const kanBoard = KanBoardMapper.toCreateKanBoardRequest(request);
+      console.log(kanBoard);
+    } catch (error) {}
   }
 }
 

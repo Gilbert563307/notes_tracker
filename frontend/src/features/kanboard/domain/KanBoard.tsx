@@ -104,22 +104,11 @@ export class KanBoard {
   toCreateJson() {
     return {
       name: this.name,
-      userId: this.userId,
       color: this.color,
       archived: this.archived,
       collaborative: this.collaborative,
       imageUrl: this.imageUrl,
     };
-  }
-
-  private validate(): void {
-    if (!this.name || this.name.trim().length === 0) {
-      throw new Error("Board name is required.");
-    }
-
-    if (!this.userId || this.userId.trim().length === 0) {
-      throw new Error("User ID is required.");
-    }
   }
 
   static from(props: KanBoardProps): KanBoard {
@@ -141,13 +130,14 @@ export class KanBoard {
     #id?: string;
     #name: string = "";
     #userId: string = "";
-    #color?: string;
+    #color?: string = "#000000";
     #archived: boolean = false;
     #collaborative: boolean = false;
     #imageUrl?: string;
     #tasks: Task[] = [];
     #createdAt: Date;
     #updatedAt: Date;
+    #validate: boolean = true;
 
     id(id: string): this {
       this.#id = id;
@@ -199,7 +189,26 @@ export class KanBoard {
       return this;
     }
 
+    validate(validate: boolean): this {
+      this.#validate = validate;
+      return this;
+    }
+
     build(): KanBoard {
+      if (this.#archived) {
+        if (!this.#name || this.#name.trim().length === 0) {
+          throw new Error("Kanboard name is required.");
+        }
+
+        if (!this.#userId || this.#userId.trim().length === 0) {
+          throw new Error("User ID is required.");
+        }
+
+        if (!this.#color?.includes("#")) {
+          throw new Error("Kanboard colour is invalid must be of hex code.");
+        }
+      }
+
       return new KanBoard({
         id: this.#id,
         name: this.#name,
