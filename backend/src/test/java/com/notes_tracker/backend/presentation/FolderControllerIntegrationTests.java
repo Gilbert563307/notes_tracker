@@ -3,6 +3,7 @@ package com.notes_tracker.backend.presentation;
 import com.notes_tracker.backend.kanboard.domain.Folder;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.security.test.context.support.WithMockUser;
 import tools.jackson.databind.ObjectMapper;
 import com.notes_tracker.backend.kanboard.application.dto.FolderDto;
@@ -45,6 +46,15 @@ class FolderControllerIntegrationTests {
 
     User savedUser;
 
+    @BeforeEach
+    void init() {
+        this.savedUser = this.userRepository.save(new User.Builder()
+                .displayName("mock-user")
+                .emailAddress("john@example.com")
+                .password("securePassword123")
+                .build());
+    }
+
     @Test
     @WithMockUser("mock-user")
     void createFolder() throws Exception {
@@ -52,7 +62,7 @@ class FolderControllerIntegrationTests {
                 null,
                 "Folder A",
                 savedUser.getId(),
-                "blue",
+                "#44444",
                 false,
                 null,
                 null
@@ -65,7 +75,7 @@ class FolderControllerIntegrationTests {
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name").value("Folder A"))
                 .andExpect(jsonPath("$.userId").value(savedUser.getId()))
-                .andExpect(jsonPath("$.color").value("blue"))
+                .andExpect(jsonPath("$.color").value("#44444"))
                 .andExpect(jsonPath("$.archived").value(false));
     }
 
@@ -75,7 +85,7 @@ class FolderControllerIntegrationTests {
         Folder created = this.repository.save( new Folder.Builder()
                 .name("Folder A")
                 .userId(savedUser.getId())
-                .color("blue")
+                .color("#4444")
                 .build());
 
         mockMvc.perform(get("/folder/{id}", created.getId()))

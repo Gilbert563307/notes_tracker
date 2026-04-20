@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
     private String getUserIdByDisplayName(String displayName) {
         Optional<User> user = this.userRepository.findByDisplayName(displayName);
         if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found by provided display name" + displayName);
+            throw new UserNotFoundException("User not found by provided display name " + displayName);
         }
         return user.get().getId();
     }

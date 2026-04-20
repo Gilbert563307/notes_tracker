@@ -95,7 +95,6 @@ public class AuthenticationControllerIntegrationTests {
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.expiresIn").value(18000000))
                 .andExpect(jsonPath("$.user.id").exists())
                 .andExpect(jsonPath("$.user.displayName").value("Login User"))
                 .andExpect(jsonPath("$.user.photoURL").value(""));

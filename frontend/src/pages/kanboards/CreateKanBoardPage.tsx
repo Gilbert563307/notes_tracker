@@ -1,12 +1,14 @@
 import React from "react";
+import { KanBoard } from "../../features/kanboard/domain/KanBoard";
+import KanBoardForm from "../../features/kanboard/presentation/components/KanBoardForm";
 
 export default function CreateKanBoardPage() {
   function onSubmit(data: { name: string; color: string }) {}
-
+  
   return (
-    <KanboardForm
+    <KanBoardForm
       onSubmit={onSubmit}
-      board={new KanBoardDto(null, null, null, null, null, null, null, null)}
+      board={new KanBoard.Builder().build()}
       submitButtonValue="create"
     />
   );

@@ -4,6 +4,9 @@ package com.notes_tracker.backend.presentation;
 import com.notes_tracker.backend.kanboard.application.dto.DriveFileDto;
 import com.notes_tracker.backend.kanboard.data.DriveFileRepository;
 import com.notes_tracker.backend.kanboard.domain.DriveFile;
+import com.notes_tracker.backend.security.data.UserRepository;
+import com.notes_tracker.backend.security.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -33,13 +36,28 @@ class DriveFileControllerIntegrationTests {
     @Autowired
     private DriveFileRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     void cleanup() {
         repository.deleteAll();
+        this.userRepository.deleteAll();
+    }
+
+    User savedUser;
+
+    @BeforeEach
+    void init() {
+        this.savedUser = this.userRepository.save(new User.Builder()
+                .displayName("mock-user")
+                .emailAddress("john@example.com")
+                .password("securePassword123")
+                .build());
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void createFile() throws Exception {
         DriveFileDto request = new DriveFileDto(
                 null,
@@ -58,14 +76,14 @@ class DriveFileControllerIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name").value("file.pdf"))
-                .andExpect(jsonPath("$.userId").value("user-1"))
+                .andExpect(jsonPath("$.userId").value(this.savedUser.getId()))
                 .andExpect(jsonPath("$.size").value("100"))
                 .andExpect(jsonPath("$.type").value("PDF"))
                 .andExpect(jsonPath("$.archived").value(false));
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void getFileById() throws Exception {
         // Arrange: Seed database directly via repository
         DriveFile saved = repository.save(new DriveFile.Builder()
@@ -83,7 +101,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void updateFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
@@ -114,7 +132,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser(username = "user-1", roles = {"USER"})
+    @WithMockUser("mock-user")
     void deleteFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
