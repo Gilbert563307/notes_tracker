@@ -1,11 +1,11 @@
 import { User } from "../../domain/User";
 
-export type AuthResponseCookie = {
+export type AuthenticationCookie = {
   token: string;
   user: { id: string; displayName: string; photoURL: string };
 };
 
-export class AuthResponse {
+export class Authentication {
   private token: string | null;
   private user: User | null;
 
@@ -28,11 +28,11 @@ export class AuthResponse {
     return { token: this.token, user: this.user.toJson() };
   }
 
-  static from(cookie: AuthResponseCookie): AuthResponse {
+  static from(cookie: AuthenticationCookie): Authentication {
     if (!cookie.token || !cookie.user) {
       throw new Error("The user or token are null");
     }
-    return new AuthResponse(cookie.token, User.from(cookie.user));
+    return new Authentication(cookie.token, User.from(cookie.user));
   }
 
   static Builder = class {
@@ -56,7 +56,7 @@ export class AuthResponse {
       if (this._token === null || this._user === null) {
         throw new Error("The user or token are null");
       }
-      return new AuthResponse(this._token, this._user);
+      return new Authentication(this._token, this._user);
     }
   };
 }

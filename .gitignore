@@ -27,3 +27,4 @@ backend/.env
 backend/.env.dev
 frontend/.env
 backend/src/test/resources/application-test.properties
+.vscode/launch.json

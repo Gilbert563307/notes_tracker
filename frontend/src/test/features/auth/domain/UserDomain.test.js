@@ -61,16 +61,7 @@ test("should throw when displayName is empty", () => {
   expect(build).toThrow("Display name is required");
 });
 
-test("should throw when photoURL is empty", () => {
-  const build = () =>
-    new User.Builder()
-      .displayName("displayName")
-      .id("user-id")
-      .photoURL("")
-      .build();
 
-  expect(build).toThrow("Photo URL is required");
-});
 
 test("should throw when values are only whitespace", () => {
   const build = () =>

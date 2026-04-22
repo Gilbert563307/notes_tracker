@@ -3,9 +3,9 @@ import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import { UseCookieStorage } from "../../../shared/utils/UseCookieStorage";
 import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
-import type { AuthResponseCookie } from "../../auth/application/response/AuthResponse";
 import type { CreateKanBoardRequest } from "./request/CreateKanBoardRequest";
 import { KanBoardMapper } from "./mapper/KanBoardMapper";
+import type { AuthenticationCookie } from "../../auth/application/response/Authentication";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {
@@ -36,7 +36,7 @@ export class KanBoardService extends ResourceService {
             .build(),
         };
       }
-      const cookieData: AuthResponseCookie = JSON.parse(cookie);
+      const cookieData: AuthenticationCookie = JSON.parse(cookie);
       const response = await super.findAll(cookieData.token);
 
       if (!response.ok) {

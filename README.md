@@ -147,3 +147,7 @@ You should now have both the backend and frontend running locally and ready for 
 ## Contributing
 
 Feel free to fork the project and submit pull requests. Suggestions and improvements are always welcome.
+
+
+## Notes
+To run the backend through vscode you must setup a launch.json file where you paste your environment variables so that you can run the application.

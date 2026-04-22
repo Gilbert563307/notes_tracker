@@ -207,6 +207,14 @@ export class KanBoard {
         if (!this.#color?.includes("#")) {
           throw new Error("Kanboard colour is invalid must be of hex code.");
         }
+
+        if (typeof this.#archived !== "boolean") {
+          throw new Error("Archived flag is required and must be a boolean.");
+        }
+
+        if (typeof this.#collaborative !== "boolean") {
+          throw new Error("Collaborative flag is required and must be a boolean.");
+        }
       }
 
       return new KanBoard({

@@ -3,8 +3,8 @@ import { AuthService } from "../../../../../features/auth/application/AuthServic
 import { AuthenticateRequest } from "../../../../../features/auth/application/request/AuthenticateRequest";
 // import { RegisterRequest } from "../../../../../features/auth/application/request/RegisterRequest";
 import { RequestHandler } from "../../../../../shared/utils/RequestHandler";
-import { AuthResponse } from "../../../../../features/auth/application/response/AuthResponse";
 import { User } from "../../../../../features/auth/domain/User";
+import { Authentication } from "../../../../../features/auth/application/response/Authentication";
 
 const MOCK_BACKEND_URL = "http://localhost:8080/api/";
 
@@ -35,7 +35,7 @@ test("should authenticate user", async () => {
     }),
   );
 
-  const expectAuth = new AuthResponse.Builder().token("token").user(user).build();
+  const expectAuth = new Authentication.Builder().token("token").user(user).build();
   const response = await authService.authenticate(new AuthenticateRequest("johndoe@gmail.com", "password"));
   const auth = response.auth;
 
@@ -56,7 +56,7 @@ test("should fail to authenticate when response is ", async () => {
 
   expect(auth).toBe(null);
   expect(response.authenticated).toBe(false);
-  expect(response.notification.getMessage()).toBe("Something went wrong while trying to authenticate your request");
+  expect(response.notification.getMessage()).toBe("Something went wrong while trying to authenticate your request, check your credentials otherwise contact the administrator");
 });
 
 // test("should create user", async () => {

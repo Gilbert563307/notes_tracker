@@ -1,13 +1,14 @@
 import { createContext, useContext } from "react";
-import type { AuthResponse } from "../../features/auth/application/response/AuthResponse";
+import type { Authentication } from "../../features/auth/application/response/Authentication";
+
 
 export const AUTH_STORAGE_KEYS = {
   AUTH: "AUTH",
 };
 
 export type AuthContextValue = {
-  auth: AuthResponse | null;
-  login: (auth: AuthResponse) => Promise<void>;
+  auth: Authentication | null;
+  login: (auth: Authentication) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
 };

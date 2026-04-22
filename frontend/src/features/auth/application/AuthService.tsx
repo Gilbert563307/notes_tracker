@@ -3,7 +3,7 @@ import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import { User } from "../domain/User";
 import type { AuthenticateRequest } from "./request/AuthenticateRequest";
 import type { RegisterRequest } from "./request/RegisterRequest";
-import { AuthResponse } from "./response/AuthResponse";
+import { Authentication } from "./response/Authentication";
 
 export class AuthService {
   #resource: string;
@@ -16,7 +16,7 @@ export class AuthService {
 
   async authenticate(authenticateRequest: AuthenticateRequest): Promise<{
     notification: NotificationDto;
-    auth: AuthResponse | null;
+    auth: Authentication | null;
     authenticated: boolean;
   }> {
     try {
@@ -53,7 +53,7 @@ export class AuthService {
       }
 
       const user = User.from(data.user);
-      const auth = new AuthResponse.Builder().token(data?.token).user(user).build();
+      const auth = new Authentication.Builder().token(data?.token).user(user).build();
 
       return {
         notification: new NotificationDto.Builder().success().message("You are now logged in").build(),

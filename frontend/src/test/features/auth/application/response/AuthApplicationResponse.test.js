@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { AuthResponse } from "../../../../../features/auth/application/response/AuthResponse";
+import { Authentication } from "../../../../../features/auth/application/response/Authentication";
 import { User } from "../../../../../features/auth/domain/User";
 
 const validUser = new User.Builder()
@@ -8,9 +8,9 @@ const validUser = new User.Builder()
   .photoURL("photourl")
   .build();
 
-describe("AuthResponse", () => {
+describe("Authentication", () => {
   test("should build correctly using Builder", () => {
-    const response = new AuthResponse.Builder()
+    const response = new Authentication.Builder()
       .token("token-123")
       .user(validUser)
       .build();
@@ -21,7 +21,7 @@ describe("AuthResponse", () => {
 
   test("should throw when building without token", () => {
     expect(() =>
-      new AuthResponse.Builder()
+      new Authentication.Builder()
         .user(validUser)
         .build()
     ).toThrow("The user or token are null");
@@ -29,7 +29,7 @@ describe("AuthResponse", () => {
 
   test("should throw when building without user", () => {
     expect(() =>
-      new AuthResponse.Builder()
+      new Authentication.Builder()
         .token("token-123")
         .build()
     ).toThrow("The user or token are null");
@@ -37,7 +37,7 @@ describe("AuthResponse", () => {
 
   test("should throw when user is not instance of User", () => {
     expect(() =>
-      new AuthResponse.Builder()
+      new Authentication.Builder()
         .token("token-123")
         // @ts-expect-error forcing wrong type for runtime test
         .user({ id: "fake" })
@@ -45,7 +45,7 @@ describe("AuthResponse", () => {
   });
 
   test("should convert to JSON correctly", () => {
-    const response = new AuthResponse.Builder()
+    const response = new Authentication.Builder()
       .token("token-123")
       .user(validUser)
       .build();
@@ -57,7 +57,7 @@ describe("AuthResponse", () => {
   });
 
   test("toJson should throw when token is null", () => {
-    const response = Object.create(AuthResponse.prototype);
+    const response = Object.create(Authentication.prototype);
     response.token = null;
     response.user = validUser;
 
@@ -65,7 +65,7 @@ describe("AuthResponse", () => {
   });
 
   test("toJson should throw when user is null", () => {
-    const response = Object.create(AuthResponse.prototype);
+    const response = Object.create(Authentication.prototype);
     response.token = "token-123";
     response.user = null;
 
@@ -82,7 +82,7 @@ describe("AuthResponse", () => {
       },
     };
 
-    const response = AuthResponse.from(cookie);
+    const response = Authentication.from(cookie);
 
     expect(response.getToken()).toBe("token-123");
     expect(response.getUser()?.getId()).toBe("user-id");
@@ -92,7 +92,7 @@ describe("AuthResponse", () => {
 
   test("should throw when cookie token is missing", () => {
     expect(() =>
-      AuthResponse.from({
+      Authentication.from({
         token: "",
         user: {
           id: "user-id",
@@ -105,7 +105,7 @@ describe("AuthResponse", () => {
 
   test("should throw when cookie user is missing", () => {
     expect(() =>
-      AuthResponse.from({
+      Authentication.from({
         token: "token-123",
         // @ts-expect-error runtime test
         user: null,

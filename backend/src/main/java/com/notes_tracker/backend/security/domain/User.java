@@ -201,5 +201,4 @@ public class User  implements UserDetails {
             throw new DomainException("Display name is missing. Please tell us what to call you.");
         }
     }
-
 }

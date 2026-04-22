@@ -7,7 +7,7 @@ import NotificationV4 from "./shared/features/notification/components/Notificati
 
 export default function Application() {
   const { auth } = useAuthProvider();
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState<string>("");
 
   return (
     <ApplicationContext.Provider value={{ title, setTitle }}>
