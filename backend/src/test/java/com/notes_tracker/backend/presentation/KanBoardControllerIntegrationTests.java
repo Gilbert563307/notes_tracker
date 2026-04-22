@@ -1,6 +1,7 @@
 package com.notes_tracker.backend.presentation;
 
 
+import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
@@ -9,7 +10,6 @@ import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.AfterEach;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,6 +33,8 @@ import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
 
 import tools.jackson.databind.ObjectMapper;
+
+import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -156,6 +159,39 @@ public class KanBoardControllerIntegrationTests {
     void shouldReturnUnauthorizedWhenNoUser() throws Exception {
         mockMvc.perform(get("/kanboard"))
                 .andExpect(status().isForbidden()); // Or isForbidden() depending on your SecurityConfig
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void getTasksByKanBoardId() throws Exception {
+        Task task = new Task.Builder()
+                .title("Test")
+                .userId("user-1")
+                .build();
+
+        Task task2 = new Task.Builder()
+                .title("Test2")
+                .userId("user-1")
+                .build();
+
+        Task task3 = new Task.Builder()
+                .title("Test")
+                .userId("user-1")
+                .build();
+
+        List<Task> savedTasks = this.taskRepository.saveAll(List.of(task, task2, task3));
+
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId("user")
+                .tasks(savedTasks)
+                .build();
+
+        KanBoard created = this.kanBoardRepository.save(board);
+
+        this.mockMvc.perform(get("/kanboard/" + created.getId() + "/tasks"))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(status().isOk());
     }
 
     @Test

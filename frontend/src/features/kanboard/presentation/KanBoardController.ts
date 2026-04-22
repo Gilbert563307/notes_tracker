@@ -22,6 +22,12 @@ export class KanBoardController {
     return response;
   }
 
+  async getTasksByKanBoardId(boardId: string) {
+    const response = await this.#kanBoardService.getTasksByKanBoardId(boardId);
+    this.#setMessageToUser(response.notification);
+    return response;
+  }
+
   #setMessageToUser(notification: NotificationDto) {
     if (notification.getMessage() === "") return;
     notificationObserver.add(notification);

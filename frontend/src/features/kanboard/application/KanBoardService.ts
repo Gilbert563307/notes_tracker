@@ -11,12 +11,14 @@ import type { KanBoard } from "../domain/KanBoard";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {
-  // #requestHandler: RequestHandler;
+  #resource;
+  #requestHandler: RequestHandler;
   #cookieStorage: UseCookieStorage;
 
   constructor(resource: string, requestHandler: RequestHandler, cookieStorage: UseCookieStorage) {
     super(resource, requestHandler);
-    // this.#requestHandler = requestHandler;
+    this.#resource = resource;
+    this.#requestHandler = requestHandler;
     this.#cookieStorage = cookieStorage;
   }
 
@@ -88,6 +90,23 @@ export class KanBoardService extends ResourceService {
       return {
         notification: new NotificationDto.Builder().danger().message(message).build(),
         created: false,
+      };
+    }
+  }
+
+  async getTasksByKanBoardId(boardId: string) {
+    try {
+      const token = await this.#getToken();
+      const request = new RequestHandler.RequestBuilder()
+        .post()
+        .url(this.#requestHandler.getBaseUrl() + this.#resource)
+        .content(authenticateRequest.toJson())
+        .build();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return {
+        notification: new NotificationDto.Builder().danger().message(message).build(),
+        task: null,
       };
     }
   }
