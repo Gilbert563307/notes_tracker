@@ -111,21 +111,6 @@ export class KanBoard {
     };
   }
 
-  static from(props: KanBoardProps): KanBoard {
-    return new KanBoard.Builder()
-      .id(props.id)
-      .name(props.name)
-      .userId(props.userId)
-      .color(props.color)
-      .archived(props.archived)
-      .collaborative(props.collaborative)
-      .imageUrl(props.imageUrl)
-      .tasks(props.tasks)
-      .createdAt(props.createdAt)
-      .updatedAt(props.updatedAt)
-      .build();
-  }
-
   static Builder = class {
     #id?: string;
     #name: string = "";
@@ -135,8 +120,8 @@ export class KanBoard {
     #collaborative: boolean = false;
     #imageUrl?: string;
     #tasks: Task[] = [];
-    #createdAt: Date;
-    #updatedAt: Date;
+    #createdAt: string;
+    #updatedAt: string;
     #validate: boolean = true;
 
     id(id: string): this {
@@ -179,12 +164,12 @@ export class KanBoard {
       return this;
     }
 
-    createdAt(date: Date): this {
+    createdAt(date: string): this {
       this.#createdAt = date;
       return this;
     }
 
-    updatedAt(date: Date): this {
+    updatedAt(date: string): this {
       this.#updatedAt = date;
       return this;
     }
@@ -195,7 +180,7 @@ export class KanBoard {
     }
 
     build(): KanBoard {
-      if (this.#archived) {
+      if (this.#validate) {
         if (!this.#name || this.#name.trim().length === 0) {
           throw new Error("Kanboard name is required.");
         }

@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { kanBoardController } from "../KanBoardController";
+import type { KanBoard } from "../../domain/KanBoard";
 
 export default function useGetKanBoardsHook() {
-  const [boards, setBoards] = useState([]);
-
-  async function getKanBoards() {
-    const response = await kanBoardController.getKanBoards();
-    console.log(response)
-  }
+  const [data, setData] = useState<{
+    total: number;
+    pages: number;
+    boards: KanBoard[];
+  }>({ total: 0, pages: 0, boards: [] });
 
   useEffect(() => {
-    getKanBoards();
+    let isMounted = true;
+
+    async function fetchBoards() {
+      const response = await kanBoardController.getKanBoards();
+      if (!isMounted) return;
+      if (response.data.total === 0) return;
+      setData(response.data);
+    }
+
+    fetchBoards();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
-  return { boards };
+  return { boards: data.boards, total: data.total, pages: data.pages };
 }

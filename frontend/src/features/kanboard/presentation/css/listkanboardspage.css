@@ -54,9 +54,14 @@
   background-color: #a6a8a9;
 }
 
+.kanboard-article-cards{
+  gap: 1em;
+}
+
 
 .kanboard-article{
   display: flex;
+  margin: 1em;
   flex-direction: column;
 }
 

@@ -1,9 +1,5 @@
 package com.notes_tracker.backend.config.exception;
 
-import com.notes_tracker.backend.security.presentation.exception.PasswordDoestNotMatchException;
-import com.notes_tracker.backend.security.presentation.exception.UserAlreadyExistsByEmailException;
-import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
-import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,7 +9,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.notes_tracker.backend.kanboard.presentation.exception.DomainException;
+import com.notes_tracker.backend.kanboard.presentation.exception.MaxKanBoardsException;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
+import com.notes_tracker.backend.security.presentation.exception.PasswordDoestNotMatchException;
+import com.notes_tracker.backend.security.presentation.exception.UserAlreadyExistsByEmailException;
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 
 //TODO find out to handle multiple bad requests
 @ControllerAdvice
@@ -67,4 +68,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),  ex.getMessage());
     }
 
+      @ExceptionHandler(value = MaxKanBoardsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody ErrorResponse handleMaxKanBoardsException(MaxKanBoardsException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    }
 }

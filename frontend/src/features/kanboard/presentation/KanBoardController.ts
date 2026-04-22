@@ -18,7 +18,7 @@ export class KanBoardController {
 
   async createKanBoard(request: CreateKanBoardRequest) {
     const response = await this.#kanBoardService.createKanBoard(request);
-    // this.#setMessageToUser(response.notification);
+    this.#setMessageToUser(response.notification);
     return response;
   }
 

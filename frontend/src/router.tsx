@@ -107,6 +107,6 @@ const routes = [
     errorElement: <ErrorPage />,
   },
 ];
-const router = createBrowserRouter(routes, { basename: "/app" });
+const router = createBrowserRouter(routes, { basename: "/app/v2" });
 
 export default router;

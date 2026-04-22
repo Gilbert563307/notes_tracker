@@ -15,10 +15,10 @@ export default function ListKanBoardsPage() {
           create
         </Link>
       </div>
-      <div className="cards">
+      <div className="cards kanboard-article-cards">
         {boards.map((board) => {
           const itemId = board.getId();
-          const boardsUrl = `/board/${itemId}`;
+          const boardsUrl = `/kanboards/read/${itemId}`;
           const updateBoardsUrl = `/kanboards/update/${itemId}`;
           return (
             <div className="card" key={itemId}>

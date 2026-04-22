@@ -17,6 +17,7 @@ public class KanBoardService {
 
     private final KanBoardRepository kanBoardRepository;
     private final UserService userService;
+    
 
     public KanBoardService(KanBoardRepository kanBoardRepository, UserService userService) {
         this.kanBoardRepository = kanBoardRepository;
@@ -31,6 +32,7 @@ public class KanBoardService {
 
     public KanBoardDto createBoard(KanBoardDto dto) {
         String userId = this.userService.getUserIdByAuthentication();
+        long totalKanBoards = this.kanBoardRepository.countByUserId(userId);
         KanBoard kanBoardToCreate = new KanBoard.Builder()
                 .name(dto.name())
                 .userId(userId)
@@ -38,6 +40,7 @@ public class KanBoardService {
                 .archived(dto.archived())
                 .collaborative(dto.collaborative())
                 .imageUrl(dto.imageUrl())
+                .totalKanBoards(totalKanBoards)
                 .build();
         KanBoard board = kanBoardRepository.save(kanBoardToCreate);
         return KanBoardDto.from(board);

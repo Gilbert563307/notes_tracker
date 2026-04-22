@@ -9,7 +9,8 @@ type KanBoardFormType = {
 };
 
 export default function KanBoardForm({ onSubmit, board, submitButtonValue }: KanBoardFormType) {
-  const values = { name: "", color: "" };
+  const values: { name: string; color: string } = { name: "", color: "" };
+  const DEFAULT_BLACK_HEXCODE: string = "#000000";
   const {
     register,
     handleSubmit,
@@ -19,7 +20,7 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue }: Kan
   } = useForm({
     defaultValues: {
       name: "",
-      color: "#000000", //back default colour
+      color: DEFAULT_BLACK_HEXCODE, //back default colour
     },
     values,
   });
@@ -29,12 +30,12 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue }: Kan
   useEffect(() => {
     reset({
       name: board.getName(),
-      color: board.getColor() || "#000000",
+      color: board.getColor() || DEFAULT_BLACK_HEXCODE,
     });
-  }, [board]);
+  }, [board, reset]);
 
   return (
-    <article className="create-kanban-article mx-2">
+    <article className="create-kanban-article m-2">
       <form className="d-flex flex-column g-3" onSubmit={handleSubmit(onSubmit)}>
         {/* start name  */}
         <div className="col-12 mb-2">

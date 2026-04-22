@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuthProvider } from "./shared/context/AuthProviderConfig";
 import DefaultLayout from "./shared/layout/DefaultLayout";
 import GuestLayout from "./shared/layout/GuestLayout";
 import { ApplicationContext } from "./shared/context/ApplicationProviderConfig";
-import NotificationV4 from "./shared/features/notification/components/NotificationV4";
+import NotificationV4 from "./shared/features/notification/presentation/components/NotificationV4";
 
 export default function Application() {
   const { auth } = useAuthProvider();

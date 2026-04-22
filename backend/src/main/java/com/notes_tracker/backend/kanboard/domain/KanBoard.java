@@ -9,9 +9,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import com.notes_tracker.backend.kanboard.presentation.exception.DomainException;
+import com.notes_tracker.backend.kanboard.presentation.exception.MaxKanBoardsException;
 
 @Document
 public class KanBoard {
+    private final int MAX_KANBOARDS_PER_USER = 20;
+
     @Id
     private String id;
     private String name;
@@ -27,6 +30,7 @@ public class KanBoard {
                                     // document. This can be a single value (the id by default), or a Document
                                     // provided via a converter.
     private List<Task> tasks;
+    private long totalKanBoards;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -42,6 +46,7 @@ public class KanBoard {
         this.collaborative = builder.collaborative;
         this.imageUrl = builder.imageUrl;
         this.tasks = builder.tasks;
+        this.totalKanBoards = builder.totalKanBoards;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
         this.validate();
@@ -115,6 +120,7 @@ public class KanBoard {
         private boolean archived = false;
         private boolean collaborative = false;
         private String imageUrl;
+        private long totalKanBoards = 0;
         private List<Task> tasks = new ArrayList<>();
         private LocalDateTime createdAt = LocalDateTime.now();
         private LocalDateTime updatedAt = LocalDateTime.now();
@@ -149,6 +155,11 @@ public class KanBoard {
             return this;
         }
 
+        public Builder totalKanBoards(long totalKanBoards) {
+            this.totalKanBoards = totalKanBoards;
+            return this;
+        }
+
         public Builder tasks(List<Task> tasks) {
             this.tasks = tasks;
             return this;
@@ -160,6 +171,11 @@ public class KanBoard {
     }
 
     private void validate() {
+        //TODO ADD A TEST FOR THIS
+        if (this.MAX_KANBOARDS_PER_USER == totalKanBoards) {
+            throw new MaxKanBoardsException(MAX_KANBOARDS_PER_USER);
+        }
+
         if (this.name == null || this.name.trim().isEmpty()) {
             throw new DomainException("Board name is required.");
         }
@@ -168,7 +184,7 @@ public class KanBoard {
             throw new DomainException("User ID is required.");
         }
 
-        if(!this.color.contains("#")){
+        if (!this.color.contains("#")) {
             throw new DomainException(
                     "Kanboard colour is invalid must be of hex code.");
         }

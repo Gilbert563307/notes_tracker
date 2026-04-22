@@ -1,9 +1,10 @@
 import React, { createRef, useEffect, useState } from "react";
 
-import "../notificationv4.css";
-import { notificationObserver } from "../observers/NotificationObserver";
-import { ALERT_TYPES } from "../constants";
-import type { NotificationDto } from "../domain/dto/NotificationDto";
+import "../../notificationv4.css";
+import { ALERT_TYPES } from "../../constants";
+import type { NotificationDto } from "../../domain/dto/NotificationDto";
+import { notificationObserver } from "../../observers/NotificationObserver";
+
 
 export default function NotificationV4() {
   const typeMap = {

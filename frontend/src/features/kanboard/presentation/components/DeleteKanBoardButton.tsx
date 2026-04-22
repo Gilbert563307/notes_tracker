@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Show } from "../../../../shared/features/notification/components/Show";
+import { Show } from "../../../../shared/features/show/Show";
 
 export default function DeleteKanBoardButton({kanBoardId}: string) {
   const [deleteModal, setDeleteModal] = useState(false);

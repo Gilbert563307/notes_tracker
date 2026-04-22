@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { useAuthProvider } from "../../../../shared/context/AuthProviderConfig";
 import "./navbar.css";
 
+//TODO FIX THIS SO WHEN A PERSON USES THE NAVIATION THAT IT ALSO UPDATED THIS SIDE BAR
 export default function NavBar() {
   const { logout } = useAuthProvider();
 
