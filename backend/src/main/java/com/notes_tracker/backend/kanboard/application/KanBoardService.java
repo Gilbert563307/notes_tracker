@@ -2,6 +2,10 @@ package com.notes_tracker.backend.kanboard.application;
 
 import java.util.List;
 
+import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
+import com.notes_tracker.backend.kanboard.data.TaskRepository;
+import com.notes_tracker.backend.kanboard.domain.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,11 +20,13 @@ import com.notes_tracker.backend.security.application.UserService;
 public class KanBoardService {
 
     private final KanBoardRepository kanBoardRepository;
+    private final TaskRepository taskRepository;
     private final UserService userService;
     
 
-    public KanBoardService(KanBoardRepository kanBoardRepository, UserService userService) {
+    public KanBoardService(KanBoardRepository kanBoardRepository, TaskRepository taskRepository, UserService userService) {
         this.kanBoardRepository = kanBoardRepository;
+        this.taskRepository = taskRepository;
         this.userService = userService;
     }
 
@@ -60,7 +66,6 @@ public class KanBoardService {
 
     public KanBoardDto updateBoard(KanBoardDto dto) {
         KanBoard board = getBoardById(dto.id());
-
         board.update(
                 dto.name(),
                 dto.userId(),
@@ -89,5 +94,22 @@ public class KanBoardService {
                 .orElseThrow(() -> new ResourceNotFoundException("Kanboard not found"));
         //does drive file equal to current auth user
         return kanBoard.getUserId().equals(userId);
+    }
+
+    public List<TaskDto> getTasksByKanBoardId(String boardId) {
+        KanBoard board = getBoardById(boardId);
+        return TaskDto.fromRawTaskList(board.getTasks());
+    }
+
+    public List<TaskDto> addTaskToKanBoard(AddTaskToKanBoardRequest request) {
+        if(request.taskId() == null || request.taskId().isEmpty()) {
+            throw new ResourceNotFoundException("Unable to assign the task to the specified Kanban board. The task ID may be missing or invalid.");
+        }
+        KanBoard board = getBoardById(request.kanBoardId());
+        Task task = this.taskRepository.findById(request.taskId())
+                .orElseThrow(() -> new ResourceNotFoundException( "Task not found. No task exists with the provided ID: " + request.taskId()));
+        board.assignTask(task);
+        KanBoard saved = this.kanBoardRepository.save(board);
+        return TaskDto.fromRawTaskList(saved.getTasks());
     }
 }

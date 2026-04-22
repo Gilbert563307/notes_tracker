@@ -67,8 +67,6 @@ public class TaskServiceTests {
 
     @Test
     void updateTask() {
-        
-
         Task task = new Task.Builder()
                 .title("Old3")
                 // .kanBoardId("1")

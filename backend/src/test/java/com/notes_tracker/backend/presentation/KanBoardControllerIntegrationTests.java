@@ -1,9 +1,14 @@
 package com.notes_tracker.backend.presentation;
 
 
+import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
+import com.notes_tracker.backend.kanboard.data.TaskRepository;
+import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.AfterEach;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +21,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,7 +42,7 @@ public class KanBoardControllerIntegrationTests {
     private MockMvc mockMvc;
 
     @Autowired
-    private KanBoardRepository repository;
+    private KanBoardRepository kanBoardRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -46,13 +50,18 @@ public class KanBoardControllerIntegrationTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    TaskRepository taskRepository;
+
     @AfterEach
     void cleanup() {
-        repository.deleteAll();
+        this.kanBoardRepository.deleteAll();
         this.userRepository.deleteAll();
+        this.taskRepository.deleteAll();
     }
 
     User savedUser;
+
     @BeforeEach
     void init() {
         this.savedUser = this.userRepository.save(new User.Builder()
@@ -82,7 +91,7 @@ public class KanBoardControllerIntegrationTests {
     @Test
     @WithUserDetails("john@example.com")
     void getBoardById() throws Exception {
-        KanBoard saved = repository.save(new KanBoard.Builder()
+        KanBoard saved = kanBoardRepository.save(new KanBoard.Builder()
                 .name("Persistent Board")
                 .userId(savedUser.getId())
                 .color("#00000")
@@ -98,7 +107,7 @@ public class KanBoardControllerIntegrationTests {
     @Test
     @WithUserDetails("john@example.com")
     void updateBoard() throws Exception {
-        KanBoard saved = repository.save(new KanBoard.Builder()
+        KanBoard saved = kanBoardRepository.save(new KanBoard.Builder()
                 .name("Old Name")
                 .userId(savedUser.getId())
                 .build());
@@ -118,7 +127,7 @@ public class KanBoardControllerIntegrationTests {
     @Test
     @WithUserDetails("john@example.com")
     void deleteBoard() throws Exception {
-        KanBoard saved = repository.save(new KanBoard.Builder()
+        KanBoard saved = kanBoardRepository.save(new KanBoard.Builder()
                 .name("To Be Deleted")
                 .userId(savedUser.getId())
                 .build());
@@ -126,14 +135,14 @@ public class KanBoardControllerIntegrationTests {
         mockMvc.perform(delete("/kanboard/" + saved.getId()))
                 .andExpect(status().isOk());
 
-        assertFalse(repository.findById(saved.getId()).isPresent());
+        assertFalse(kanBoardRepository.findById(saved.getId()).isPresent());
     }
 
     @Test
     @WithUserDetails("john@example.com")
     void getBoardsWithPagination() throws Exception {
-        repository.save(new KanBoard.Builder().name("Board 1").userId(savedUser.getId()).build());
-        repository.save(new KanBoard.Builder().name("Board 2").userId(savedUser.getId()).build());
+        kanBoardRepository.save(new KanBoard.Builder().name("Board 1").userId(savedUser.getId()).build());
+        kanBoardRepository.save(new KanBoard.Builder().name("Board 2").userId(savedUser.getId()).build());
 
         mockMvc.perform(get("/kanboard")
                         .param("page", "0")
@@ -147,5 +156,31 @@ public class KanBoardControllerIntegrationTests {
     void shouldReturnUnauthorizedWhenNoUser() throws Exception {
         mockMvc.perform(get("/kanboard"))
                 .andExpect(status().isForbidden()); // Or isForbidden() depending on your SecurityConfig
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void addTaskToKanBoard() throws Exception {
+        //arrange
+        Task task = this.taskRepository.save(new Task.Builder()
+                .title("Test")
+                .userId(savedUser.getId())
+                .build());
+
+        KanBoard board = this.kanBoardRepository.save(new KanBoard.Builder()
+                .name("Old")
+                .userId(savedUser.getId())
+                .build());
+
+        this.mockMvc.perform(patch("/kanboard/task")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        new AddTaskToKanBoardRequest(task.getId(), board.getId())
+                                )
+                        )
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+        ;
     }
 }

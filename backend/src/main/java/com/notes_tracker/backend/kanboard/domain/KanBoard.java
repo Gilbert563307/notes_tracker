@@ -13,7 +13,6 @@ import com.notes_tracker.backend.kanboard.presentation.exception.MaxKanBoardsExc
 
 @Document
 public class KanBoard {
-    private final int MAX_KANBOARDS_PER_USER = 20;
 
     @Id
     private String id;
@@ -27,8 +26,8 @@ public class KanBoard {
     // https://bootify.io/mongodb/document-reference-in-spring-boot-mongodb.html
     // https://docs.spring.io/spring-data/mongodb/reference/mongodb/mapping/mapping.html
     @DocumentReference(lazy = true) // Applied at the field to indicate it is to be stored as a pointer to another
-                                    // document. This can be a single value (the id by default), or a Document
-                                    // provided via a converter.
+    // document. This can be a single value (the id by default), or a Document
+    // provided via a converter.
     private List<Task> tasks;
     private long totalKanBoards;
     private LocalDateTime createdAt;
@@ -53,7 +52,7 @@ public class KanBoard {
     }
 
     public void update(String name, String userId, String color, boolean archived, boolean collaborative,
-            String imageUrl) {
+                       String imageUrl) {
         this.name = name;
         this.userId = userId;
         this.color = color;
@@ -105,7 +104,9 @@ public class KanBoard {
     }
 
     public void assignTask(Task task) {
-        this.tasks.add(task);
+        List<Task> updatedList = new ArrayList<>(this.tasks);
+        updatedList.add(task);
+        this.tasks = updatedList;
     }
 
     public void removeTask(Task taskToRemove) {
@@ -171,8 +172,8 @@ public class KanBoard {
     }
 
     private void validate() {
-        //TODO ADD A TEST FOR THIS
-        if (this.MAX_KANBOARDS_PER_USER == totalKanBoards) {
+        int MAX_KANBOARDS_PER_USER = 20;
+        if (totalKanBoards >= MAX_KANBOARDS_PER_USER) {
             throw new MaxKanBoardsException(MAX_KANBOARDS_PER_USER);
         }
 

@@ -3,6 +3,7 @@ import com.notes_tracker.backend.kanboard.domain.Task;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public record TaskDto(
@@ -46,5 +47,20 @@ public record TaskDto(
                 task.getCreatedAt(),
                 task.getUpdatedAt()
         ));
+    }
+
+    public static List<TaskDto> fromRawTaskList(List<Task> taskList){
+        return taskList.stream().map(task -> new TaskDto(
+                task.getId(),
+//                task.getKanBoardId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getPriority(),
+                task.getAssigneId(),
+                task.isArchived(),
+                task.getCreatedAt(),
+                task.getUpdatedAt()
+        )).toList();
     }
 }

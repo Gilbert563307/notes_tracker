@@ -6,7 +6,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: test-pwd
       MONGO_INITDB_DATABASE: test-database
     ports:
-      - 27017:27017
+      - "37017:27017"
     volumes:
       - mongot_test_data:/data/db # Persist database files
 

@@ -3,6 +3,7 @@ package com.notes_tracker.backend.domain;
 
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.kanboard.domain.Task;
+import com.notes_tracker.backend.kanboard.presentation.exception.MaxKanBoardsException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -77,6 +78,22 @@ public class KanBoardDomainTests {
 
         board.assignTask(this.task);
         assertEquals(1, board.getTasks().size());
+    }
+
+    @Test
+    void shouldFailToBuildIfUserHasReachedMaxKanBoards(){
+        KanBoard.Builder builder = new KanBoard.Builder()
+                .name("Board")
+                .userId("user-1")
+                .color("#33333")
+                .archived(false)
+                .collaborative(true)
+                .imageUrl("img.png")
+                .totalKanBoards(21);
+
+        MaxKanBoardsException exception = assertThrows(MaxKanBoardsException.class, builder::build);
+        assertEquals("You have reached the maximum number of Kanboards (20).", exception.getMessage());
+
     }
 
 }

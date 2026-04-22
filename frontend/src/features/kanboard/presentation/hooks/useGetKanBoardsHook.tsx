@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { kanBoardController } from "../KanBoardController";
 import type { KanBoard } from "../../domain/KanBoard";
 
@@ -10,7 +10,7 @@ export default function useGetKanBoardsHook() {
   }>({ total: 0, pages: 0, boards: [] });
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted: boolean = true;
 
     async function fetchBoards() {
       const response = await kanBoardController.getKanBoards();

@@ -49,8 +49,7 @@ public class TaskService {
     }
 
     private Task getTaskById(String taskId) {
-        Task task = this.taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task not found by provided id"));
-        return task;
+        return this.taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task not found. No task exists with the provided ID: " + taskId));
     }
 
     public TaskDto updateTask(TaskDto taskDto) {
@@ -79,7 +78,7 @@ public class TaskService {
     public boolean isTaskOwner(final String id) {
         final String userId = this.userService.getUserIdByAuthentication();
         final Task task = this.taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found. No task exists with the provided ID: " + id));
         //does drive file equal to current auth user
         return task.getUserId().equals(userId);
     }

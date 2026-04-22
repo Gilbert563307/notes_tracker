@@ -3,8 +3,12 @@ package com.notes_tracker.backend.application.integration;
 
 import com.notes_tracker.backend.kanboard.application.KanBoardService;
 import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
+import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
+import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
+import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
@@ -16,6 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,14 +35,17 @@ public class KanBoardServiceIntegrationTests {
     @Autowired
     KanBoardRepository repository;
 
-
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
     @AfterEach
     void cleanup() {
         repository.deleteAll();
         this.userRepository.deleteAll();
+        this.taskRepository.deleteAll();
     }
 
     User savedUser;
@@ -165,5 +174,58 @@ public class KanBoardServiceIntegrationTests {
         assertThrows(ResourceNotFoundException.class, () -> {
             kanBoardService.getBoard(created.id());
         });
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void getTasksByKanBoardId() {
+        Task task = new Task.Builder()
+                .title("Test")
+                .userId("user-1")
+                .build();
+
+        Task task2 = new Task.Builder()
+                .title("Test2")
+                .userId("user-1")
+                .build();
+
+        Task task3 = new Task.Builder()
+                .title("Test")
+                .userId("user-1")
+                .build();
+
+        List<Task> savedTasks = this.taskRepository.saveAll(List.of(task, task2, task3));
+
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId("user")
+                .tasks(savedTasks)
+                .build();
+
+        KanBoard created = this.repository.save(board);
+        List<TaskDto> taskDtoList = this.kanBoardService.getTasksByKanBoardId(created.getId());
+        assertNotNull(taskDtoList);
+        assertEquals(3, taskDtoList.size());
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void addTaskToKanBoard(){
+        //arrange
+        Task task = this.taskRepository.save(new Task.Builder()
+                .title("Test")
+                .userId("user-1")
+                .build());
+
+        KanBoard board = this.repository.save(new KanBoard.Builder()
+                .name("Old")
+                .userId("user")
+                .build());
+
+        List<TaskDto> taskDtoList = this.kanBoardService.addTaskToKanBoard(
+                new AddTaskToKanBoardRequest(task.getId(), board.getId())
+        );
+        assertNotNull(taskDtoList);
+        assertEquals(1, taskDtoList.size());
     }
 }
