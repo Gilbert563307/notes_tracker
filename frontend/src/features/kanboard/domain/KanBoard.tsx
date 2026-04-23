@@ -118,7 +118,7 @@ export class KanBoard {
     #color?: string = "#000000";
     #archived: boolean = false;
     #collaborative: boolean = false;
-    #imageUrl?: string;
+    #imageUrl?: string = "";
     #tasks: Task[] = [];
     #createdAt: string;
     #updatedAt: string;
