@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter } from "react-router";
 import ErrorPage from "./pages/ErrorPage";
 import CreateKanBoardPage from "./pages/kanboards/CreateKanBoardPage";
@@ -14,6 +13,8 @@ import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import ReadKanBoardPage from "./pages/kanboards/ReadKanBoardPage";
 import ListKanBoardsPage from "./pages/kanboards/ListKanBoardsPage";
+import CreateTaskPage from "./pages/tasks/CreateTaskPage";
+import ListTasksPage from "./pages/tasks/ListTasksPage";
 
 const routes = [
   {
@@ -67,7 +68,11 @@ const routes = [
       },
       {
         path: "/tasks",
-        element: "hello tasks",
+        element: (
+          <ProtectedRoute>
+            <ListTasksPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/folders",

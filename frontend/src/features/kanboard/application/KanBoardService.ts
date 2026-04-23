@@ -8,10 +8,12 @@ import { KanBoardMapper } from "./mapper/KanBoardMapper";
 import type { AuthenticationCookie } from "../../auth/application/response/Authentication";
 import type { getKanBoardsResponse } from "../../auth/types";
 import type { KanBoard } from "../domain/KanBoard";
+import type { Task } from "../domain/Task";
+import { TaskMapper } from "./mapper/TaskMapper";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {
-  #resource;
+  #resource: string;
   #requestHandler: RequestHandler;
   #cookieStorage: UseCookieStorage;
 
@@ -25,12 +27,13 @@ export class KanBoardService extends ResourceService {
   async #getToken(): Promise<string> {
     const value: string | null = await this.#cookieStorage.readCookieValue(AUTH_STORAGE_KEYS.AUTH);
     if (value === null) {
-      throw new Error("User token is missing, try to signout an login again");
+      throw new Error("We couldn’t find your session token. Please sign out and log in again.");
     }
     const cookieData: AuthenticationCookie = JSON.parse(value);
     return cookieData.token;
   }
 
+  //TODO NEEDS VI TESTING
   async getKanBoards(): Promise<{
     data: {
       total: number;
@@ -67,6 +70,7 @@ export class KanBoardService extends ResourceService {
     }
   }
 
+  //TODO NEEDS VI TESTING
   async createKanBoard(request: CreateKanBoardRequest): Promise<{ notification: NotificationDto; created: boolean }> {
     try {
       const token = await this.#getToken();
@@ -94,19 +98,34 @@ export class KanBoardService extends ResourceService {
     }
   }
 
-  async getTasksByKanBoardId(boardId: string) {
+  //TODO NEEDS VI TESTING
+  async getTasksByKanBoardId(boardId: string): Promise<{ notification: NotificationDto; tasks: Task[] }> {
     try {
       const token = await this.#getToken();
-      const request = new RequestHandler.RequestBuilder()
-        .post()
-        .url(this.#requestHandler.getBaseUrl() + this.#resource)
-        .content(authenticateRequest.toJson())
-        .build();
+      const url: string = `${this.#requestHandler.getBaseUrl()}${this.#resource}/${boardId}/tasks`;
+
+      const response = await this.#requestHandler.perform(
+        new RequestHandler.RequestBuilder().get().bearer(token).url(url).build(),
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        return {
+          notification: new NotificationDto.Builder().danger().message(data?.message).build(),
+          tasks: [],
+        };
+      }
+
+      const data = await response.json();
+      return {
+        notification: new NotificationDto.Builder().success().build(),
+        tasks: TaskMapper.toTaskList(data),
+      };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       return {
         notification: new NotificationDto.Builder().danger().message(message).build(),
-        task: null,
+        tasks: [],
       };
     }
   }
