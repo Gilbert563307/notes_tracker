@@ -1,10 +1,12 @@
 import { afterEach, expect, test, vi } from "vitest";
 import { AuthService } from "../../../../../features/auth/application/AuthService";
 import { AuthenticateRequest } from "../../../../../features/auth/application/request/AuthenticateRequest";
-// import { RegisterRequest } from "../../../../../features/auth/application/request/RegisterRequest";
 import { RequestHandler } from "../../../../../shared/utils/RequestHandler";
 import { User } from "../../../../../features/auth/domain/User";
 import { Authentication } from "../../../../../features/auth/application/response/Authentication";
+import { NotificationDto } from "../../../../../shared/features/notification/domain/dto/NotificationDto";
+import { RegisterRequest } from "../../../../../features/auth/application/request/RegisterRequest";
+import type { ApiErrorResponse } from "../../../../../types";
 
 const MOCK_BACKEND_URL = "http://localhost:8080/api/";
 
@@ -44,7 +46,7 @@ test("should authenticate user", async () => {
   expect(response.authenticated).toBe(true);
 });
 
-test("should fail to authenticate when response is ", async () => {
+test("should fail to authenticate when response is not ok ", async () => {
   global.fetch = vi.fn(() =>
     Promise.resolve({
       ok: false,
@@ -56,9 +58,45 @@ test("should fail to authenticate when response is ", async () => {
 
   expect(auth).toBe(null);
   expect(response.authenticated).toBe(false);
-  expect(response.notification.getMessage()).toBe("Something went wrong while trying to authenticate your request, check your credentials otherwise contact the administrator");
+  expect(response.notification.getMessage()).toBe(
+    "Something went wrong while trying to authenticate your request, check your credentials otherwise contact the administrator",
+  );
 });
 
-// test("should create user", async () => {
-  
-// });
+test("should register a user", async () => {
+  const mockUser = {
+    id: "uuid",
+    displayName: "JohnDoe",
+    photoURL: "",
+  };
+
+  const successMsg = "Your account has been created successfully. Please visit the login page to continue.";
+  global.fetch = vi.fn(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(mockUser),
+    }),
+  );
+
+  const request = new RegisterRequest("JohnDoe", "john@example.com", "password123", "password123");
+
+  const response = await authService.create(request);
+  expect(response.created).toBe(true);
+  expect(response.notification.getMessage()).toBe(successMsg);
+  expect(response.user?.toJson()).toStrictEqual(mockUser);
+});
+
+test("should fail to register a user when the response is not ok", async () => {
+  const error: ApiErrorResponse = { statusCode: 400, message: "" };
+  global.fetch = vi.fn(() =>
+    Promise.resolve({
+      ok: false,
+      json: () => Promise.resolve(error),
+    }),
+  );
+  const failMessage = "Something went wrong while trying to create your account";
+  const request = new RegisterRequest("JohnDoe", "john@example.com", "password123", "password123");
+  const response = await authService.create(request);
+  expect(response.created).toBe(false);
+  expect(response.notification.getMessage()).toBe(failMessage);
+});

@@ -6,10 +6,11 @@ import { NotificationDto } from "../../../shared/features/notification/domain/dt
 import type { CreateKanBoardRequest } from "./request/CreateKanBoardRequest";
 import { KanBoardMapper } from "./mapper/KanBoardMapper";
 import type { AuthenticationCookie } from "../../auth/application/response/Authentication";
-import type { getKanBoardsResponse } from "../../auth/types";
+import type { getKanBoardsResponse, getTasksByKanBoardIdResponse } from "../../auth/types";
 import type { KanBoard } from "../domain/KanBoard";
 import type { Task } from "../domain/Task";
 import { TaskMapper } from "./mapper/TaskMapper";
+import type { ApiErrorResponse } from "../../../types";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {
@@ -33,7 +34,7 @@ export class KanBoardService extends ResourceService {
     return cookieData.token;
   }
 
-  //TODO NEEDS VI TESTING
+
   async getKanBoards(): Promise<{
     data: {
       total: number;
@@ -47,9 +48,12 @@ export class KanBoardService extends ResourceService {
       const response = await super.findAll(token);
 
       if (!response.ok) {
-        const data = await response.json();
+        const data: ApiErrorResponse = await response.json();
         return {
-          notification: new NotificationDto.Builder().danger().message(data?.message).build(),
+          notification: new NotificationDto.Builder()
+            .danger()
+            .message(data.message || "Failed to load kanban boards. Please try again.")
+            .build(),
           data: { total: 0, pages: 0, boards: [] },
         };
       }
@@ -70,7 +74,6 @@ export class KanBoardService extends ResourceService {
     }
   }
 
-  //TODO NEEDS VI TESTING
   async createKanBoard(request: CreateKanBoardRequest): Promise<{ notification: NotificationDto; created: boolean }> {
     try {
       const token = await this.#getToken();
@@ -78,9 +81,12 @@ export class KanBoardService extends ResourceService {
       const response = await super.create(token, kanBoard);
 
       if (!response.ok) {
-        const data = await response.json();
+        const data: ApiErrorResponse = await response.json();
         return {
-          notification: new NotificationDto.Builder().danger().message(data?.message).build(),
+          notification: new NotificationDto.Builder()
+            .danger()
+            .message(data.message || "Failed to create kanban board. Please try again.")
+            .build(),
           created: false,
         };
       }
@@ -109,14 +115,17 @@ export class KanBoardService extends ResourceService {
       );
 
       if (!response.ok) {
-        const data = await response.json();
+        const data: ApiErrorResponse = await response.json();
         return {
-          notification: new NotificationDto.Builder().danger().message(data?.message).build(),
+          notification: new NotificationDto.Builder()
+            .danger()
+            .message(data.message || "Failed to load tasks. Please try again.")
+            .build(),
           tasks: [],
         };
       }
 
-      const data = await response.json();
+      const data: getTasksByKanBoardIdResponse = await response.json();
       return {
         notification: new NotificationDto.Builder().success().build(),
         tasks: TaskMapper.toTaskList(data),

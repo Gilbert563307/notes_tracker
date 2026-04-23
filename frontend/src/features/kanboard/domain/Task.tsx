@@ -8,8 +8,8 @@ export type TaskProps = {
   priority: number;
   assigneId?: string;
   archived: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export class Task {
@@ -22,8 +22,8 @@ export class Task {
   private priority: number;
   private assigneId?: string;
   private archived: boolean;
-  private createdAt: Date;
-  private updatedAt: Date;
+  private createdAt: string;
+  private updatedAt: string;
 
   private constructor({
     id,
@@ -75,11 +75,11 @@ export class Task {
     return this.archived;
   }
 
-  getCreatedAt(): Date {
+  getCreatedAt(): string {
     return this.createdAt;
   }
 
-  getUpdatedAt(): Date {
+  getUpdatedAt(): string {
     return this.updatedAt;
   }
 

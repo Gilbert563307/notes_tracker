@@ -2,6 +2,7 @@ import type { getKanBoardsResponse, KanBoardItem } from "../../../auth/types";
 import { KanBoard } from "../../domain/KanBoard";
 import type { CreateKanBoardRequest } from "../request/CreateKanBoardRequest";
 
+//TODO NEEDS VI TESTING
 export class KanBoardMapper {
   static findAllResponseToDomain(response: getKanBoardsResponse): {
     total: number;
@@ -20,7 +21,8 @@ export class KanBoardMapper {
     };
   }
   static toCreateKanBoardRequest(request: CreateKanBoardRequest) {
-    return new KanBoard.Builder().name(request.getName()).color(request.getColor()).id("").build().toCreateJson();
+    //id will not be used
+    return new KanBoard.Builder().name(request.getName()).color(request.getColor()).userId("mock-id").build().toCreateJson();
   }
 
   static toKanBoard(data: KanBoardItem) {

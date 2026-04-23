@@ -1,3 +1,4 @@
+import type { TaskProps } from "../kanboard/domain/Task";
 import type { User } from "./domain/User";
 
 export type CreateUserResponse = {
@@ -5,6 +6,8 @@ export type CreateUserResponse = {
   message: string;
   user: User | null;
 };
+
+export type getTasksByKanBoardIdResponse = Array<TaskProps>;
 
 export type getKanBoardsResponse = {
   content: KanBoardItem[];
