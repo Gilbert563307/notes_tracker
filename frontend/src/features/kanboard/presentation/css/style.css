@@ -1,0 +1,9 @@
+.create-task-kanboard-text-editor > .quil-text-editor> .container > .ql-container> .ql-editor {
+    min-height: 300px !important;
+}
+
+/* .create-task-kanboard-text-editor > .quil-text-editor> .container  {
+    min-height: 300px !important;
+} */
+
+

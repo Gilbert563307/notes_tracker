@@ -3,6 +3,8 @@ import useGetKanBoardTasksHook from "../../features/kanboard/presentation/hooks/
 import { KanBoard } from "../../features/kanboard/domain/KanBoard";
 import { Task } from "../../features/kanboard/domain/Task";
 import "../../features/kanboard/presentation/css/readkanboardpage.css";
+import { Show } from "../../shared/features/show/Show";
+import AddTaskToKanBoardButton from "../../features/kanboard/presentation/components/AddTaskToKanBoardButton";
 
 // Helper to create mock tasks using your Builder pattern
 const mockTasks = [
@@ -47,6 +49,7 @@ export default function ReadKanBoardPage() {
   }
 
   const columns = KanBoard.getDefaultHeaders();
+  const kanBoardName = "kanboard name";
 
   return (
     <div className="container-fluid bg-light min-vh-100 p-4">
@@ -54,7 +57,9 @@ export default function ReadKanBoardPage() {
       <div className="row mb-4">
         <div className="col">
           <div className="input-group bg-white shadow-sm rounded border-0">
-            <span className="input-group-text bg-white border-0 text-primary"><i className="fa-solid fa-magnifying-glass"></i></span>
+            <span className="input-group-text bg-white border-0 text-primary">
+              <i className="fa-solid fa-magnifying-glass"></i>
+            </span>
             <input type="text" className="form-control border-0 shadow-none" placeholder='"Search.."' />
           </div>
         </div>
@@ -113,12 +118,7 @@ export default function ReadKanBoardPage() {
                 ))}
 
                 {/* The "Add item" button at the end of the column - */}
-                <button
-                  className="btn btn-light border-0 w-100 mt-2 text-muted shadow-sm d-flex align-items-center justify-content-center"
-                  style={{ backgroundColor: "#eaeded", fontSize: "0.9rem", padding: "8px" }}
-                >
-                  <span className="me-2">+</span> Add item
-                </button>
+                <AddTaskToKanBoardButton kanBoardName={kanBoardName} />
               </div>
             </div>
           );

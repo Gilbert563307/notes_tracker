@@ -17,7 +17,7 @@ export default function ListKanBoardsPage() {
           <p className="text-muted mb-0">Manage your workspace boards</p>
         </div>
 
-        <Link to="/kanboards/create" className="add-task-button task-btn-plain">
+        <Link to="/kanboards/create" className="btn btn-success">
           New project
         </Link>
       </div>
