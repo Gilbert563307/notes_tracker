@@ -9,8 +9,8 @@ type KanBoardProps = {
   collaborative: boolean;
   imageUrl?: string;
   tasks: Task[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export class KanBoard {
@@ -22,8 +22,10 @@ export class KanBoard {
   private collaborative: boolean;
   private imageUrl?: string;
   private tasks: Task[];
-  private createdAt: Date;
-  private updatedAt: Date;
+  private createdAt: string;
+  private updatedAt: string;
+
+  private currentDate: Date = new Date();
 
   private constructor(props: KanBoardProps) {
     this.id = props.id;
@@ -70,12 +72,16 @@ export class KanBoard {
     return this.tasks;
   }
 
-  getUpdatedAt(): Date {
+  getUpdatedAt(): string {
     return this.updatedAt;
   }
 
-  getCreatedAt(): Date {
+  getCreatedAt(): string {
     return this.createdAt;
+  }
+
+  getUpdatedDaysAgoDifference() {
+    return Math.floor((this.currentDate - new Date(this.updatedAt)) / (1000 * 60 * 60 * 24));
   }
 
   // assignTask(task: Task): void {
@@ -111,8 +117,22 @@ export class KanBoard {
     };
   }
 
+  static getDefaultHeaders(): Array<{ id: string; title: string; description: string; color: string }> {
+    return [
+      { id: "todo", title: "Todo", description: "This item hasn't been started", color: "text-success" },
+      {
+        id: "in-progress",
+        title: "In Progress",
+        description: "This is actively being worked on",
+        color: "text-warning",
+      },
+      { id: "in-review", title: "In review", description: "", color: "text-primary" },
+      { id: "done", title: "Done", description: "This has been completed", color: "text-info" },
+    ];
+  }
+
   static Builder = class {
-    #id?: string;
+    #id?: string = "";
     #name: string = "";
     #userId: string = "";
     #color?: string = "#000000";
@@ -120,9 +140,10 @@ export class KanBoard {
     #collaborative: boolean = false;
     #imageUrl?: string = "";
     #tasks: Task[] = [];
-    #createdAt: string;
-    #updatedAt: string;
+    #createdAt: string = "";
+    #updatedAt: string = "";
     #validate: boolean = true;
+    #init: boolean = false;
 
     id(id: string): this {
       this.#id = id;
@@ -179,7 +200,27 @@ export class KanBoard {
       return this;
     }
 
+    init() {
+      this.#init = true;
+      return this;
+    }
+
     build(): KanBoard {
+      if (this.#init) {
+        return new KanBoard({
+          id: this.#id,
+          name: this.#name,
+          userId: this.#userId,
+          color: this.#color,
+          archived: this.#archived,
+          collaborative: this.#collaborative,
+          imageUrl: this.#imageUrl,
+          tasks: this.#tasks,
+          createdAt: this.#createdAt,
+          updatedAt: this.#updatedAt,
+        });
+      }
+
       if (this.#validate) {
         if (!this.#name || this.#name.trim().length === 0) {
           throw new Error("Kanboard name is required.");

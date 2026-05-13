@@ -73,6 +73,12 @@ const routes = [
             <ListTasksPage />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            path: "/tasks/create",
+            element: "create task",
+          },
+        ],
       },
       {
         path: "/folders",

@@ -5,34 +5,58 @@ import "../../features/kanboard/presentation/css/listkanboardspage.css";
 
 export default function ListKanBoardsPage() {
   useSetPageTitleHook({ title: "Kanban" });
+
   const { boards } = useGetKanBoardsHook();
 
   return (
-    <article className="kanboard-article">
-      <div className="kanban-button-div">
-        <p className="kanban-p">Your workspace's</p>
-        <Link aria-describedby="create task button" className="add-task-button task-btn-plain " to="/kanboards/create">
-          create
+    <article className="kanboard-page container py-4">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 className=" mb-1">Projects</h2>
+          <p className="text-muted mb-0">Manage your workspace boards</p>
+        </div>
+
+        <Link to="/kanboards/create" className="add-task-button task-btn-plain">
+          New project
         </Link>
       </div>
-      <div className="cards kanboard-article-cards">
-        {boards.map((board) => {
+
+      {/* Search */}
+      <div className="mb-4">
+        <input type="text" className="form-control search-input" placeholder="Search boards..." />
+      </div>
+
+      {/* List container */}
+      <div className="projects-container">
+        <div className="projects-header">{boards.length} recently viewed</div>
+
+        {boards.map((board, index) => {
           const itemId = board.getId();
-          const boardsUrl = `/kanboards/read/${itemId}`;
-          const updateBoardsUrl = `/kanboards/update/${itemId}`;
+
           return (
-            <div className="card" key={itemId}>
-              <Link to={boardsUrl}>
-                <div className="card-color" style={{ backgroundColor: board.getColor() }} />
+            <div className="project-row" key={itemId}>
+              <Link to={`/kanboards/read/${itemId}`} className="project-main">
+                <div className="project-icon">
+                  <i className="fa-solid fa-table-columns"></i>
+                </div>
+
+                <div className="project-info">
+                  <div className="project-top">
+                    <span className="project-name">{board.getName()}</span>
+
+                    <span className="project-badge">Private</span>
+                  </div>
+
+                  <div className="project-meta">
+                    #{index} updated {board.getUpdatedDaysAgoDifference()} days ago
+                  </div>
+                </div>
               </Link>
-              <div className="card-label">
-                {board.getName()}
-                <Link to={updateBoardsUrl}>
-                  <button className="kanboard-options-button">
-                    <i className="fa-solid fa-pencil"></i>
-                  </button>
-                </Link>
-              </div>
+
+              <Link to={`/kanboards/update/${itemId}`} className="project-options">
+                <i className="fa-solid fa-ellipsis"></i>
+              </Link>
             </div>
           );
         })}

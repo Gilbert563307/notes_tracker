@@ -4,7 +4,6 @@ import { AuthenticateRequest } from "../../../../../features/auth/application/re
 import { RequestHandler } from "../../../../../shared/utils/RequestHandler";
 import { User } from "../../../../../features/auth/domain/User";
 import { Authentication } from "../../../../../features/auth/application/response/Authentication";
-import { NotificationDto } from "../../../../../shared/features/notification/domain/dto/NotificationDto";
 import { RegisterRequest } from "../../../../../features/auth/application/request/RegisterRequest";
 import type { ApiErrorResponse } from "../../../../../types";
 
@@ -30,7 +29,7 @@ test("should authenticate user", async () => {
 
   const user = User.from(mockUser);
 
-  global.fetch = vi.fn(() =>
+  globalThis.fetch = vi.fn(() =>
     Promise.resolve({
       ok: true,
       json: () => Promise.resolve(mockResponse),
@@ -47,7 +46,7 @@ test("should authenticate user", async () => {
 });
 
 test("should fail to authenticate when response is not ok ", async () => {
-  global.fetch = vi.fn(() =>
+  globalThis.fetch = vi.fn(() =>
     Promise.resolve({
       ok: false,
     }),
@@ -71,7 +70,7 @@ test("should register a user", async () => {
   };
 
   const successMsg = "Your account has been created successfully. Please visit the login page to continue.";
-  global.fetch = vi.fn(() =>
+  globalThis.fetch = vi.fn(() =>
     Promise.resolve({
       ok: true,
       json: () => Promise.resolve(mockUser),
@@ -88,7 +87,7 @@ test("should register a user", async () => {
 
 test("should fail to register a user when the response is not ok", async () => {
   const error: ApiErrorResponse = { statusCode: 400, message: "" };
-  global.fetch = vi.fn(() =>
+  globalThis.fetch = vi.fn(() =>
     Promise.resolve({
       ok: false,
       json: () => Promise.resolve(error),
