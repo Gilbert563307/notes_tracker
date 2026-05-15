@@ -1,3 +1,202 @@
 .kanban-card{
     max-width: 390px !important;
 }
+
+.kanban-card:hover{
+    border: 1px solid rgb(13, 110, 253);
+    opacity: 1;
+}
+
+/* PAGE */
+
+.kanban-page {
+  background: #f5f7fb;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* SEARCH */
+
+.search-row {
+  margin-bottom: 2rem;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 0.75rem 1rem;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.search-icon {
+  margin-right: 0.75rem;
+  color: #2563eb;
+}
+
+
+
+/* BOARD */
+
+.kanban-board {
+  display: flex;
+
+  gap: 1.5rem;
+
+  padding-bottom: 1rem;
+}
+
+/* COLUMN */
+
+.kanban-column {
+  min-width: 350px;
+  background-color: #f5f7fb;
+  /* display: flex; */
+
+  flex-shrink: 0;
+}
+
+.column-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 0.25rem;
+}
+
+.column-left {
+  display: flex;
+
+  align-items: center;
+}
+
+.column-dot {
+  margin-right: 0.5rem;
+
+  font-size: 1.2rem;
+}
+
+.column-title {
+  margin-right: 0.5rem;
+
+  color: #1f2937;
+}
+
+.task-count {
+  background: rgba(107, 114, 128, 0.15);
+
+  color: #6b7280;
+
+  border-radius: 999px;
+
+  padding: 0.2rem 0.6rem;
+
+  font-size: 0.75rem;
+}
+
+.column-actions {
+  display: flex;
+
+  gap: 0.75rem;
+
+  color: #9ca3af;
+
+  cursor: pointer;
+}
+
+.column-description {
+  color: #9ca3af;
+
+  font-size: 0.75rem;
+
+  min-height: 1rem;
+
+  margin-bottom: 1rem;
+
+  padding-left: 0.25rem;
+}
+
+/* TASKS */
+
+.task-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+}
+
+/* CARD */
+
+.kanban-card {
+  max-width: 390px;
+
+  background: white;
+
+  border-radius: 16px;
+
+  border: 1px solid transparent;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  transition: all 0.2s ease;
+
+  cursor: grab;
+}
+
+.kanban-card:hover {
+  border: 1px solid rgb(13, 110, 253);
+
+  transform: translateY(-2px);
+}
+
+.kanban-card-body {
+  padding: 1rem;
+}
+
+.task-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  margin-bottom: 0.75rem;
+}
+
+.task-id {
+  color: #9ca3af;
+
+  font-size: 0.7rem;
+
+  font-family: monospace;
+}
+
+.task-avatar {
+  width: 20px;
+
+  height: 20px;
+
+  border-radius: 50%;
+
+  border: 1px solid #d1d5db;
+
+  background: rgba(107, 114, 128, 0.1);
+}
+
+.task-title {
+  margin: 0;
+
+  font-size: 0.85rem;
+
+  line-height: 1.4;
+
+  color: #333;
+}

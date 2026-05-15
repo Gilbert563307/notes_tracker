@@ -52,7 +52,7 @@ export default function ReadKanBoardPage() {
   const kanBoardName = "kanboard name";
 
   return (
-    <div className="container-fluid bg-light min-vh-100 p-4">
+    <section className="container-fluid bg-light min-vh-100 p-4">
       {/* Search Header */}
       <div className="row mb-4">
         <div className="col">
@@ -66,7 +66,7 @@ export default function ReadKanBoardPage() {
       </div>
 
       {/* Kanban Board Horizontal Scroll Wrapper */}
-      <div className="d-flex flex-nowrap overflow-auto pb-3" style={{ gap: "1.5rem" }}>
+      <article className="d-flex flex-nowrap overflow-auto pb-3" style={{ gap: "1.5rem" }}>
         {columns.map((col) => {
           const columnTasks = getTasksByStatus(col.id);
 
@@ -133,7 +133,7 @@ export default function ReadKanBoardPage() {
             +
           </button>
         </div> */}
-      </div>
-    </div>
+      </article>
+    </section>
   );
 }
