@@ -35,65 +35,64 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue }: Kan
   }, [board, reset]);
 
   return (
-    <article className="create-kanban-article m-2">
-      <form className="d-flex flex-column g-3" onSubmit={handleSubmit(onSubmit)}>
-        {/* start name  */}
-        <div className="col-12 mb-2">
-          <label htmlFor="name" className="form-label">
-            Name
-          </label>
-          <input
-            type="text"
-            className={`form-control ${errors.name && errors.name.type ? "is-invalid" : ""}`}
-            id="name"
-            aria-describedby="name"
-            maxLength={255}
-            {...register("name", {
-              required: "The name cannot be empty",
-              minLength: {
-                value: 1,
-                message: "The name must longer than 4 characters",
-              },
-              maxLength: {
-                value: 255,
-                message: "The name cannot be longer than 255 characters",
-              },
-            })}
-          />
-          {errors.name && <div className="invalid-feedback d-block">{errors.name.message}</div>}
+    <article className="container py-3 mt-1">
+      <div className="card border-0 shadow-sm">
+        <div className="card-body p-4">
+          <h2 className="fs-4 mb-4">Project settings</h2>
+
+          <form className="d-flex flex-column" onSubmit={handleSubmit(onSubmit)}>
+            {/* Project Name */}
+            <div className="mb-4">
+              <label htmlFor="name" className="form-label fw-semibold">
+                Project name
+              </label>
+
+              <input
+                type="text"
+                id="name"
+                className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                placeholder="Enter project name"
+                maxLength={255}
+                {...register("name", {
+                  required: "Project name is required",
+                  minLength: {
+                    value: 1,
+                    message: "Project name is too short",
+                  },
+                  maxLength: {
+                    value: 255,
+                    message: "Project name cannot exceed 255 characters",
+                  },
+                })}
+              />
+
+              {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
+            </div>
+
+            {/* Colour Picker */}
+            <div className="mb-4">
+              <label htmlFor="color" className="form-label fw-semibold">
+                Colour
+              </label>
+
+              <input
+                type="color"
+                id="color"
+                className="form-control form-control-color"
+                title="Choose project colour"
+                {...register("color")}
+              />
+            </div>
+
+            {/* Submit */}
+            <div>
+              <button type="submit" className="btn btn-success px-4">
+                {submitButtonValue}
+              </button>
+            </div>
+          </form>
         </div>
-        {/* end name  */}
-        {/* start color picker */}
-        <div className="col-12 mb-2">
-          <label htmlFor="ColorInput" className="form-label">
-            Colour
-          </label>
-          <input
-            type="color"
-            className="form-control form-control-color"
-            id="ColorInput"
-            defaultValue="#563d7c"
-            {...register("color")}
-            title="Choose your color"
-          ></input>
-        </div>
-        {/* end color picker */}
-        <div className="col-12 mt-3">
-          <input
-            type="submit"
-            name="submit"
-            value={submitButtonValue}
-            className="add-task-button task-btn-plain"
-          ></input>
-        </div>
-        {board.getId() ? (
-          <div className="kanboard-float-end">
-            <DeleteKanBoardButton kanBoardId={board.getId()} />
-          </div>
-        ) : (
-          ""
-        )}
-      </form>
+      </div>
     </article>
   );
 }
