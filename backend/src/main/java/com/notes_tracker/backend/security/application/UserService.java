@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -95,5 +96,13 @@ public class UserService implements UserDetailsService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         //this returns the email
         return this.getUserIdByEmail(authentication.getName());
+    }
+
+    public Optional<User> getCurrentUser() {
+        return Optional.ofNullable(SecurityContextHolder.getContext())
+                .map(SecurityContext::getAuthentication)
+                .filter(Authentication::isAuthenticated)
+                .map(Authentication::getPrincipal)
+                .map(User.class::cast);
     }
 }
