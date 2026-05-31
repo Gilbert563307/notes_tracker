@@ -4,6 +4,7 @@ package com.notes_tracker.backend.application;
 import com.notes_tracker.backend.kanboard.application.KanBoardService;
 import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddNewTaskToKanBoard;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
@@ -142,5 +143,40 @@ public class KanBoardServiceTests {
         verify(this.kanBoardRepository).save(board);
         assertNotNull(taskDtoList);
         assertEquals(1, taskDtoList.size());
+    }
+
+    @Test
+    void addNewTaskToKanBoard(){
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId("user")
+                .build();
+
+        TaskDto taskDto = new TaskDto(
+                null,
+                "Task A",
+                "desc",
+                Task.TaskStatus.TODO,
+                1,
+                "user-1",
+                false,
+                null,
+                null
+        );
+
+        when(this.kanBoardRepository.findById("1")).thenReturn(Optional.ofNullable(board));
+
+        when(this.kanBoardRepository.save(board)).thenReturn(board);
+
+        List<TaskDto> taskDtoList = this.service.addNewTaskToKanBoard(
+                new AddNewTaskToKanBoard(taskDto), "1"
+        );
+        //assert
+
+        verify(this.kanBoardRepository).findById("1");
+        verify(this.kanBoardRepository).save(board);
+        assertNotNull(taskDtoList);
+        assertEquals(1, taskDtoList.size());
+
     }
 }

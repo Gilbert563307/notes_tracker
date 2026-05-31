@@ -4,6 +4,7 @@ package com.notes_tracker.backend.application.integration;
 import com.notes_tracker.backend.kanboard.application.KanBoardService;
 import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddNewTaskToKanBoard;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
@@ -224,6 +225,35 @@ public class KanBoardServiceIntegrationTests {
 
         List<TaskDto> taskDtoList = this.kanBoardService.addTaskToKanBoard(
                 new AddTaskToKanBoardRequest(task.getId(), board.getId())
+        );
+        assertNotNull(taskDtoList);
+        assertEquals(1, taskDtoList.size());
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void addNewTaskToKanBoard(){
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId(this.savedUser.getId())
+                .build();
+
+        KanBoard created = this.repository.save(board);
+
+        TaskDto taskDto = new TaskDto(
+                null,
+                "Task A",
+                "desc",
+                Task.TaskStatus.TODO,
+                1,
+                this.savedUser.getId(),
+                false,
+                null,
+                null
+        );
+
+        List<TaskDto> taskDtoList = this.kanBoardService.addNewTaskToKanBoard(
+                new AddNewTaskToKanBoard(taskDto), created.getId()
         );
         assertNotNull(taskDtoList);
         assertEquals(1, taskDtoList.size());

@@ -1,6 +1,7 @@
 package com.notes_tracker.backend.kanboard.presentation;
 
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddNewTaskToKanBoard;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,12 @@ public class KanBoardController {
     @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")  //TODO FUTURE THINK ABOUT MULTIPLT PEOPLE ALLOWED TO ADD TASKS IN PROJECT
     public ResponseEntity<List<TaskDto>> addTaskToKanBoard(@RequestBody AddTaskToKanBoardRequest request) {
         return ResponseEntity.ok(kanBoardService.addTaskToKanBoard(request));
+    }
+
+    @PatchMapping("/{boardId}/task")
+    @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")
+    public ResponseEntity<List<TaskDto>> addNewTaskToKanBoard(@RequestBody AddNewTaskToKanBoard request,  @PathVariable String boardId) {
+        return ResponseEntity.ok(kanBoardService.addNewTaskToKanBoard(request, boardId));
     }
 
     @PutMapping

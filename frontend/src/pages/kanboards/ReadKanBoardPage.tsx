@@ -3,91 +3,56 @@ import useGetKanBoardTasksHook from "../../features/kanboard/presentation/hooks/
 import { KanBoard } from "../../features/kanboard/domain/KanBoard";
 import { Task } from "../../features/kanboard/domain/Task";
 import "../../features/kanboard/presentation/css/readkanboardpage.css";
-import { Show } from "../../shared/features/show/Show";
 import AddTaskToKanBoardButton from "../../features/kanboard/presentation/components/AddTaskToKanBoardButton";
-
-// Helper to create mock tasks using your Builder pattern
-const mockTasks = [
-  new Task.Builder()
-    .id("59")
-    .title("Als docent wil ik een GAME aan een skilltree kunnen koppelen")
-    .status("TODO")
-    .assigneId("user1")
-    .build(),
-  new Task.Builder()
-    .id("60")
-    .title("Als docent wil ik een pagina waarop ik een skilltree kan bekijken")
-    .status("TODO")
-    .assigneId("user1")
-    .build(),
-  new Task.Builder()
-    .id("164")
-    .title("Frontend testing combination game domein, dto & service & controller")
-    .status("DOING")
-    .assigneId("user2")
-    .build(),
-  new Task.Builder().id("138").title("antwoord spel preview").status("REVIEW").assigneId("user3").build(),
-];
 
 export default function ReadKanBoardPage() {
   const { kanBoardId } = useParams();
   const { tasks } = useGetKanBoardTasksHook({ kanBoardId });
 
-  // Use real tasks if available, fallback to mockTasks
-  const allTasks = tasks && tasks.length > 0 ? tasks : mockTasks;
-
-  function getTasksByStatus(statusId: string) {
-    // Map column IDs to your TaskStatus type
-    const statusMap: Record<string, string> = {
-      todo: "TODO",
-      "in-progress": "DOING",
-      "in-review": "REVIEW",
-      done: "DONE",
-    };
-    const target = statusMap[statusId] || statusId.toUpperCase();
-    return allTasks.filter((task) => task.getStatus() === target);
-  }
+  console.log(tasks);
 
   const columns = KanBoard.getDefaultHeaders();
   const kanBoardName = "kanboard name";
 
   return (
-    <section className="container-fluid bg-light min-vh-100 p-4">
+    <section className="container-fluid  min-vh-100 p-4">
       {/* Search Header */}
       <div className="row mb-4">
         <div className="col">
           <div className="input-group bg-white shadow-sm rounded border-0">
             <span className="input-group-text bg-white border-0 text-primary">
-              <i className="fa-solid fa-magnifying-glass"></i>
+              <i className="fa-solid fa-magnifying-glass kanboard-search-glass"></i>
             </span>
-            <input type="text" className="form-control border-0 shadow-none" placeholder='"Search.."' />
+            <input type="text" className="form-control border-0 shadow-none" placeholder="Search.." />
           </div>
         </div>
       </div>
 
       {/* Kanban Board Horizontal Scroll Wrapper */}
-      <article className="d-flex flex-nowrap overflow-auto pb-3" style={{ gap: "1.5rem" }}>
+      <article className="d-flex flex-nowrap overflow-auto pb-3 kan-board-article">
         {columns.map((col) => {
-          const columnTasks = getTasksByStatus(col.id);
+          const columnTasks = [];
 
           return (
-            <div key={col.id} style={{ minWidth: "350px", flex: "0 0 auto" }}>
+            <div key={col.id} style={{ minWidth: "350px", flex: "0 0 auto" }} className="kan-board-column">
               {/* Column Header */}
-              <div className="d-flex align-items-center justify-content-between px-1 mb-1">
+              <div className="d-flex align-items-center justify-content-between px-1 mb-1 ">
                 <div className="d-flex align-items-center">
                   <span className={`me-2 ${col.color}`} style={{ fontSize: "1.2rem" }}>
-                    ○
+                    <i className="fa-solid fa-o"></i>
                   </span>
-                  <strong className="text-dark me-2">{col.title}</strong>
+                  <strong className="kanboard-card-title">{col.title}</strong>
                   <span className="badge rounded-pill bg-secondary bg-opacity-25 text-secondary small">
                     {columnTasks.length}
                   </span>
                 </div>
-                <div className="text-muted small">
-                  <span className="me-2" style={{ cursor: "pointer" }}>
-                    ...
-                  </span>
-                  <span style={{ cursor: "pointer" }}>+</span>
+                <div className="kanboard-action-buttons">
+                  <button className="text-muted small btn btn-light" type="button">
+                    <span>...</span>
+                  </button>
+                  <button type="button" className="btn btn-light">
+                    <i className="fa-solid fa-plus"></i>
+                  </button>
                 </div>
               </div>
 
@@ -118,7 +83,7 @@ export default function ReadKanBoardPage() {
                 ))}
 
                 {/* The "Add item" button at the end of the column - */}
-                <AddTaskToKanBoardButton kanBoardName={kanBoardName} />
+                <AddTaskToKanBoardButton kanBoardId={kanBoardId} />
               </div>
             </div>
           );

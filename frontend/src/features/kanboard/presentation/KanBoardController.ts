@@ -2,6 +2,7 @@ import type { NotificationDto } from "../../../shared/features/notification/doma
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import { KanBoardService, kanBoardService } from "../application/KanBoardService";
 import type { CreateKanBoardRequest } from "../application/request/CreateKanBoardRequest";
+import type { CreateKanBoardTaskRequest } from "./request/CreateKanBoardTaskRequest";
 
 export class KanBoardController {
   #kanBoardService: KanBoardService;
@@ -26,6 +27,10 @@ export class KanBoardController {
     const response = await this.#kanBoardService.getTasksByKanBoardId(boardId);
     this.#setMessageToUser(response.notification);
     return response;
+  }
+
+  async createTask(request: CreateKanBoardTaskRequest) {
+    console.log(request)
   }
 
   #setMessageToUser(notification: NotificationDto) {

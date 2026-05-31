@@ -1,15 +1,21 @@
 import type { Delta } from "quill";
 import Quill from "quill";
+import "quill/dist/quill.snow.css";
+
 import React, { useCallback, useEffect, useState } from "react";
 
 interface QuilTextEditorProps {
   content?: string;
-  saveText?: (content: string) => void;
+  saveContent?: (content: string) => void;
   readOnly?: boolean;
 }
 
 //TODO FIX THIS DRY
-export default function SimpleTextEditor<QuilTextEditorProps>({ content = "", saveText = () => {}, readOnly = false }) {
+export default function SimpleTextEditor<QuilTextEditorProps>({
+  content = "",
+  saveContent = (c: string) => {},
+  readOnly = false,
+}) {
   const [quill, setQuill] = useState<Quill | null>(null);
 
   // Detect Quill content changes
@@ -19,7 +25,7 @@ export default function SimpleTextEditor<QuilTextEditorProps>({ content = "", sa
     const handler = (delta: Delta, oldDelta: Delta, source: Object) => {
       if (source !== "user") return;
 
-      saveText(quill.root.innerHTML);
+      saveContent(quill.root.innerHTML);
     };
 
     quill.on("text-change", handler);
@@ -27,7 +33,7 @@ export default function SimpleTextEditor<QuilTextEditorProps>({ content = "", sa
     return () => {
       quill.off("text-change", handler);
     };
-  }, [quill, saveText]);
+  }, [quill]);
 
   /**
    * Update editor content when `content` prop changes
@@ -38,33 +44,30 @@ export default function SimpleTextEditor<QuilTextEditorProps>({ content = "", sa
     }
   }, [content, quill]);
 
-  const wrapperRef = useCallback(
-    (wrapper: HTMLDivElement | null) => {
-      if (!wrapper) return;
+  const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
+    if (!wrapper) return;
 
-      wrapper.innerHTML = "";
+    wrapper.innerHTML = "";
 
-      const editor = document.createElement("div");
-      wrapper.append(editor);
+    const editor = document.createElement("div");
+    wrapper.append(editor);
 
-      const quillEditor = new Quill(editor, {
-        theme: "snow",
-        modules: {
-          toolbar: [
-            ["bold", "italic"],
-            ["link", "blockquote", "code-block", "image"],
-            [{ list: "ordered" }, { list: "bullet" }],
-          ],
-        },
-        readOnly,
-      });
+    const quillEditor = new Quill(editor, {
+      theme: "snow",
+      modules: {
+        toolbar: [
+          ["bold", "italic"],
+          ["link", "blockquote", "code-block", "image"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+      },
+      readOnly,
+    });
 
-      quillEditor.root.innerHTML = content;
+    quillEditor.root.innerHTML = content;
 
-      setQuill(quillEditor);
-    },
-    [content, readOnly],
-  );
+    setQuill(quillEditor);
+  }, []);
 
   return (
     <article className="simple-quil-text-editor">

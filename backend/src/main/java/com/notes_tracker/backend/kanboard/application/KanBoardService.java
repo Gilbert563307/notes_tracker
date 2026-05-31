@@ -3,6 +3,7 @@ package com.notes_tracker.backend.kanboard.application;
 import java.util.List;
 
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddNewTaskToKanBoard;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
@@ -111,5 +112,26 @@ public class KanBoardService {
         board.assignTask(task);
         KanBoard saved = this.kanBoardRepository.save(board);
         return TaskDto.fromRawTaskList(saved.getTasks());
+    }
+
+
+    public List<TaskDto> addNewTaskToKanBoard(AddNewTaskToKanBoard request, String boardId) {
+        Task task =  this.getTaskFromTaskDto(request.task(), this.userService.getUserIdByAuthentication());
+        KanBoard board = getBoardById(boardId);
+        board.assignTask(task);
+        KanBoard saved = this.kanBoardRepository.save(board);
+        return TaskDto.fromRawTaskList(saved.getTasks());
+    }
+
+    private Task getTaskFromTaskDto(TaskDto taskDto, String userId){
+       return new Task.Builder()
+                .userId(userId)
+                .title(taskDto.title())
+                .description(taskDto.description())
+                .status(taskDto.status())
+                .priority(taskDto.priority())
+                .assigneId(taskDto.assigneId())
+                .archived(taskDto.archived())
+                .build();
     }
 }

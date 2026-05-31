@@ -2,6 +2,7 @@ package com.notes_tracker.backend.presentation;
 
 
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.request.AddNewTaskToKanBoard;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
@@ -218,5 +219,40 @@ public class KanBoardControllerIntegrationTests {
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
         ;
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void addNewTaskToKanBoard() throws Exception {
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId(this.savedUser.getId())
+                .build();
+
+        KanBoard created = this.kanBoardRepository.save(board);
+
+        TaskDto taskDto = new TaskDto(
+                null,
+                "Task A",
+                "desc",
+                Task.TaskStatus.TODO,
+                1,
+                this.savedUser.getId(),
+                false,
+                null,
+                null
+        );
+        String url = String.format("/kanboard/%s/task", created.getId());
+
+        this.mockMvc.perform(patch(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                        objectMapper.writeValueAsString(
+                                new AddNewTaskToKanBoard(taskDto)
+                        )
+                )).andExpect(status().isOk()).andExpect(
+                        jsonPath("$", hasSize(1))
+        );
+
     }
 }
