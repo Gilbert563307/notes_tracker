@@ -58,6 +58,14 @@ export class NotificationDto {
       return this;
     }
 
+    public type(type: number): this {
+      if (type === 0) this.info();
+      if (type === 1) this.danger();
+      if (type === 2) this.success();
+      if (type === 3) this.primary();
+      return this;
+    }
+
     public build(): NotificationDto {
       return new NotificationDto(this.#message, this.#type);
     }

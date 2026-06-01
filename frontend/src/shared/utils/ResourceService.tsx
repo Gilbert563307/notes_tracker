@@ -60,4 +60,12 @@ export class ResourceService {
 
     return await this.#requestHandler.perform(request);
   }
+
+  getRequestHandler(): RequestHandler {
+    return this.#requestHandler;
+  }
+
+  getResource(): string {
+    return this.#resource;
+  }
 }

@@ -4,6 +4,7 @@ import SimpleTextEditor from "../../../../shared/features/texteditor/presentatio
 import { useForm } from "react-hook-form";
 import { kanBoardController } from "../KanBoardController";
 import { CreateKanBoardTaskRequest } from "../request/CreateKanBoardTaskRequest";
+import { useNavigate } from "react-router";
 
 export default function CreateKanBoardTaskForm({ onClose, kanBoardId }: { onClose: () => void; kanBoardId: string }) {
   const [description, setDescription] = useState<string>("");
@@ -16,12 +17,16 @@ export default function CreateKanBoardTaskForm({ onClose, kanBoardId }: { onClos
     formState: { errors },
   } = useForm({});
 
+  const navigate = useNavigate();
+
   async function onSubmit(data: { title: string }) {
-    reset();
-    if (kanBoardId) return;
-    const response = await kanBoardController.createTask(
+    const response = await kanBoardController.createNewTaskInKanBoard(
       new CreateKanBoardTaskRequest({ title: data.title, description: description }, kanBoardId),
     );
+    if (response.length === 0) return;
+    navigate("/kanboards/read/" + kanBoardId);
+    // reset();
+    // setDescription("");
   }
 
   return (

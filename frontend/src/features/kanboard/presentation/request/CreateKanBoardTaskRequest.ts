@@ -20,6 +20,14 @@ export class CreateKanBoardTaskRequest {
     return this.#data;
   }
 
+  getTitle() {
+    return this.#data.title;
+  }
+
+  getDescription() {
+    return this.#data.description;
+  }
+
   validate() {
     if (!this.#kanBoardId) {
       throw new Error("Board id must not be null");

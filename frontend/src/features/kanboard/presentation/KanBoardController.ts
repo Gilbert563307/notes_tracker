@@ -29,8 +29,13 @@ export class KanBoardController {
     return response;
   }
 
-  async createTask(request: CreateKanBoardTaskRequest) {
-    console.log(request)
+  async createNewTaskInKanBoard(request: CreateKanBoardTaskRequest) {
+    try {
+      return await this.#kanBoardService.createNewTaskInKanBoard(request);
+    } catch (error) {
+      this.#setMessageToUser(error);
+      return [];
+    }
   }
 
   #setMessageToUser(notification: NotificationDto) {

@@ -11,17 +11,15 @@ import type { KanBoard } from "../domain/KanBoard";
 import type { Task } from "../domain/Task";
 import { TaskMapper } from "./mapper/TaskMapper";
 import type { ApiErrorResponse } from "../../../types";
+import type { CreateKanBoardTaskRequest } from "../presentation/request/CreateKanBoardTaskRequest";
+import { CreateTaskRequest } from "../presentation/request/CreateTaskRequest";
+import { FailedToCreateTaskIntoProjectException } from "../presentation/exceptions/exceptions";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 export class KanBoardService extends ResourceService {
-  #resource: string;
-  #requestHandler: RequestHandler;
   #cookieStorage: UseCookieStorage;
-
   constructor(resource: string, requestHandler: RequestHandler, cookieStorage: UseCookieStorage) {
     super(resource, requestHandler);
-    this.#resource = resource;
-    this.#requestHandler = requestHandler;
     this.#cookieStorage = cookieStorage;
   }
 
@@ -33,7 +31,6 @@ export class KanBoardService extends ResourceService {
     const cookieData: AuthenticationCookie = JSON.parse(value);
     return cookieData.token;
   }
-
 
   async getKanBoards(): Promise<{
     data: {
@@ -104,15 +101,54 @@ export class KanBoardService extends ResourceService {
     }
   }
 
+  async createNewTaskInKanBoard(request: CreateKanBoardTaskRequest): Promise<Array<Task>> {
+    request.validate();
+    const token = await this.#getToken();
+    //TODO MAKE URL CONSTRUCT EASIER
+    const url = `${super.getRequestHandler().getBaseUrl()}${super.getResource()}/${request.getKanBoardId()}/task`;
+    const response = await super
+      .getRequestHandler()
+      .perform(
+        new RequestHandler.RequestBuilder()
+          .patch()
+          .bearer(token)
+          .content(
+            new CreateTaskRequest.Builder()
+              .title(request.getTitle())
+              .description(request.getDescription())
+              .build()
+              .toJson(),
+          )
+          .url(url)
+          .build(),
+      );
+
+    if (!response.ok) {
+      const data: ApiErrorResponse = await response.json();
+      if (data.message) throw new Error(data.message);
+      throw new FailedToCreateTaskIntoProjectException();
+    }
+
+    let data: getTasksByKanBoardIdResponse;
+    try {
+      data = await response.json();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      throw new Error(message);
+    }
+
+    return TaskMapper.toTaskList(data);
+  }
+
   //TODO NEEDS VI TESTING
   async getTasksByKanBoardId(boardId: string): Promise<{ notification: NotificationDto; tasks: Task[] }> {
     try {
       const token = await this.#getToken();
-      const url: string = `${this.#requestHandler.getBaseUrl()}${this.#resource}/${boardId}/tasks`;
+      const url: string = `${super.getRequestHandler().getBaseUrl()}${super.getResource()}/${boardId}/tasks`;
 
-      const response = await this.#requestHandler.perform(
-        new RequestHandler.RequestBuilder().get().bearer(token).url(url).build(),
-      );
+      const response = await super
+        .getRequestHandler()
+        .perform(new RequestHandler.RequestBuilder().get().bearer(token).url(url).build());
 
       if (!response.ok) {
         const data: ApiErrorResponse = await response.json();
