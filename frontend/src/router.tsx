@@ -9,12 +9,12 @@ import ProtectedRoute from "./shared/utils/ProtectedRoute";
 import AuthVerifyPage from "./pages/auth/AuthVerifyPage";
 import GuestRoute from "./shared/utils/GuestRoute";
 import Application from "./Application";
-import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import ReadKanBoardPage from "./pages/kanboards/ReadKanBoardPage";
 import ListKanBoardsPage from "./pages/kanboards/ListKanBoardsPage";
 import CreateTaskPage from "./pages/tasks/CreateTaskPage";
 import ListTasksPage from "./pages/tasks/ListTasksPage";
+import AuthVerifiedPage from "./pages/auth/AuthVerifiedPage";
 
 const routes = [
   {
@@ -97,20 +97,16 @@ const routes = [
         ),
       },
       {
-        path: "/auth/register",
-        element: (
-          <GuestRoute>
-            <AuthRegisterPage />
-          </GuestRoute>
-        ),
-      },
-      {
         path: "/auth/verify",
         element: (
           <GuestRoute>
             <AuthVerifyPage />
           </GuestRoute>
         ),
+      },
+      {
+        path: "/auth/verified",
+        element: <AuthVerifiedPage />,
       },
     ],
   },

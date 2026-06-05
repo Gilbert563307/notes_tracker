@@ -31,6 +31,7 @@ export class RequestHandler {
     #url: string = "";
     #headers: Headers = new Headers();
     #content: unknown = null;
+    #withCredentials = false;
 
     get() {
       this.#method = "GET";
@@ -77,6 +78,11 @@ export class RequestHandler {
       return this;
     }
 
+    withCredentials() {
+      this.#withCredentials = true;
+      return this;
+    }
+
     #getBody(): BodyInit | undefined {
       if (this.#content == null) return undefined;
 
@@ -112,6 +118,10 @@ export class RequestHandler {
         if (body !== undefined) {
           options.body = body;
         }
+      }
+
+      if(this.#withCredentials){
+        options.credentials = "include";
       }
 
       return new Request(this.#url, options);

@@ -62,6 +62,9 @@ export class User {
     }
 
     build(): User {
+      if (!this._id) {
+        throw new Error("User id is required");
+      }
       return new User(this._id, this._displayName, this._photoURL);
     }
   };

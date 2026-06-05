@@ -2,6 +2,8 @@ package com.notes_tracker.backend.config;
 
 import java.util.List;
 
+import com.notes_tracker.backend.security.application.CustomOidcUserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfiguration {
 
-    private final JwtFilter jwtFilter;
+    private final CustomOidcUserService customOidcUserService;
 
     @Value("${cors.allowed.origins.localhost}")
     private String corsAllowedOriginsLocalhost;
@@ -35,8 +37,11 @@ public class SecurityConfiguration {
     @Value("${cors.allowed.origins.production}")
     private String corsAllowedOriginsProduction;
 
-    public SecurityConfiguration(JwtFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
+    @Value("${auth.default.success.url}")
+    private String authDefaultSuccessUrl;
+
+    public SecurityConfiguration(CustomOidcUserService customOidcUserService) {
+        this.customOidcUserService = customOidcUserService;
     }
 
     @Bean
@@ -45,23 +50,36 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/auth/**", "/api/login/oauth2/code/**").permitAll()
                         .anyRequest().authenticated())
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // .logout(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.oidcUserService(this.customOidcUserService))
+                                .defaultSuccessUrl(this.authDefaultSuccessUrl, true) //force redirect to this frontend page when sucessfull loged in
+                        ).logout(logout -> logout
+//                        .logoutSuccessUrl("http://localhost:5173/login")    // redirect to frontend login page after logout //TODO
+                        .invalidateHttpSession(true)    //Invalidate the session
+                        .clearAuthentication(true)  // clear authentication context
+                        .deleteCookies("JESSIONID") // remove session cookie
+                        .permitAll())   // Allow logout endpoint for all users
+                // Exception handling (unauthenticated or forbidden cases)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);    // When not logged in → return 401 Unauthorized
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN);    // When logged in but forbidden (e.g. missing ADMIN role) → return 403
+                        }))
                 .build();
     }
 
 
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
-                                                       PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(authProvider);
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+//                                                       PasswordEncoder passwordEncoder) {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+//        authProvider.setPasswordEncoder(passwordEncoder);
+//        return new ProviderManager(authProvider);
+//    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -76,9 +94,8 @@ public class SecurityConfiguration {
         return source;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 }

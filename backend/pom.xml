@@ -107,6 +107,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- oauth -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

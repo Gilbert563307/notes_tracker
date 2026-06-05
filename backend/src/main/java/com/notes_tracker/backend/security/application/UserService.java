@@ -4,12 +4,7 @@ import java.util.Optional;
 
 import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.notes_tracker.backend.security.application.dto.UserDto;
@@ -18,26 +13,11 @@ import com.notes_tracker.backend.security.domain.User;
 import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService  {
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    /**
-     *
-     * @param username the username (is the user email) identifying the user whose data is required.
-     * @return
-     * @throws UsernameNotFoundException
-     */
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = this.userRepository.findByEmailAddress(username);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found by provided email");
-        }
-        return new org.springframework.security.core.userdetails.User(user.get().getEmailAddress(), user.get().getPassword(), user.get().getAuthorities());
     }
 
     public UserDto getUser(String userId) {
@@ -66,21 +46,17 @@ public class UserService implements UserDetailsService {
         this.userRepository.deleteById(userId);
     }
 
+    public UserDto getUserDtoByEmail(String email) {
+        Optional<User> user = this.userRepository.findByEmailAddress(email);
+        if (user.isEmpty()) {
+            throw new UserNotFoundAuthorizationException("User not found by provided email" + email);
+        }
+        return UserDto.from(user.get());
+    }
+
     private User getUserById(String userId) {
         return this.userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with provided id"));
-    }
-
-    public void initWithMockUser() {
-        Optional<User> user = this.userRepository.findByDisplayName("MOCK_USER");
-        if (user.isEmpty()) {
-            this.userRepository.save(
-                    new User.Builder()
-                            .displayName("MOCK_USER")
-                            .emailAddress("mockuser@gmail.com")
-                            .password(new BCryptPasswordEncoder().encode("password"))
-                            .build());
-        }
     }
 
     private String getUserIdByEmail(String email) {
@@ -98,11 +74,4 @@ public class UserService implements UserDetailsService {
         return this.getUserIdByEmail(authentication.getName());
     }
 
-    public Optional<User> getCurrentUser() {
-        return Optional.ofNullable(SecurityContextHolder.getContext())
-                .map(SecurityContext::getAuthentication)
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getPrincipal)
-                .map(User.class::cast);
-    }
 }

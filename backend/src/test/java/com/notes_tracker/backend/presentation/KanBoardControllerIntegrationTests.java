@@ -250,7 +250,7 @@ public class KanBoardControllerIntegrationTests {
                         objectMapper.writeValueAsString(
                                 new AddNewTaskToKanBoard(taskDto)
                         )
-                )).andDo(print())
+                ))
                 .andExpect(status().isOk()).andExpect(
                         jsonPath("$", hasSize(1))
         );
