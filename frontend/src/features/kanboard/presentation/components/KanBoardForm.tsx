@@ -35,63 +35,53 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue }: Kan
   }, [board, reset]);
 
   return (
-    <article className="container py-3 mt-1">
-      <div className="card border-0 shadow-sm">
-        <div className="card-body p-4">
-          <h2 className="fs-4 mb-4">Project settings</h2>
+    <article className="container py-4">
+      <div style={{ maxWidth: "910px" }}>
+        <h1 className="fs-5 mb-4 fw-normal">Project settings</h1>
 
-          <form className="d-flex flex-column" onSubmit={handleSubmit(onSubmit)}>
-            {/* Project Name */}
-            <div className="mb-4">
-              <label htmlFor="name" className="form-label fw-semibold">
-                Project name
-              </label>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Project name */}
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label mb-1" style={{ fontSize: "13px", fontWeight: 600 }}>
+              Project name
+            </label>
 
-              <input
-                type="text"
-                id="name"
-                className={`form-control ${errors.name ? "is-invalid" : ""}`}
-                placeholder="Enter project name"
-                maxLength={255}
-                {...register("name", {
-                  required: "Project name is required",
-                  minLength: {
-                    value: 1,
-                    message: "Project name is too short",
-                  },
-                  maxLength: {
-                    value: 255,
-                    message: "Project name cannot exceed 255 characters",
-                  },
-                })}
-              />
+            <input
+              id="name"
+              type="text"
+              className={`form-control form-control-sm ${errors.name ? "is-invalid" : ""}`}
+              style={{ maxWidth: "540px" }}
+              {...register("name", {
+                required: "Project name is required",
+                maxLength: {
+                  value: 255,
+                  message: "Maximum 255 characters",
+                },
+              })}
+            />
 
-              {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
-            </div>
+            {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
+          </div>
 
-            {/* Colour Picker */}
-            <div className="mb-4">
-              <label htmlFor="color" className="form-label fw-semibold">
-                Colour
-              </label>
+          {/* Colour */}
+          <div className="mb-4">
+            <label htmlFor="color" className="form-label mb-1" style={{ fontSize: "13px", fontWeight: 600 }}>
+              Colour
+            </label>
 
-              <input
-                type="color"
-                id="color"
-                className="form-control form-control-color"
-                title="Choose project colour"
-                {...register("color")}
-              />
-            </div>
+            <input
+              id="color"
+              type="color"
+              className="form-control form-control-color form-control-sm"
+              
+              {...register("color")}
+            />
+          </div>
 
-            {/* Submit */}
-            <div>
-              <button type="submit" className="btn btn-success px-4">
-                {submitButtonValue}
-              </button>
-            </div>
-          </form>
-        </div>
+          <button type="submit" className="btn btn-success btn-sm px-3">
+            {submitButtonValue}
+          </button>
+        </form>
       </div>
     </article>
   );

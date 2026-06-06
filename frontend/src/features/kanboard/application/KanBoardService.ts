@@ -12,9 +12,11 @@ import type { CreateKanBoardTaskRequest } from "../presentation/request/CreateKa
 import { CreateTaskRequest } from "../presentation/request/CreateTaskRequest";
 import {
   FailedToCreateTaskIntoProjectException,
+  FailedToFindYourKanBoardException,
   FailedToLoadKanBoardsException,
 } from "../presentation/exceptions/exceptions";
 import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
+import { JsonParsingError } from "../../../shared/exceptions/exceptions";
 
 export const KAN_BOARD_RESOURCE = "kanboard";
 
@@ -69,6 +71,22 @@ export class KanBoardService extends OAuth2ResourceService {
     }
   }
 
+  async getKanBoardById(id: string): Promise<KanBoard> {
+    const response = await super.read(id);
+
+    if (!response.ok) {
+      const data: ApiErrorResponse = await response.json();
+      throw new FailedToFindYourKanBoardException(data.message);
+    }
+
+    try {
+      const data = await response.json();
+      return KanBoardMapper.toKanBoard(data);
+    } catch (error) {
+      throw new JsonParsingError(error?.message);
+    }
+  }
+
   async createNewTaskInKanBoard(request: CreateKanBoardTaskRequest): Promise<Array<Task>> {
     request.validate();
     //TODO MAKE URL CONSTRUCT EASIER
@@ -100,9 +118,7 @@ export class KanBoardService extends OAuth2ResourceService {
     try {
       data = await response.json();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      //TODO ADD custom error
-      throw new Error(message);
+      throw new JsonParsingError(error?.message);
     }
 
     return TaskMapper.toTaskList(data);
@@ -146,6 +162,5 @@ export class KanBoardService extends OAuth2ResourceService {
 const kanBoardService = new KanBoardService(
   KAN_BOARD_RESOURCE,
   new RequestHandler(import.meta.env.VITE_APP_BACKEND_URL),
-  new UseCookieStorage(),
 );
 export { kanBoardService };

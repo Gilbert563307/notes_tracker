@@ -14,9 +14,15 @@ export class KanBoardController {
 
   async getKanBoards() {
     try {
-      const response = await this.#kanBoardService.getKanBoards();
-      console.log(response)
-      return response;
+      return await this.#kanBoardService.getKanBoards();
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
+  }
+
+  async getKanBoardById(id: string) {
+    try {
+      return await this.#kanBoardService.getKanBoardById(id);
     } catch (error) {
       this.#setMessageToUserV2(error);
     }

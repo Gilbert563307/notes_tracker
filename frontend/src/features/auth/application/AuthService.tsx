@@ -1,8 +1,9 @@
 import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
+import { JsonParsingError } from "../../../shared/exceptions/exceptions";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import { UseSessionStorage } from "../../../shared/utils/UseSessionStorage";
 import { User } from "../domain/User";
-import { AuthResponseNotOkError, JsonParsingError, MissingAuthDataError } from "../presentation/exceptions/exceptions";
+import { AuthResponseNotOkError, MissingAuthDataError } from "../presentation/exceptions/exceptions";
 import { Authentication } from "./response/Authentication";
 
 export class AuthService {

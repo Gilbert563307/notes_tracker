@@ -15,8 +15,4 @@ export class MissingAuthDataError extends BaseException {
   }
 }
 
-export class JsonParsingError extends BaseException {
-  constructor(message: string) {
-    super(message, 1);
-  }
-}
+
