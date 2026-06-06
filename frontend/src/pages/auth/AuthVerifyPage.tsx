@@ -1,46 +1,24 @@
-import React from "react";
-import "./auth.css";
-import { Link } from "react-router";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useAuthProvider } from "../../shared/context/AuthProviderConfig";
 import { authController } from "../../features/auth/presentation/AuthController";
-import IMAGES from "../../assets/images/Images";
+import { Authentication } from "../../features/auth/application/response/Authentication";
 
 export default function AuthVerifyPage() {
-  //  const response = await authController.authenticate(new AuthenticateRequest(form.email, form.password));
+  const { login } = useAuthProvider();
+  const navigate = useNavigate();
 
-  function signInWithGoogle() {
-    authController.signInWithGoogle();
+  async function authenticateRequest() {
+    const response = await authController.authenticate();
+    if (response != undefined && response instanceof Authentication) {
+      await login(response);
+      navigate("/kanboards");
+    }
   }
 
-  return (
-    <div className="container-fluid vh-100">
-      <div className="row h-100">
-        {/* LEFT SIDE - FORM */}
-        <div className=" d-flex align-items-center justify-content-center bg-white p-5">
-          <div className="w-25">
-            <h2 className="mb-4 fw-semibold">Your Tasks's</h2>
+  useEffect(() => {
+    authenticateRequest();
+  }, []);
 
-            <div className="sign-in-buttons">
-              {/* Signup Button */}
-        
-
-              <button type="button" className="btn sign-in-btn google-button" onClick={signInWithGoogle}>
-                <img src={IMAGES.googleIcon} className="sign-in-icons" alt="goole icon"></img>
-                Sign in with Google
-              </button>
-
-              {/* Divider */}
-              <div className="text-center my-3 text-muted">or</div>
-
-              <p className="text-center mt-3">
-                Don't have an account?{" "}
-                <Link to="/auth/policy" className="btn btn-link">
-                  Our policy
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <div>Loading....</div>;
 }

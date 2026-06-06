@@ -1,8 +1,7 @@
+import { BaseException } from "../../../shared/exceptions/exceptions";
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import { AuthService, authService } from "../application/AuthService";
-import type { AuthenticateRequest } from "../application/request/AuthenticateRequest";
-import type { RegisterRequest } from "../application/request/RegisterRequest";
 
 class AuthController {
   #authService;
@@ -12,16 +11,17 @@ class AuthController {
     this.#authService = authService;
     this.#oauthUrl = oauthUrl;
   }
-
-  //TODO REMOVE METHOD
-  async register(request: RegisterRequest) {
-    throw new Error("DELETE METHOD");
-  }
-
+  
   async authenticate() {
-    const response = await this.#authService.authenticate();
-    this.#setMessageToUser(response.notification);
-    return response;
+    try {
+      const response = await this.#authService.authenticate();
+      return response;
+    } catch (error: unknown) {
+      const err = error instanceof BaseException ? error : null;
+      if (!err) return;
+      this.#setMessageToUser(new NotificationDto.Builder().message(err.message).type(err.type).build());
+      return;
+    }
   }
 
   signInWithGoogle() {

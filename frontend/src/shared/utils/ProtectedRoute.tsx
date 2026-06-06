@@ -12,7 +12,7 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
 
   // not logged in → redirect
   if (!auth) {
-    return <Navigate to="/auth/verify" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   // logged in → allow access
