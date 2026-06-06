@@ -2,18 +2,20 @@ package com.notes_tracker.backend.security.application;
 
 import java.util.Optional;
 
-import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.notes_tracker.backend.security.application.dto.UserDto;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
+import com.notes_tracker.backend.security.presentation.exception.UserNotFoundAuthorizationException;
 import com.notes_tracker.backend.security.presentation.exception.UserNotFoundException;
 
 @Service
-public class UserService  {
+public class UserService {
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -25,15 +27,15 @@ public class UserService  {
         return UserDto.from(user);
     }
 
-    public UserDto updateUser(String userId, String emailAddress, String fireBaseUid, String displayName, String photoURL) {
+    public UserDto updateUser(String userId, String emailAddress, String fireBaseUid, String displayName,
+            String photoURL) {
         User user = this.getUserById(userId);
 
         user.update(
                 fireBaseUid,
                 displayName,
                 emailAddress,
-                photoURL
-        );
+                photoURL);
 
         this.userRepository.save(user);
         return UserDto.from(user);
@@ -49,29 +51,26 @@ public class UserService  {
     public UserDto getUserDtoByEmail(String email) {
         Optional<User> user = this.userRepository.findByEmailAddress(email);
         if (user.isEmpty()) {
-            throw new UserNotFoundAuthorizationException("User not found by provided email" + email);
+            throw new UserNotFoundAuthorizationException("User not found by provided email " + email);
         }
         return UserDto.from(user.get());
     }
 
+    public User getUserByEmail(String email) {
+        return this.userRepository.findByEmailAddress(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email " + email));
+    }
+
     private User getUserById(String userId) {
         return this.userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with provided id"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with provided id " + userId));
     }
 
-    private String getUserIdByEmail(String email) {
-        Optional<User> user = this.userRepository.findByEmailAddress(email);
-        if (user.isEmpty()) {
-            throw new UserNotFoundAuthorizationException("User not found by provided email" + email);
-        }
-        return user.get().getId();
-    }
-
-    // https://www.youtube.com/watch?v=mt7wR0CujHo  1:34:10
     public String getUserIdByAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //this returns the email
-        return this.getUserIdByEmail(authentication.getName());
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+        String email = oauth2User.getAttribute("email");
+        User user  = this.getUserByEmail(email);
+        return user.getId();
     }
-
 }

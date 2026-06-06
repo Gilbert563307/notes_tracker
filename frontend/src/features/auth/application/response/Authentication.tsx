@@ -1,8 +1,6 @@
 import { User } from "../../domain/User";
 
-export type AuthenticationCookie = {
-  user: { id: string; displayName: string; photoURL: string };
-};
+export type AuthenticationCookie = { id: string; displayName: string; photoURL: string };
 
 export class Authentication {
   private user: User | null;
@@ -19,11 +17,15 @@ export class Authentication {
     return this.user.toJson();
   }
 
+  toString(){
+    return JSON.stringify(this.toJson());
+  }
+
   static from(cookie: AuthenticationCookie): Authentication {
-    if (!cookie.user) {
-      throw new Error("The user is  null");
+    if (!cookie) {
+      throw new Error("The user cookie is  null");
     }
-    return new Authentication(User.from(cookie.user));
+    return new Authentication(User.from(cookie));
   }
 
   static Builder = class {

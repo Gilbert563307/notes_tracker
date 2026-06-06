@@ -1,4 +1,6 @@
+import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
+import { UseSessionStorage } from "../../../shared/utils/UseSessionStorage";
 import { User } from "../domain/User";
 import { AuthResponseNotOkError, JsonParsingError, MissingAuthDataError } from "../presentation/exceptions/exceptions";
 import { Authentication } from "./response/Authentication";
@@ -6,10 +8,12 @@ import { Authentication } from "./response/Authentication";
 export class AuthService {
   #resource: string;
   #requestHandler: RequestHandler;
+  #sessionStorage: UseSessionStorage;
 
-  constructor(resource: string, requestHandler: RequestHandler) {
+  constructor(resource: string, requestHandler: RequestHandler, sessionStorage: UseSessionStorage) {
     this.#resource = resource;
     this.#requestHandler = requestHandler;
+    this.#sessionStorage = sessionStorage;
   }
 
   async authenticate(): Promise<Authentication> {
@@ -30,11 +34,20 @@ export class AuthService {
       if (!data) {
         throw new MissingAuthDataError();
       }
-      return new Authentication.Builder().user(User.from(data)).build();
+
+      const auth = new Authentication.Builder().user(User.from(data)).build();
+
+      this.#sessionStorage.setItem(AUTH_STORAGE_KEYS.AUTH, auth.toString());
+
+      return auth;
     } catch (error: unknown) {
       throw new JsonParsingError(error?.message);
     }
   }
 }
-const authService = new AuthService("auth", new RequestHandler(import.meta.env.VITE_APP_BACKEND_URL));
+const authService = new AuthService(
+  "auth",
+  new RequestHandler(import.meta.env.VITE_APP_BACKEND_URL),
+  new UseSessionStorage(),
+);
 export { authService };

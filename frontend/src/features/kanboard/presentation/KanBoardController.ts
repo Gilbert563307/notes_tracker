@@ -1,4 +1,5 @@
-import type { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
+import { BaseException } from "../../../shared/exceptions/exceptions";
+import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import { KanBoardService, kanBoardService } from "../application/KanBoardService";
 import type { CreateKanBoardRequest } from "../application/request/CreateKanBoardRequest";
@@ -12,9 +13,13 @@ export class KanBoardController {
   }
 
   async getKanBoards() {
-    const response = await this.#kanBoardService.getKanBoards();
-    this.#setMessageToUser(response.notification);
-    return response;
+    try {
+      const response = await this.#kanBoardService.getKanBoards();
+      console.log(response)
+      return response;
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
   }
 
   async createKanBoard(request: CreateKanBoardRequest) {
@@ -35,9 +40,21 @@ export class KanBoardController {
     return response;
   }
 
+  /**
+   *
+   * @deprecated
+   *
+   */
   #setMessageToUser(notification: NotificationDto) {
     if (notification.getMessage() === "") return;
     notificationObserver.add(notification);
+  }
+
+  #setMessageToUserV2(error: unknown) {
+    const err = error instanceof BaseException ? error : null;
+    if (!err) return;
+    notificationObserver.add(new NotificationDto.Builder().message(err.message).type(err.type).build());
+    return;
   }
 }
 

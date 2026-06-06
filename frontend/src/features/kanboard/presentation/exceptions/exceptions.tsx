@@ -1,4 +1,3 @@
-
 import { BaseException } from "../../../../shared/exceptions/exceptions";
 
 export class ApiException extends BaseException {
@@ -37,8 +36,9 @@ export class FailedToFindTasksException extends BaseException {
 }
 
 export class FailedToLoadKanBoardsException extends BaseException {
-  constructor() {
-    super("Failed to load kanban boards. Please try again.", 1);
+  constructor(message: string = "") {
+    const newMessage = message === "" ? "Failed to load kanban boards. Please try again." : message;
+    super(newMessage, 1);
     this.name = "FailedToLoadKanBoardsException";
   }
 }

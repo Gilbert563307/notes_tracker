@@ -1,9 +1,9 @@
 import { RequestHandler } from "./RequestHandler";
 
 /**
- * Usage for token bases APIS
+ * Usage for spring OAuth2 credential based API'S
  */
-export class ResourceService {
+export class OAuth2ResourceService {
   #resource: string;
   #requestHandler: RequestHandler;
 
@@ -12,54 +12,52 @@ export class ResourceService {
     this.#requestHandler = requestHandler;
   }
 
-  async create(token: string, data: unknown): Promise<Response> {
+  async create(data: unknown): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .post()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
-      .bearer(token)
+      .withCredentials()
       .content(data)
       .build();
 
     return await this.#requestHandler.perform(request);
   }
 
-  async read(token: string, id: string | number): Promise<Response> {
+  async read(id: string | number): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .get()
       .url(this.#requestHandler.getBaseUrl() + this.#resource + `/${id}`)
-      .bearer(token)
+      .withCredentials()
       .build();
 
     return await this.#requestHandler.perform(request);
   }
 
-  async update(token: string, data: unknown): Promise<Response> {
+  async update(data: unknown): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .put()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
-      .bearer(token)
+      .withCredentials()
       .content(data)
       .build();
-
     return await this.#requestHandler.perform(request);
   }
 
-  async delete(token: string, id: string | number): Promise<Response> {
+  async delete(id: string | number): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .delete()
       .url(this.#requestHandler.getBaseUrl() + this.#resource + `/${id}`)
-      .bearer(token)
+      .withCredentials()
       .build();
 
     return await this.#requestHandler.perform(request);
   }
 
- 
-  async findAll(token: string): Promise<Response> {
+  async findAll(): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .get()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
-      .bearer(token)
+      .withCredentials()
       .build();
 
     return await this.#requestHandler.perform(request);

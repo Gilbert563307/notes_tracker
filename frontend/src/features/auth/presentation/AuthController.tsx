@@ -11,22 +11,19 @@ class AuthController {
     this.#authService = authService;
     this.#oauthUrl = oauthUrl;
   }
-  
+
   async authenticate() {
     try {
       const response = await this.#authService.authenticate();
       return response;
     } catch (error: unknown) {
-      const err = error instanceof BaseException ? error : null;
-      if (!err) return;
-      this.#setMessageToUser(new NotificationDto.Builder().message(err.message).type(err.type).build());
-      return;
+      this.#setMessageToUserV2(error);
     }
   }
 
   signInWithGoogle() {
     if (!this.#oauthUrl) {
-      this.#setMessageToUser(
+      notificationObserver.add(
         new NotificationDto.Builder()
           .info()
           .message("Something went wrong while trying to reach the server, please contact the administrator")
@@ -36,9 +33,11 @@ class AuthController {
     window.location.href = this.#oauthUrl + "google";
   }
 
-  #setMessageToUser(notification: NotificationDto) {
-    if (notification.getMessage() === "") return;
-    notificationObserver.add(notification);
+  #setMessageToUserV2(error: unknown) {
+    const err = error instanceof BaseException ? error : null;
+    if (!err) return;
+    notificationObserver.add(new NotificationDto.Builder().message(err.message).type(err.type).build());
+    return;
   }
 }
 

@@ -2,39 +2,29 @@ import { useEffect, useState } from "react";
 import { UseCookieStorage } from "../utils/UseCookieStorage";
 import { AUTH_STORAGE_KEYS, AuthProviderContext } from "./AuthProviderConfig";
 import { Authentication, type AuthenticationCookie } from "../../features/auth/application/response/Authentication";
-
+import { UseSessionStorage } from "../utils/UseSessionStorage";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<Authentication | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   async function login(auth: Authentication) {
-    const day = 24 * 60 * 60 * 1000;
-
-    //TODO AUTH SHOULD BE ALSO IN COOKIE
-    const cookie = new UseCookieStorage.CookieBuilder()
-      .name(AUTH_STORAGE_KEYS.AUTH)
-      .value(JSON.stringify(auth.toJson()))
-      .expires(Date.now() + day)
-      .build();
-
-    await UseCookieStorage.createCookie(cookie);
     setAuth(auth);
   }
 
   useEffect(() => {
     async function loadAuth() {
-      const cookie = await new UseCookieStorage().readCookie(AUTH_STORAGE_KEYS.AUTH);
-      if (cookie && cookie.value) {
-        const parsedData: AuthenticationCookie = JSON.parse(cookie.value);
+      const data = await new UseSessionStorage().getItem(AUTH_STORAGE_KEYS.AUTH);
+      if (data) {
+        const parsedData: AuthenticationCookie = JSON.parse(data);
         setAuth(Authentication.from(parsedData));
       }
       setLoading(false);
     }
-
     loadAuth();
   }, []);
 
+  //TODO remove there and set into component
   async function logout() {
     setAuth(null);
     const cookieStorage = new UseCookieStorage();

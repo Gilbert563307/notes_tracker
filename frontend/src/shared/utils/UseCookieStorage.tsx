@@ -11,7 +11,7 @@ interface CookieData {
 }
 
 export class UseCookieStorage {
-  static async createCookie(data: CookieData): Promise<void> {
+  async createCookie(data: CookieData): Promise<void> {
     await cookieStore.set({
       name: data.name,
       value: data.value,
