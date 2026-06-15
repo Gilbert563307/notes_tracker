@@ -37,8 +37,6 @@ public class UserServiceIntegrationTests {
 
        User created=   this.userRepository.save( new User.Builder()
                 .displayName("John")
-                .password("securePassword123")
-                .fireBaseUid("222")
                 .emailAddress("email@mail.com")
                 .build()
     );
@@ -57,8 +55,8 @@ public class UserServiceIntegrationTests {
     void shouldDeleteUser() {
         User created=   this.userRepository.save( new User.Builder()
                 .displayName("John")
-                .password("securePassword123")
-                .fireBaseUid("222")
+
+
                 .emailAddress("email@mail.com")
                 .build()
         );
@@ -71,27 +69,27 @@ public class UserServiceIntegrationTests {
     }
 
     @Test
-    void shouldLoadUserByUsername() {
+    void shouldLoadUserByEmail() {
         this.userRepository.save( new User.Builder()
                 .displayName("John")
-                .password("securePassword123")
-                .fireBaseUid("222")
+
+
                 .emailAddress("login@example.com")
                 .build()
         );
 
-        var userDetails = userService.loadUserByUsername("login@example.com");
+        var userDetails = userService.getUserByEmail("login@example.com");
 
         assertNotNull(userDetails);
-        assertEquals("login@example.com", userDetails.getUsername());
+        assertEquals("login@example.com", userDetails.getEmailAddress());
     }
 
     @Test
     void getUserById() {
         User created =  this.userRepository.save( new User.Builder()
                 .displayName("John")
-                .password("securePassword123")
-                .fireBaseUid("222")
+
+
                 .emailAddress("login@example.com")
                 .build()
         );

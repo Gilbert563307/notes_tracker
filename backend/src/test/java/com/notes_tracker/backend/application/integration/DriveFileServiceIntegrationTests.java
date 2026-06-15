@@ -1,20 +1,19 @@
 package com.notes_tracker.backend.application.integration;
 
 
+
 import com.notes_tracker.backend.kanboard.application.DriveFileService;
 import com.notes_tracker.backend.kanboard.application.dto.DriveFileDto;
 import com.notes_tracker.backend.kanboard.data.DriveFileRepository;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +31,7 @@ public class DriveFileServiceIntegrationTests {
     @Autowired
     UserRepository userRepository;
 
+
     @AfterEach
     void cleanup() {
         this.repository.deleteAll();
@@ -45,7 +45,6 @@ public class DriveFileServiceIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
                 .build());
     }
 

@@ -22,7 +22,7 @@ public class UserServiceTests {
         User user = new User.Builder()
                 .displayName("John Doe")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
+
                 .build();
 
         when(repo.findById("user-123")).thenReturn(Optional.of(user));
@@ -45,7 +45,7 @@ public class UserServiceTests {
         User existingUser = new User.Builder()
                 .displayName("Old Name")
                 .emailAddress("old@example.com")
-                .password("securePassword123")
+
                 .build();
 
         when(repo.findById("user-123")).thenReturn(Optional.of(existingUser));

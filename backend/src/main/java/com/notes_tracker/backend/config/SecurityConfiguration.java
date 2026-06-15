@@ -32,12 +32,17 @@ public class SecurityConfiguration {
     @Value("${auth.default.success.url}")
     private String authDefaultSuccessUrl;
 
+    @Value("${auth.logout.success.url}")
+    private String authLogoutSuccessUrl;
+
     public SecurityConfiguration(CustomOidcUserService customOidcUserService) {
         this.customOidcUserService = customOidcUserService;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        System.out.println(this.authDefaultSuccessUrl.startsWith("http"));
+        System.out.println(this.authLogoutSuccessUrl.startsWith("http"));
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
@@ -48,7 +53,7 @@ public class SecurityConfiguration {
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.oidcUserService(this.customOidcUserService))
                                 .defaultSuccessUrl(this.authDefaultSuccessUrl, true) //force redirect to this frontend page when sucessfull loged in
                         ).logout(logout -> logout
-//                        .logoutSuccessUrl("http://localhost:5173/login")    // redirect to frontend login page after logout //TODO
+                        .logoutSuccessUrl(this.authLogoutSuccessUrl)    // redirect to frontend login page after logout //TODO
                         .invalidateHttpSession(true)    //Invalidate the session
                         .clearAuthentication(true)  // clear authentication context
                         .deleteCookies("JESSIONID") // remove session cookie

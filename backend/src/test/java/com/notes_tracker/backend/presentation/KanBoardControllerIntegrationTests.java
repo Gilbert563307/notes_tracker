@@ -71,12 +71,12 @@ public class KanBoardControllerIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
+
                 .build());
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void createBoard() throws Exception {
         KanBoardDto dto = new KanBoardDto(
                 null, "New Board", savedUser.getId(), "#11111", false, true, "img.png", null, null
@@ -93,7 +93,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void getBoardById() throws Exception {
         KanBoard saved = kanBoardRepository.save(new KanBoard.Builder()
                 .name("Persistent Board")
@@ -109,7 +109,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void updateBoard() throws Exception {
         KanBoard saved = kanBoardRepository.save(new KanBoard.Builder()
                 .name("Old Name")
@@ -129,7 +129,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void deleteBoard() throws Exception {
         KanBoard saved = kanBoardRepository.save(new KanBoard.Builder()
                 .name("To Be Deleted")
@@ -143,7 +143,7 @@ public class KanBoardControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void getBoardsWithPagination() throws Exception {
         kanBoardRepository.save(new KanBoard.Builder().name("Board 1").userId(savedUser.getId()).build());
         kanBoardRepository.save(new KanBoard.Builder().name("Board 2").userId(savedUser.getId()).build());
@@ -159,7 +159,7 @@ public class KanBoardControllerIntegrationTests {
     @Test
     void shouldReturnUnauthorizedWhenNoUser() throws Exception {
         mockMvc.perform(get("/kanboard"))
-                .andExpect(status().isForbidden()); // Or isForbidden() depending on your SecurityConfig
+                .andExpect(status().isUnauthorized()); // Or isForbidden() depending on your SecurityConfig
     }
 
     @Test

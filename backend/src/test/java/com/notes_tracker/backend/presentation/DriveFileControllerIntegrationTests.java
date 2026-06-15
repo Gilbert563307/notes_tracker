@@ -53,12 +53,12 @@ class DriveFileControllerIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
+
                 .build());
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void createFile() throws Exception {
         DriveFileDto request = new DriveFileDto(
                 null,
@@ -84,7 +84,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void getFileById() throws Exception {
         // Arrange: Seed database directly via repository
         DriveFile saved = repository.save(new DriveFile.Builder()
@@ -102,7 +102,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void updateFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")
@@ -133,7 +133,7 @@ class DriveFileControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void deleteFile() throws Exception {
         DriveFile saved = repository.save(new DriveFile.Builder()
                 .name("file.pdf")

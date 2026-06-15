@@ -50,12 +50,12 @@ public class TaskControllerIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
+
                 .build());
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void createTask() throws Exception {
 
         TaskDto dto = new TaskDto(
@@ -83,7 +83,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void getTaskById() throws Exception {
 
         Task created = repository.save(
@@ -100,7 +100,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void updateTask() throws Exception {
 
         Task saved = repository.save(
@@ -134,7 +134,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void deleteTask() throws Exception {
 
         Task saved = repository.save(
@@ -152,7 +152,7 @@ public class TaskControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void getTasks() throws Exception {
 
         repository.save(new Task.Builder()

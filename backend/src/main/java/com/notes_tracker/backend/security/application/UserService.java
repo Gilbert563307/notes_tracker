@@ -66,11 +66,29 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with provided id " + userId));
     }
 
+    //Method can be made smarter
     public String getUserIdByAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oauth2User.getAttribute("email");
-        User user  = this.getUserByEmail(email);
+
+        if (authentication == null) {
+            throw new IllegalStateException("No authentication found");
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof OAuth2User oauth2User) {
+            email = oauth2User.getAttribute("email");
+        }
+        else if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+            email = userDetails.getUsername();
+        }
+        else {
+            throw new IllegalStateException("Unsupported principal type: " + principal.getClass());
+        }
+
+        User user = this.getUserByEmail(email);
         return user.getId();
     }
 }

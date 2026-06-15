@@ -4,6 +4,7 @@ import com.notes_tracker.backend.kanboard.domain.Folder;
 import com.notes_tracker.backend.security.data.UserRepository;
 import com.notes_tracker.backend.security.domain.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import tools.jackson.databind.ObjectMapper;
 import com.notes_tracker.backend.kanboard.application.dto.FolderDto;
@@ -51,12 +52,12 @@ class FolderControllerIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
+
                 .build());
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void createFolder() throws Exception {
         FolderDto request = new FolderDto(
                 null,
@@ -80,7 +81,7 @@ class FolderControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void getFolderById() throws Exception {
         Folder created = this.repository.save( new Folder.Builder()
                 .name("Folder A")
@@ -95,7 +96,7 @@ class FolderControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void updateFolder() throws Exception {
 
         Folder created = this.repository.save( new Folder.Builder()
@@ -126,7 +127,7 @@ class FolderControllerIntegrationTests {
     }
 
     @Test
-    @WithUserDetails("john@example.com")
+    @WithMockUser("john@example.com")
     void deleteFolder() throws Exception {
         Folder created = this.repository.save( new Folder.Builder()
                 .name("My Folder")

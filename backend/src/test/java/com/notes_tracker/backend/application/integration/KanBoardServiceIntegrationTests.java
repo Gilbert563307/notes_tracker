@@ -55,7 +55,7 @@ public class KanBoardServiceIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
+
                 .build());
     }
 

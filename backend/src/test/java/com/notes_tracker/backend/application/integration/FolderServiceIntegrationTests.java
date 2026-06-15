@@ -1,6 +1,7 @@
 package com.notes_tracker.backend.application.integration;
 
 
+
 import com.notes_tracker.backend.kanboard.application.FolderService;
 import com.notes_tracker.backend.kanboard.application.dto.FolderDto;
 import com.notes_tracker.backend.kanboard.data.FolderRepository;
@@ -43,10 +44,8 @@ public class FolderServiceIntegrationTests {
         this.savedUser = this.userRepository.save(new User.Builder()
                 .displayName("mock-user")
                 .emailAddress("john@example.com")
-                .password("securePassword123")
                 .build());
     }
-
 
     @Test
     @WithMockUser("john@example.com")
