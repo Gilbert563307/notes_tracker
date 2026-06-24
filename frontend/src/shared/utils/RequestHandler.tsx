@@ -23,6 +23,7 @@ export class RequestHandler {
     if (!(request instanceof Request)) {
       throw new Error("Invalid request type");
     }
+
     return await fetch(request);
   }
 
@@ -120,7 +121,7 @@ export class RequestHandler {
         }
       }
 
-      if(this.#withCredentials){
+      if (this.#withCredentials) {
         options.credentials = "include";
       }
 

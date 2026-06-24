@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../css/style.css";
 import SimpleTextEditor from "../../../../shared/features/texteditor/presentation/components/SimpleTextEditor";
 import { useForm } from "react-hook-form";
-import { kanBoardController } from "../KanBoardController";
-import { CreateKanBoardTaskRequest } from "../request/CreateKanBoardTaskRequest";
-import { useNavigate } from "react-router";
 
-export default function CreateKanBoardTaskForm({ onClose, kanBoardId }: { onClose: () => void; kanBoardId: string }) {
+type props = {
+  onClose: () => void;
+  createTaskInKanBoard: (data: { title: string; description: string }) => void;
+};
+
+export default function CreateKanBoardTaskForm({ onClose, createTaskInKanBoard }: props) {
   const [description, setDescription] = useState<string>("");
 
   const {
@@ -17,16 +19,11 @@ export default function CreateKanBoardTaskForm({ onClose, kanBoardId }: { onClos
     formState: { errors },
   } = useForm({});
 
-  const navigate = useNavigate();
-
   async function onSubmit(data: { title: string }) {
-    const response = await kanBoardController.createNewTaskInKanBoard(
-      new CreateKanBoardTaskRequest({ title: data.title, description: description }, kanBoardId),
-    );
-    if (response.length === 0) return;
-    navigate("/kanboards/read/" + kanBoardId);
-    // reset();
-    // setDescription("");
+    onClose();
+    await createTaskInKanBoard({ title: data.title, description: description });
+    reset();
+    setDescription("");
   }
 
   return (

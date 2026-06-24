@@ -3,6 +3,7 @@ import { NotificationDto } from "../../../shared/features/notification/domain/dt
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import { KanBoardService, kanBoardService } from "../application/KanBoardService";
 import type { CreateKanBoardRequest } from "../application/request/CreateKanBoardRequest";
+import type { KanBoard } from "../domain/KanBoard";
 import type { CreateKanBoardTaskRequest } from "./request/CreateKanBoardTaskRequest";
 
 export class KanBoardController {
@@ -35,15 +36,35 @@ export class KanBoardController {
   }
 
   async getTasksByKanBoardId(boardId: string) {
-    const response = await this.#kanBoardService.getTasksByKanBoardId(boardId);
-    this.#setMessageToUser(response.notification);
-    return response;
+    try {
+      return await this.#kanBoardService.getTasksByKanBoardId(boardId);
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
   }
 
   async createNewTaskInKanBoard(request: CreateKanBoardTaskRequest) {
-    const response = await this.#kanBoardService.createNewTaskInKanBoard(request);
-    this.#setMessageToUser(response.notification);
-    return response;
+    try {
+      return await this.#kanBoardService.createNewTaskInKanBoard(request);
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
+  }
+
+  async updateKanBoard(data: { name: string; color: string }, kanBoard: KanBoard | undefined) {
+    try {
+      return await this.#kanBoardService.updateKanBoard(data, kanBoard);
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
+  }
+
+  async deleteKanBoard(id: string | undefined) {
+    try {
+      return await this.#kanBoardService.deleteKanBoard(id);
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
   }
 
   /**

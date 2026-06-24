@@ -1,3 +1,4 @@
+import { InvalidNameAndColourArgException } from "../presentation/exceptions/exceptions";
 import type { Task } from "./Task";
 
 type KanBoardProps = {
@@ -84,6 +85,14 @@ export class KanBoard {
     return Math.floor((this.currentDate - new Date(this.updatedAt)) / (1000 * 60 * 60 * 24));
   }
 
+  updateNameAndColor(name: string, color: string) {
+    if (!name || !color) {
+      throw new InvalidNameAndColourArgException();
+    }
+    this.name = name;
+    this.color = color;
+  }
+
   // assignTask(task: Task): void {
   //   this.tasks.push(task);
   // }
@@ -107,6 +116,21 @@ export class KanBoard {
     };
   }
 
+  toJsonWithoutTasks() {
+    return {
+      id: this.id,
+      name: this.name,
+      userId: this.userId,
+      color: this.color,
+      archived: this.archived,
+      collaborative: this.collaborative,
+      imageUrl: this.imageUrl,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
+
+
   toCreateJson() {
     return {
       name: this.name,
@@ -119,15 +143,15 @@ export class KanBoard {
 
   static getDefaultHeaders(): Array<{ id: string; title: string; description: string; color: string }> {
     return [
-      { id: "todo", title: "Todo", description: "This item hasn't been started", color: "text-success" },
+      { id: "TODO", title: "Todo", description: "This item hasn't been started", color: "text-success" },
       {
-        id: "in-progress",
+        id: "DOING",
         title: "In Progress",
         description: "This is actively being worked on",
         color: "text-warning",
       },
-      { id: "in-review", title: "In review", description: "", color: "text-primary" },
-      { id: "done", title: "Done", description: "This has been completed", color: "text-info" },
+      { id: "REVIEW", title: "In review", description: "", color: "text-primary" },
+      { id: "DONE", title: "Done", description: "This has been completed", color: "text-info" },
     ];
   }
 

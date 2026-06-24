@@ -11,30 +11,32 @@ export default function AuthLoginPage() {
   }
 
   return (
-    <div className="container-fluid vh-100">
-      <div className="row h-100">
-        {/* LEFT SIDE - FORM */}
-        <div className=" d-flex align-items-center justify-content-center bg-white p-5">
-          <div className="w-25">
-            <h2 className="mb-4 fw-semibold">Your Tasks's</h2>
+    <article className="auth-article ">
+      <article className="auth-vector">
+        <div className="auth-content">
+          {/* LEFT SIDE - FORM */}
+          <div className="auth-content-section">
+            <div >
+              <h2 className="mb-4 fw-semibold">Your Tasks's</h2>
 
-            <div className="sign-in-buttons">
-              {/* Signup Button */}
+              <div className="sign-in-buttons">
+                {/* Signup Button */}
 
-              <button type="button" className="btn sign-in-btn google-button" onClick={signInWithGoogle}>
-                <img src={IMAGES.googleIcon} className="sign-in-icons" alt="goole icon"></img>
-                Sign in with Google
-              </button>
+                <button type="button" className="btn sign-in-btn google-button" onClick={signInWithGoogle}>
+                  <img src={IMAGES.googleIcon} className="sign-in-icons" alt="goole icon"></img>
+                  Sign in with Google
+                </button>
 
-              <p className="text-center mt-3">
-                <Link to="/auth/policy" className="btn btn-link">
-                  Our Sign In policy
-                </Link>
-              </p>
+                <p className="text-center mt-3">
+                  <Link to="/auth/policy" className="btn btn-link">
+                    Our Sign In policy
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </article>
+    </article>
   );
 }

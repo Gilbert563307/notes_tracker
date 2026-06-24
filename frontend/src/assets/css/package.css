@@ -353,7 +353,7 @@ html.dark .add-task-button {
 .notes-tracker-btn {
   /* Reduced vertical and horizontal padding */
   padding: 6px 16px !important;
-  height: 30px;
+  height: 32px;
   font-size: smaller;
   border-radius: 6px; /* Slightly tighter corner radius for the smaller height */
   cursor: pointer;
@@ -391,6 +391,11 @@ html.dark .add-task-button {
 
 .notes-tracker-btn-secondary:active {
   background-color: #f1f3f4;
+}
+
+.kanboard-options-header{
+  display: flex;
+  gap: 0.5em;
 }
 
 @media only screen and (max-width: 768px) {

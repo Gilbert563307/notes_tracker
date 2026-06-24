@@ -118,7 +118,8 @@ public class KanBoardService {
     public List<TaskDto> addNewTaskToKanBoard(AddNewTaskToKanBoard request, String boardId) {
         Task task =  this.getTaskFromTaskDto(request.task(), this.userService.getUserIdByAuthentication());
         KanBoard board = getBoardById(boardId);
-        board.assignTask(task);
+        Task savedTask = taskRepository.save(task);
+        board.assignTask(savedTask);
         KanBoard saved = this.kanBoardRepository.save(board);
         return TaskDto.fromRawTaskList(saved.getTasks());
     }

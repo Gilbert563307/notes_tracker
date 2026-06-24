@@ -30,3 +30,4 @@ export class JsonParsingError extends BaseException {
     super(message, 1);
   }
 }
+

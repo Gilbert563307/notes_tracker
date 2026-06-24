@@ -12,8 +12,11 @@ import type { CreateKanBoardTaskRequest } from "../presentation/request/CreateKa
 import { CreateTaskRequest } from "../presentation/request/CreateTaskRequest";
 import {
   FailedToCreateTaskIntoProjectException,
+  FailedToDeleteKanBoardException,
+  FailedToFindTasksException,
   FailedToFindYourKanBoardException,
   FailedToLoadKanBoardsException,
+  FailedToUpdateKanBoardException,
 } from "../presentation/exceptions/exceptions";
 import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
 import { JsonParsingError } from "../../../shared/exceptions/exceptions";
@@ -33,13 +36,16 @@ export class KanBoardService extends OAuth2ResourceService {
     const response = await super.findAll();
 
     if (!response.ok) {
-      const data: ApiErrorResponse = await response.json();
-      throw new FailedToLoadKanBoardsException(data.message);
+      try {
+        const data: ApiErrorResponse = await response.json();
+        throw new FailedToLoadKanBoardsException(data.message);
+      } catch (error) {
+        throw new FailedToLoadKanBoardsException();
+      }
     }
 
     const responseData: getKanBoardsResponse = await response.json();
-    const data = KanBoardMapper.findAllResponseToDomain(responseData);
-    return data;
+    return KanBoardMapper.findAllResponseToDomain(responseData);
   }
 
   async createKanBoard(request: CreateKanBoardRequest): Promise<{ notification: NotificationDto; created: boolean }> {
@@ -125,37 +131,53 @@ export class KanBoardService extends OAuth2ResourceService {
   }
 
   //TODO NEEDS VI TESTING
-  async getTasksByKanBoardId(boardId: string): Promise<{ notification: NotificationDto; tasks: Task[] }> {
-    try {
-      const url: string = `${super.getRequestHandler().getBaseUrl()}${super.getResource()}/${boardId}/tasks`;
+  async getTasksByKanBoardId(boardId: string): Promise<Array<Task>> {
+    const url: string = `${super.getRequestHandler().getBaseUrl()}${super.getResource()}/${boardId}/tasks`;
 
-      const response = await super
-        .getRequestHandler()
-        .perform(new RequestHandler.RequestBuilder().get().withCredentials().url(url).build());
+    const response = await super
+      .getRequestHandler()
+      .perform(new RequestHandler.RequestBuilder().get().withCredentials().url(url).build());
 
-      if (!response.ok) {
+    if (!response.ok) {
+      try {
         const data: ApiErrorResponse = await response.json();
-        return {
-          notification: new NotificationDto.Builder()
-            .danger()
-            .message(data.message || "Failed to load tasks. Please try again.")
-            .build(),
-          tasks: [],
-        };
+        if (data.message) throw new Error(data.message);
+        throw new FailedToFindTasksException();
+      } catch (error) {
+        throw new FailedToFindTasksException();
       }
-
-      const data: getTasksByKanBoardIdResponse = await response.json();
-      return {
-        notification: new NotificationDto.Builder().success().build(),
-        tasks: TaskMapper.toTaskList(data),
-      };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      return {
-        notification: new NotificationDto.Builder().danger().message(message).build(),
-        tasks: [],
-      };
     }
+
+    const data: getTasksByKanBoardIdResponse = await response.json();
+    return TaskMapper.toTaskList(data);
+  }
+
+  async updateKanBoard(data: { name: string; color: string }, kanBoard: KanBoard | undefined): Promise<boolean> {
+    if (!kanBoard) {
+      throw new FailedToFindYourKanBoardException();
+    }
+    kanBoard?.updateNameAndColor(data.name, data.color);
+    const response = await super.update(kanBoard.toJsonWithoutTasks());
+
+    if (!response.ok) {
+      const data: ApiErrorResponse = await response.json();
+      if (data.message) throw new Error(data.message);
+      throw new FailedToUpdateKanBoardException();
+    }
+    return true;
+  }
+
+  async deleteKanBoard(id: string | undefined): Promise<boolean> {
+    if (!id) {
+      throw new FailedToDeleteKanBoardException();
+    }
+    const response = await super.delete(id);
+    if (!response.ok) {
+      const data: ApiErrorResponse = await response.json();
+      if (data.message) throw new Error(data.message);
+      throw new FailedToDeleteKanBoardException();
+    }
+    return true;
   }
 }
 

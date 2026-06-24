@@ -1,232 +1,96 @@
-.kanban-card {
-  max-width: 390px !important;
+.main-columns{
+    margin: 1em; 
+    display: grid;
+    grid-template-columns: 284px 284px 284px 284px;
+    gap:  1em;
 }
 
-.kanban-card:hover {
-  border: 1px solid rgb(13, 110, 253);
-  opacity: 1;
+.card-own{
+    display: flex;
+    flex-direction: column;
+    background-color: #F1F2F4;
+    border-radius: 10px;
+    max-height: 800px;
+    overflow-y: auto;
 }
 
-/* PAGE */
-
-.kanban-page {
-  background: #f5f7fb;
-  min-height: 100vh;
-  padding: 2rem;
+.card-parent-header{
+    font-weight: 410;
+    margin: 1em 1em 0em 1em;
 }
 
-/* SEARCH */
 
-.search-row {
-  margin-bottom: 2rem;
+.board-card-item{
+    list-style-type: none;
+    background-color: #fff;
+    padding: 0.4em
 }
 
-.search-container {
-  display: flex;
-  align-items: center;
-
-  background: white;
-
-  border-radius: 12px;
-
-  padding: 0.75rem 1rem;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.board-tasks{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin: 1em;
 }
 
-.search-icon {
-  margin-right: 0.75rem;
-  color: #2563eb;
+.add-card-btn{
+    border: none;
+    text-align: left;
+    margin: 0em 1em 0.5em 1em;
+    padding: 4px 0px 4px 0px
 }
 
-/* BOARD */
-
-.kanban-board {
-  display: flex;
-
-  gap: 1.5rem;
-
-  padding-bottom: 1rem;
+.card-parent-header{
+    color: #172B4D;
 }
 
-/* COLUMN */
-
-.kanban-column {
-  min-width: 350px;
-  background-color: #f5f7fb;
-  /* display: flex; */
-
-  flex-shrink: 0;
+.main-board{
+    display: flex;
+    background-image: url("../../../../assets/images/land_scape.png");
+    min-height: 60dvh;
 }
 
-.column-header {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  margin-bottom: 0.25rem;
+/* add border so that the items do not bounce when hover */
+/* https://stackoverflow.com/questions/67873631/how-to-stop-the-elements-from-growing-when-hovering-over-an-element */
+.board-card-item{
+    border: 2px solid transparent;
 }
 
-.column-left {
-  display: flex;
-
-  align-items: center;
+.board-card-item:hover{
+    border: 2px solid #007BFF;
+    padding: none
 }
 
-.column-dot {
-  margin-right: 0.5rem;
-
-  font-size: 1.2rem;
+.button-card-content{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 0.4em;
 }
 
-.column-title {
-  margin-right: 0.5rem;
-
-  color: #1f2937;
+.button-card-content > i {
+    margin-left: 0.2em;
 }
 
-.task-count {
-  background: rgba(107, 114, 128, 0.15);
-
-  color: #6b7280;
-
-  border-radius: 999px;
-
-  padding: 0.2rem 0.6rem;
-
-  font-size: 0.75rem;
+.add-card-btn:hover{
+    background-color: #D0D4DB;
 }
 
-.column-actions {
-  display: flex;
-
-  gap: 0.75rem;
-
-  color: #9ca3af;
-
-  cursor: pointer;
+html.dark .board-card-title {
+    color:  black !important;
 }
 
-.column-description {
-  color: #9ca3af;
-
-  font-size: 0.75rem;
-
-  min-height: 1rem;
-
-  margin-bottom: 1rem;
-
-  padding-left: 0.25rem;
+.read-link {
+    text-decoration: none !important;
+    color: black;
 }
 
-/* TASKS */
-
-.task-list {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 0.75rem;
+html.dark .read-link {
+    color: #B6C2CF;
 }
 
-/* CARD */
-
-.kanban-card {
-  max-width: 390px;
-
-  background: white;
-
-  border-radius: 16px;
-
-  border: 1px solid transparent;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-  transition: all 0.2s ease;
-
-  cursor: grab;
-}
-
-.kanban-card:hover {
-  border: 1px solid rgb(13, 110, 253);
-
-  transform: translateY(-2px);
-}
-
-.kanban-card-body {
-  padding: 1rem;
-}
-
-.task-header {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  margin-bottom: 0.75rem;
-}
-
-.task-id {
-  color: #9ca3af;
-
-  font-size: 0.7rem;
-
-  font-family: monospace;
-}
-
-.task-avatar {
-  width: 20px;
-
-  height: 20px;
-
-  border-radius: 50%;
-
-  border: 1px solid #d1d5db;
-
-  background: rgba(107, 114, 128, 0.1);
-}
-
-.task-title {
-  margin: 0;
-
-  font-size: 0.85rem;
-
-  line-height: 1.4;
-
-  color: #333;
-}
-
-.kan-board-column {
-  background-color: #f6f8fa;
-  border-radius: 10px;
-}
-.kan-board-article {
-  gap: 0.5em;
-}
-
-.kanboard-card-title {
-  font-weight: 500;
-}
-
-.kan-board-column > div,
-.kan-board-column > p {
-  margin-left: 0.4em;
-  margin-right: 0.4em;
-}
-
-.kanboard-action-buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.kanboard-action-buttons > button {
-  color: rgb(89, 99, 100, 1) !important;
-}
-
-.kanboard-search-glass {
-  color: rgb(89, 99, 100, 1) !important;
+@media only screen and (max-width: 768px) {
+    .main-board{
+        overflow: scroll;
+    }
 }

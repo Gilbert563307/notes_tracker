@@ -12,6 +12,7 @@ export default function useGetKanBoardTasksHook({ kanBoardId }: { kanBoardId: st
       if (!kanBoardId) return;
       const response = await kanBoardController.getTasksByKanBoardId(kanBoardId);
       if (!isMounted) return;
+      if (!response) return;
       if (response.length === 0) return;
       setTasks(response);
     }

@@ -1,14 +1,17 @@
 import { useEffect } from "react";
 import type { KanBoard } from "../../domain/KanBoard";
 import { useForm } from "react-hook-form";
+import DeleteKanBoardButton from "./DeleteKanBoardButton";
+import "../css/kanboardform.css";
 
 type KanBoardFormType = {
   onSubmit: (data: { name: string; color: string }) => void;
   board: KanBoard;
   submitButtonValue: string;
+  deleteKanBoard: () => void;
 };
 
-export default function KanBoardForm({ onSubmit, board, submitButtonValue }: KanBoardFormType) {
+export default function KanBoardForm({ onSubmit, board, submitButtonValue, deleteKanBoard }: KanBoardFormType) {
   const values: { name: string; color: string } = { name: "", color: "" };
   const DEFAULT_BLACK_HEXCODE: string = "#000000";
   const {
@@ -73,14 +76,16 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue }: Kan
               id="color"
               type="color"
               className="form-control form-control-color form-control-sm"
-              
               {...register("color")}
             />
           </div>
 
-          <button type="submit" className="btn btn-success btn-sm px-3">
-            {submitButtonValue}
-          </button>
+          <div className="kanboard-form-options">
+            <button type="submit" className="notes-tracker-btn notes-tracker-btn-primary">
+              {submitButtonValue}
+            </button>
+            <DeleteKanBoardButton kanBoardId={board.getId()} deleteKanBoard={deleteKanBoard} />
+          </div>
         </form>
       </div>
     </article>

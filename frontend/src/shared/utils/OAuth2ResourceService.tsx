@@ -12,7 +12,7 @@ export class OAuth2ResourceService {
     this.#requestHandler = requestHandler;
   }
 
-  async create(data: unknown): Promise<Response> {
+  protected async create(data: unknown): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .post()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
@@ -23,7 +23,7 @@ export class OAuth2ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async read(id: string | number): Promise<Response> {
+  protected async read(id: string | number): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .get()
       .url(this.#requestHandler.getBaseUrl() + this.#resource + `/${id}`)
@@ -33,7 +33,7 @@ export class OAuth2ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async update(data: unknown): Promise<Response> {
+  protected async update(data: unknown): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .put()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
@@ -43,7 +43,7 @@ export class OAuth2ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async delete(id: string | number): Promise<Response> {
+  protected async delete(id: string | number): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .delete()
       .url(this.#requestHandler.getBaseUrl() + this.#resource + `/${id}`)
@@ -53,7 +53,7 @@ export class OAuth2ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  async findAll(): Promise<Response> {
+  protected async findAll(): Promise<Response> {
     const request = new RequestHandler.RequestBuilder()
       .get()
       .url(this.#requestHandler.getBaseUrl() + this.#resource)
@@ -63,11 +63,11 @@ export class OAuth2ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
-  getRequestHandler(): RequestHandler {
+  protected getRequestHandler(): RequestHandler {
     return this.#requestHandler;
   }
 
-  getResource(): string {
+  protected getResource(): string {
     return this.#resource;
   }
 }

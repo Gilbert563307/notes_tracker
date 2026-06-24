@@ -11,9 +11,7 @@
 
 .kanboard-page > article:first-child {
   margin-top: 1em;
-  border: 1px solid #dee2e6;
   border-radius: 5px;
-  background-color: #F8F9FA;
 }
 
 .kanboard-page > article:first-child > p {
@@ -25,17 +23,23 @@
   margin: 0.4em;
 }
 
-.kanboard-page > article:nth-child(2){
+.kanboard-page > article:nth-child(2) {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.5em;
 }
 
-.search-section > input{
-  height: 30px;
+.search-section > input {
+  height: 35px;
 }
 
-.kanboard-projects{
+.kanboard-projects {
   border: 1px solid #dee2e6;
   border-radius: 5px;
+}
+
+.kanboard-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
 }

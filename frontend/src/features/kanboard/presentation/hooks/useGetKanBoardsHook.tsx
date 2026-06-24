@@ -15,6 +15,7 @@ export default function useGetKanBoardsHook() {
     async function fetchBoards() {
       const response = await kanBoardController.getKanBoards();
       if (!isMounted) return;
+      if (!response) return;
       if (response.total === 0) return;
       setData(response);
     }

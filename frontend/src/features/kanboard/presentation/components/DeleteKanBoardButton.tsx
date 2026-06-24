@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 import { Show } from "../../../../shared/features/show/Show";
+import BS5Modal, { MODAL_SIZES } from "../../../../shared/features/bs5/presentation/components/BS5Modal";
 
-export default function DeleteKanBoardButton({kanBoardId}: string) {
+export default function DeleteKanBoardButton({
+  kanBoardId,
+  deleteKanBoard,
+}: {
+  kanBoardId: string | undefined;
+  deleteKanBoard: () => void;
+}) {
   const [deleteModal, setDeleteModal] = useState(false);
 
-  const showModal = () => {
+  if (!kanBoardId) return "";
+
+  function showModal() {
     setDeleteModal(true);
-  };
+  }
 
-  const hideModal = () => {
+  function hideModal() {
     setDeleteModal(false);
-  };
+  }
 
-  const deleteFolder = () => {
-    // dispatch({ type: KAN_BOARDS_CONTROLLER_ACTIONS.DELETE, payload: kanBoardId });
+  async function deleteKanBoardButton() {
+    await deleteKanBoard();
     hideModal();
-  };
+  }
 
   const modalContent = (
     <p>
@@ -26,12 +35,12 @@ export default function DeleteKanBoardButton({kanBoardId}: string) {
 
   return (
     <React.Fragment>
-      <button onClick={showModal} type="button" className="btn btn-outline-danger delete-btn-plain">
+      <button onClick={showModal} type="button" className="notes-tracker-btn notes-tracker-btn-secondary">
         Delete kanboard
       </button>
       <Show>
         <Show.When isTrue={deleteModal}>
-          {/* <BS5Modal
+          <BS5Modal
             modal_id="delete_kanboard_modal"
             modal_label="delete_kanboard_modal"
             modal_title="Are you sure you want to delete this kan board?"
@@ -40,11 +49,11 @@ export default function DeleteKanBoardButton({kanBoardId}: string) {
             modal_footer={true}
             headerCentre={true}
             closeModal={hideModal}
-            saveChangesFunction={deleteFolder}
+            saveChangesFunction={deleteKanBoardButton}
             modalSize={MODAL_SIZES.NONE}
             saveChangesTitle="Delete"
             saveChangesClass={4}
-          /> */}
+          />
         </Show.When>
       </Show>
     </React.Fragment>

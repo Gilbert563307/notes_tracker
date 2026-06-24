@@ -5,6 +5,28 @@
     color: white;
 } */
 
+.auth-vector {
+    background-color: #86BBD8;
+    clip-path: polygon(0% 40%, 8% 16%, 28% 0%, 57% 5%, 71% 11%, 100% 19%, 100% 37%, 94% 61%, 86% 77%, 71% 85%, 49% 83%, 34% 77%, 22% 64%, 13% 53%, 1% 46%);
+   
+    min-height: 578px;
+    min-width: 550px;
+    display: flex;
+    justify-content: center;
+}
+
+.auth-article {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 100dvh;
+}
+
+.auth-content-section{
+    margin-top: 50%;
+}
+
 .sign-in-btn{
     display: flex;
     justify-content: center;
@@ -25,6 +47,3 @@
     height: 30px;
 }
 
-.google-button{
-    border: 1px solid #0d6efd;
-}
