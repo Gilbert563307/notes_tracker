@@ -16,7 +16,7 @@ import CreateTaskPage from "./pages/tasks/CreateTaskPage";
 import ListTasksPage from "./pages/tasks/ListTasksPage";
 import AuthLoginPage from "./pages/auth/AuthLoginPage";
 import AuthVerifyPage from "./pages/auth/AuthVerifyPage";
-
+import ReadKanBoardPageContext from "./features/kanboard/presentation/context/ReadKanBoardPageContext";
 
 const routes = [
   {
@@ -48,7 +48,9 @@ const routes = [
         path: "/kanboards/read/:kanBoardId",
         element: (
           <ProtectedRoute>
-            <ReadKanBoardPage />
+            <ReadKanBoardPageContext>
+              <ReadKanBoardPage />
+            </ReadKanBoardPageContext>
           </ProtectedRoute>
         ),
       },

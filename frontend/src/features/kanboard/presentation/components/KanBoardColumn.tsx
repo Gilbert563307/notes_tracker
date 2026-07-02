@@ -1,8 +1,9 @@
 import type { Task } from "../../domain/Task";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import CreateCardButton from "./CreateCardButton";
 import { CreateKanBoardTaskRequest } from "../request/CreateKanBoardTaskRequest";
 import { kanBoardController } from "../KanBoardController";
+import { KANBOARD_PAGE_ACTIONS, useReadKanBoardPageContext } from "../context/ReadKanBoardPageContext";
 
 type componentProps = {
   title: string;
@@ -21,15 +22,15 @@ export default function KanBoardColumn({
   onDragEnter,
   handleDragStart,
 }: componentProps) {
-  
-  
+  const { dispatch } = useReadKanBoardPageContext();
+
   async function createTaskInKanBoard(data: { title: string; description: string }) {
     const response = await kanBoardController.createNewTaskInKanBoard(
       new CreateKanBoardTaskRequest({ title: data.title, description: data.description }, kanBoardId),
     );
 
     if (response?.length === 0) return;
-   
+    dispatch({ type: KANBOARD_PAGE_ACTIONS.LIST_TASKS_BY_KANBOARD_ID, payload: kanBoardId });
   }
 
   return (
