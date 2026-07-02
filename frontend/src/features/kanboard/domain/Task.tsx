@@ -87,6 +87,10 @@ export class Task {
     return "";
   }
 
+  getProjectId(): string {
+    return "";
+  }
+
   getAssigneeName(): string {
     return "";
   }
@@ -164,7 +168,8 @@ export class Task {
 
   static Builder = class {
     #id?: string;
-    #title!: string;
+    #projectId: string;
+    #title: string;
     #description?: string;
     #status: TaskStatus = "TODO";
     #priority: number = 0;
@@ -176,6 +181,12 @@ export class Task {
 
     id(id: string): this {
       this.#id = id;
+      return this;
+    }
+
+    //TODO ADD IN FINAL BUILD
+    projectId(id: string) {
+      this.#projectId = id;
       return this;
     }
 
