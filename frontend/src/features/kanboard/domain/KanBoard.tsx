@@ -1,5 +1,5 @@
 import { InvalidNameAndColourArgException } from "../presentation/exceptions/exceptions";
-import type { Task } from "./Task";
+import type { Task, TaskStatus } from "./Task";
 
 type KanBoardProps = {
   id?: string;
@@ -141,7 +141,7 @@ export class KanBoard {
     };
   }
 
-  static getDefaultHeaders(): Array<{ id: string; title: string; description: string; color: string }> {
+  static getDefaultHeaders(): Array<{ id: TaskStatus; title: string; description: string; color: string }> {
     return [
       { id: "TODO", title: "Todo", description: "This item hasn't been started", color: "text-success" },
       {

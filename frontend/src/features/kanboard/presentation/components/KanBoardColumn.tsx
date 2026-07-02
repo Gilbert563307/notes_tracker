@@ -1,4 +1,4 @@
-import type { Task } from "../../domain/Task";
+import type { Task, TaskStatus } from "../../domain/Task";
 import { Link } from "react-router";
 import CreateCardButton from "./CreateCardButton";
 import { CreateKanBoardTaskRequest } from "../request/CreateKanBoardTaskRequest";
@@ -7,7 +7,7 @@ import { KANBOARD_PAGE_ACTIONS, useReadKanBoardPageContext } from "../context/Re
 
 type componentProps = {
   title: string;
-  headerId: string;
+  headerId: TaskStatus;
   tasks: Array<Task>;
   kanBoardId: string;
   onDragEnter: () => void;
@@ -26,7 +26,7 @@ export default function KanBoardColumn({
 
   async function createTaskInKanBoard(data: { title: string; description: string }) {
     const response = await kanBoardController.createNewTaskInKanBoard(
-      new CreateKanBoardTaskRequest({ title: data.title, description: data.description }, kanBoardId),
+      new CreateKanBoardTaskRequest({ title: data.title, description: data.description, status: headerId }, kanBoardId),
     );
 
     if (response?.length === 0) return;

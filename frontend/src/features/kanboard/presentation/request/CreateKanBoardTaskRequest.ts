@@ -1,6 +1,9 @@
+import type { TaskStatus } from "../../domain/Task";
+
 type CreateKanBoardTaskForm = {
   title: string;
   description: string;
+  status: TaskStatus;
 };
 
 export class CreateKanBoardTaskRequest {
@@ -22,6 +25,10 @@ export class CreateKanBoardTaskRequest {
 
   getTitle() {
     return this.#data.title;
+  }
+
+  getStatus() {
+    return this.#data.status;
   }
 
   getDescription() {

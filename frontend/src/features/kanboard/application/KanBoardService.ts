@@ -1,5 +1,4 @@
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
-import { UseCookieStorage } from "../../../shared/utils/UseCookieStorage";
 import { NotificationDto } from "../../../shared/features/notification/domain/dto/NotificationDto";
 import type { CreateKanBoardRequest } from "./request/CreateKanBoardRequest";
 import { KanBoardMapper } from "./mapper/KanBoardMapper";
@@ -107,6 +106,7 @@ export class KanBoardService extends OAuth2ResourceService {
             new CreateTaskRequest.Builder()
               .title(request.getTitle())
               .description(request.getDescription())
+              .status(request.getStatus())
               .build()
               .toJson(),
           )
