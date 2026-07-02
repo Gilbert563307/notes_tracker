@@ -1,4 +1,4 @@
-export type TaskStatus = "TODO" | "DOING" | "REVIEW" | "DONE";
+export type TaskStatus = "BACKLOG" | "TODO" | "DOING" | "REVIEW" | "DONE";
 
 export type TaskProps = {
   id?: string;
@@ -83,6 +83,18 @@ export class Task {
     return this.updatedAt;
   }
 
+  getProjectName(): string {
+    return "";
+  }
+
+  getAssigneeName(): string {
+    return "";
+  }
+
+  getReporterName(): string {
+    return "";
+  }
+
   toJson() {
     return {
       id: this.id,
@@ -160,6 +172,7 @@ export class Task {
     #archived: boolean = false;
     #createdAt?: Date;
     #updatedAt?: Date;
+    #skipValidation: boolean = false;
 
     id(id: string): this {
       this.#id = id;
@@ -206,13 +219,20 @@ export class Task {
       return this;
     }
 
-    build(): Task {
-      if (!this.#title || this.#title.trim().length === 0) {
-        throw new Error("Title is required before building a Task.");
-      }
+    skipValidation() {
+      this.#skipValidation = true;
+      return this;
+    }
 
-      if (this.#title.length < Task.MIN_TITLE_LENGTH) {
-        throw new Error(`Task title must be at least ${Task.MIN_TITLE_LENGTH} characters long.`);
+    build(): Task {
+      if (this.#skipValidation === false) {
+        if (!this.#title || this.#title.trim().length === 0) {
+          throw new Error("Title is required before building a Task.");
+        }
+
+        if (this.#title.length < Task.MIN_TITLE_LENGTH) {
+          throw new Error(`Task title must be at least ${Task.MIN_TITLE_LENGTH} characters long.`);
+        }
       }
 
       return new Task({

@@ -1,46 +1,35 @@
-import { AUTH_STORAGE_KEYS } from "../../../shared/context/AuthProviderConfig";
+import { JsonParsingError } from "../../../shared/exceptions/exceptions";
+import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
-import { ResourceService } from "../../../shared/utils/ResourceService";
-import { UseCookieStorage } from "../../../shared/utils/UseCookieStorage";
-import type { AuthenticationCookie } from "../../auth/application/response/Authentication";
+import type { ApiErrorResponse } from "../../../types";
+import { FailedToFindYourTaskException } from "../presentation/exceptions/exceptions";
 import { TaskMapper } from "./mapper/TaskMapper";
 
 export const TASK_RESOURCE = "task";
-export class TaskService extends ResourceService {
-  #resource: string;
-  #requestHandler: RequestHandler;
-  #cookieStorage: UseCookieStorage;
-
-  constructor(resource: string, requestHandler: RequestHandler, cookieStorage: UseCookieStorage) {
+export class TaskService extends OAuth2ResourceService {
+  constructor(resource: string, requestHandler: RequestHandler) {
     super(resource, requestHandler);
-    this.#resource = resource;
-    this.#requestHandler = requestHandler;
-    this.#cookieStorage = cookieStorage;
   }
 
-  async #getToken(): Promise<string> {
-    const value: string | null = await this.#cookieStorage.readCookieValue(AUTH_STORAGE_KEYS.AUTH);
-    if (value === null) {
-      throw new Error("We couldn’t find your session token. Please sign out and log in again.");
+  async getTaskById(id: string) {
+    if (!id) {
+      throw new FailedToFindYourTaskException();
     }
-    const cookieData: AuthenticationCookie = JSON.parse(value);
-    return cookieData.token;
-  }
+    const response = await super.read(id);
 
-  async createTask(request: CreateTaskRequest){
+    if (!response.ok) {
+      const data: ApiErrorResponse = await response.json();
+      throw new FailedToFindYourTaskException(data.message);
+    }
+
     try {
-        const token = await this.#getToken();
-        const task = TaskMapper.toCreateTaskRequest(request);
-        const response = await super.create(token, task);
+      const data = await response.json();
+      return TaskMapper.toTask(data);
     } catch (error) {
-        
+      throw new JsonParsingError(error?.message);
     }
   }
 }
 
-const taskService = new TaskService(
-  TASK_RESOURCE,
-  new RequestHandler(import.meta.env.VITE_APP_BACKEND_URL),
-  new UseCookieStorage(),
-);
+const taskService = new TaskService(TASK_RESOURCE, new RequestHandler(import.meta.env.VITE_APP_BACKEND_URL));
 export { taskService };

@@ -1,9 +1,4 @@
-import React from "react";
-import { useAuthProvider } from "../../shared/context/AuthProviderConfig";
-import { Link } from "react-router";
-
 export default function SettingsPage() {
-  const { logout } = useAuthProvider();
   return (
     <article className="settings-options">
       {/* <ThemeModeComponent /> */}
@@ -16,24 +11,13 @@ export default function SettingsPage() {
             </div>
             <div className="toast-body">
               <ul>
-                <li>
-                  <button type="button" className="btn btn-link log-out-settings" onClick={logout}>
-                    Force Logout
-                  </button>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <Link to="/kanboards/read/0" title="Kanban default">
-                    Kanban default
-                  </Link>
-                </li>
+                <li>option</li>
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="card bug-card">
+        <div className="card bug-card mx-2">
           <div className="card-body">
             <h5 className="card-title">Report a Bug or Suggest an Improvement</h5>
 

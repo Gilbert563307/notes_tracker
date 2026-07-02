@@ -17,6 +17,8 @@ import ListTasksPage from "./pages/tasks/ListTasksPage";
 import AuthLoginPage from "./pages/auth/AuthLoginPage";
 import AuthVerifyPage from "./pages/auth/AuthVerifyPage";
 import ReadKanBoardPageContext from "./features/kanboard/presentation/context/ReadKanBoardPageContext";
+import ReadTaskPage from "./pages/tasks/ReadTaskPage";
+import UpdateTaskPage from "./pages/tasks/UpdateTaskPage";
 
 const routes = [
   {
@@ -77,12 +79,30 @@ const routes = [
             <ListTasksPage />
           </ProtectedRoute>
         ),
-        children: [
-          {
-            path: "/tasks/create",
-            element: "create task",
-          },
-        ],
+      },
+      {
+        path: "/tasks/create",
+        element: (
+          <ProtectedRoute>
+            <CreateTaskPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/tasks/read/:taskId",
+        element: (
+          <ProtectedRoute>
+            <ReadTaskPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/tasks/update/:taskId",
+        element: (
+          <ProtectedRoute>
+            <UpdateTaskPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/folders",

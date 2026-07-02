@@ -10,6 +10,7 @@ import com.notes_tracker.backend.kanboard.presentation.exception.DomainException
 @Document
 public class Task {
     public enum TaskStatus {
+        BACKLOG,
         TODO,
         DOING,
         REVIEW,

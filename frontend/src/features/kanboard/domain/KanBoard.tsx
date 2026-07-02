@@ -130,7 +130,6 @@ export class KanBoard {
     };
   }
 
-
   toCreateJson() {
     return {
       name: this.name,
@@ -143,6 +142,12 @@ export class KanBoard {
 
   static getDefaultHeaders(): Array<{ id: TaskStatus; title: string; description: string; color: string }> {
     return [
+      {
+        id: "BACKLOG",
+        title: "Backlog",
+        description: "Ideas and tasks that are not yet prioritized or ready to start",
+        color: "",
+      },
       { id: "TODO", title: "Todo", description: "This item hasn't been started", color: "text-success" },
       {
         id: "DOING",
@@ -150,7 +155,12 @@ export class KanBoard {
         description: "This is actively being worked on",
         color: "text-warning",
       },
-      { id: "REVIEW", title: "In review", description: "", color: "text-primary" },
+      {
+        id: "REVIEW",
+        title: "In review",
+        description: "This is being reviewed before completion",
+        color: "text-primary",
+      },
       { id: "DONE", title: "Done", description: "This has been completed", color: "text-info" },
     ];
   }
