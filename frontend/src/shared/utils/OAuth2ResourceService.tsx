@@ -63,11 +63,27 @@ export class OAuth2ResourceService {
     return await this.#requestHandler.perform(request);
   }
 
+  protected async search(data: Map<string, string | boolean>): Promise<Response> {
+    const urlWithRequestParams = this.getKeyValuePairsFromMap(data);
+
+    const request = new RequestHandler.RequestBuilder()
+      .get()
+      .url(this.#requestHandler.getBaseUrl() + this.#resource + `/search?${urlWithRequestParams}`)
+      .withCredentials()
+      .build();
+
+    return await this.#requestHandler.perform(request);
+  }
+
   protected getRequestHandler(): RequestHandler {
     return this.#requestHandler;
   }
 
   protected getResource(): string {
     return this.#resource;
+  }
+
+  private getKeyValuePairsFromMap(data: Map<any, any>): string {
+    return new URLSearchParams(Object.fromEntries(data.entries())).toString();
   }
 }

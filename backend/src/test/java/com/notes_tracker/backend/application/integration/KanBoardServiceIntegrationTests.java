@@ -258,4 +258,71 @@ public class KanBoardServiceIntegrationTests {
         assertNotNull(taskDtoList);
         assertEquals(1, taskDtoList.size());
     }
+
+    @Test
+    void getKanBoardBySearchTerm() throws Exception {
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId(this.savedUser.getId())
+                .build();
+        KanBoard board2 = new KanBoard.Builder()
+                .name("Old1")
+                .userId(this.savedUser.getId())
+                .build();
+        KanBoard board3 = new KanBoard.Builder()
+                .name("testing data")
+                .userId(this.savedUser.getId())
+                .build();
+
+        KanBoard board4 = new KanBoard.Builder()
+                .name("testing")
+                .userId(this.savedUser.getId())
+                .build();
+
+
+        this.repository.save(board);
+        this.repository.save(board2);
+        this.repository.save(board2);
+        this.repository.save(board3);
+        this.repository.save(board4);
+
+        List<KanBoardDto> results = this.kanBoardService.getKanBoardsBySearchTerm("testing data", null);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals(board3.getName(), results.get(0).name());
+    }
+
+
+    @Test
+    void getMultipleKanBoardsBySearchTerm() throws Exception {
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .color("#44444")
+                .userId(this.savedUser.getId())
+                .build();
+        KanBoard board2 = new KanBoard.Builder()
+                .name("Old 1")
+                .userId(this.savedUser.getId())
+                .build();
+        KanBoard board3 = new KanBoard.Builder()
+                .name("testing data")
+                .userId(this.savedUser.getId())
+                .build();
+
+        KanBoard board4 = new KanBoard.Builder()
+                .name("Old 2")
+                .userId(this.savedUser.getId())
+                .build();
+
+
+        this.repository.save(board);
+        this.repository.save(board2);
+        this.repository.save(board2);
+        this.repository.save(board3);
+        this.repository.save(board4);
+
+        List<KanBoardDto> results = this.kanBoardService.getKanBoardsBySearchTerm("Old", null);
+        assertNotNull(results);
+        assertEquals(3, results.size());
+    }
 }

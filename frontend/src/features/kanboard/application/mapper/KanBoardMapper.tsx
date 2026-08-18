@@ -22,7 +22,20 @@ export class KanBoardMapper {
   }
   static toCreateKanBoardRequest(request: CreateKanBoardRequest) {
     //id will not be used
-    return new KanBoard.Builder().name(request.getName()).color(request.getColor()).userId("mock-id").build().toCreateJson();
+    return new KanBoard.Builder()
+      .name(request.getName())
+      .color(request.getColor())
+      .userId("mock-id")
+      .build()
+      .toCreateJson();
+  }
+
+  static toKanBoardList(data: Array<object>) {
+  
+    if (!data || data.length === 0) return [];
+    return data.map((obj) => {
+      return KanBoardMapper.toKanBoard(obj);
+    });
   }
 
   static toKanBoard(data: KanBoardItem) {

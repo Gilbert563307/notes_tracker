@@ -10,6 +10,7 @@ import type { ApiErrorResponse } from "../../../types";
 import type { CreateKanBoardTaskRequest } from "../presentation/request/CreateKanBoardTaskRequest";
 import { CreateTaskRequest } from "../presentation/request/CreateTaskRequest";
 import {
+  EmptySearchTermException,
   FailedToCreateTaskIntoProjectException,
   FailedToDeleteKanBoardException,
   FailedToFindTasksException,
@@ -178,6 +179,23 @@ export class KanBoardService extends OAuth2ResourceService {
       throw new FailedToDeleteKanBoardException();
     }
     return true;
+  }
+
+  //TODO NEEDS TESTING
+  async searchKanBoard(value: string) : Promise<Array<KanBoard>> {
+    if (!value) {
+      throw new EmptySearchTermException();
+    }
+
+    const response = await super.search(new Map([["name", value]]));
+    if (!response.ok) {
+      const data: ApiErrorResponse = await response.json();
+      if (data.message) throw new Error(data.message);
+      throw new FailedToLoadKanBoardsException();
+    }
+
+    const data: Array<KanBoard> = await response.json();
+    return KanBoardMapper.toKanBoardList(data);
   }
 }
 

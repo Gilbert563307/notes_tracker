@@ -68,6 +68,13 @@ export class FailedToDeleteKanBoardException extends BaseException {
   }
 }
 
+export class EmptySearchTermException extends BaseException{
+  constructor(){
+    super("Please fill in a value.", 0)
+  }
+}
+
+
 //TASK exceptions
 export class FailedToFindYourTaskException extends BaseException {
   constructor(message = "") {

@@ -44,6 +44,12 @@ public class KanBoardController {
         return ResponseEntity.ok(kanBoardService.getBoard(boardId));
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")
+    public  ResponseEntity<List<KanBoardDto>> getKanBoardsBySearchTerm(@RequestParam(required = false) String name, @RequestParam(required = false) String color){
+        return  ResponseEntity.ok(this.kanBoardService.getKanBoardsBySearchTerm(name, color));
+    }
+
     @GetMapping("/{boardId}/tasks")
     @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")
     public ResponseEntity<List<TaskDto>> getTasksByKanBoardId(@PathVariable String boardId) {

@@ -245,15 +245,40 @@ public class KanBoardControllerIntegrationTests {
         String url = String.format("/kanboard/%s/task", created.getId());
 
         this.mockMvc.perform(patch(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                        objectMapper.writeValueAsString(
-                                new AddNewTaskToKanBoard(taskDto)
-                        )
-                ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        new AddNewTaskToKanBoard(taskDto)
+                                )
+                        ))
                 .andExpect(status().isOk()).andExpect(
                         jsonPath("$", hasSize(1))
-        );
+                );
 
+    }
+
+    @Test
+    @WithMockUser("john@example.com")
+    void getKanBoardBySearchTerm() throws Exception {
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId(this.savedUser.getId())
+                .build();
+
+        KanBoard board2 = new KanBoard.Builder()
+                .name("Tester")
+                .userId(this.savedUser.getId())
+                .build();
+
+         this.kanBoardRepository.save(board);
+         this.kanBoardRepository.save(board2);
+
+        String url = String.format("/kanboard/search");
+
+        this.mockMvc.perform(get(url)
+                .param("name", "Old")
+        ).andExpect(status().isOk()).andExpect(
+                jsonPath("$", hasSize(1))
+        );
     }
 }

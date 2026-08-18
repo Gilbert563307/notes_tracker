@@ -67,6 +67,14 @@ export class KanBoardController {
     }
   }
 
+  async searchKanBoard(value: string){
+    try {
+      return await this.#kanBoardService.searchKanBoard(value);
+    } catch (error) {
+      this.#setMessageToUserV2(error);
+    }
+  }
+
   /**
    *
    * @deprecated

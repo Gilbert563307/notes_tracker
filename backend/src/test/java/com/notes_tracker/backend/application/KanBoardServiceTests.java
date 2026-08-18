@@ -179,4 +179,25 @@ public class KanBoardServiceTests {
         assertEquals(1, taskDtoList.size());
 
     }
+
+    @Test
+    void getKanBoardsBySearchTerm() throws Exception {
+        KanBoard board = new KanBoard.Builder()
+                .name("Old")
+                .userId("user")
+                .build();
+
+        Optional<List<KanBoard>> results = Optional.of(List.of(board));
+
+        when(this.kanBoardRepository.findKanBoardByNameContainingAndColorContaining("name", "")).thenReturn(results);
+
+        List<KanBoardDto> serviceResults = this.service.getKanBoardsBySearchTerm("name", "");
+
+        verify(this.kanBoardRepository).findKanBoardByNameContainingAndColorContaining("name", "");
+
+        //assert
+        assertNotNull(results);
+        assertEquals(1, serviceResults.size());
+    }
+
 }

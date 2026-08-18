@@ -1,12 +1,15 @@
 package com.notes_tracker.backend.kanboard.application;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
 import com.notes_tracker.backend.kanboard.application.request.AddNewTaskToKanBoard;
 import com.notes_tracker.backend.kanboard.application.request.AddTaskToKanBoardRequest;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.kanboard.domain.Task;
+import com.notes_tracker.backend.kanboard.presentation.exception.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -134,5 +137,19 @@ public class KanBoardService {
                 .assigneId(taskDto.assigneId())
                 .archived(taskDto.archived())
                 .build();
+    }
+
+    public List<KanBoardDto> getKanBoardsBySearchTerm(String name, String color) {
+        if(name == null  && color == null){
+            throw new BadRequestException("Your search term cannot be empty");
+        }
+        if(name == null){
+            name = "";
+        }
+        if(color == null){
+            color = "";
+        }
+        Optional<List<KanBoard>> results = this.kanBoardRepository.findKanBoardByNameContainingAndColorContaining(name,color);
+        return results.map(KanBoardDto::fromKanBoardList).orElseGet(ArrayList::new);
     }
 }

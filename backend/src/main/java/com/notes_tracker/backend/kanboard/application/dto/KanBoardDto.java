@@ -3,6 +3,7 @@ package com.notes_tracker.backend.kanboard.application.dto;
 import com.notes_tracker.backend.kanboard.domain.KanBoard;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record KanBoardDto(
         String id,
@@ -30,4 +31,9 @@ public record KanBoardDto(
         );
     }
 
+    public static List<KanBoardDto> fromKanBoardList(List<KanBoard> results) {
+        return results.stream()
+                .map(KanBoardDto::from)
+                .toList();
+    }
 }
