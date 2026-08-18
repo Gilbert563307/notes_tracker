@@ -1,5 +1,7 @@
 package com.notes_tracker.backend.presentation;
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
+import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
 import com.notes_tracker.backend.security.data.UserRepository;
@@ -31,6 +33,9 @@ public class TaskControllerIntegrationTests {
 
     @Autowired
     TaskRepository repository;
+
+    @Autowired
+    KanBoardRepository kanBoardRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -90,12 +95,21 @@ public class TaskControllerIntegrationTests {
                 new Task.Builder()
                         .title("Task A")
                         .userId(savedUser.getId())
+                        .assigneId(savedUser.getId())
                         .build()
         );
 
+        KanBoard board = kanBoardRepository.save(new KanBoard.Builder()
+                .name("Persistent Board")
+                .userId(savedUser.getId())
+                .color("#00000")
+                .build());
+        board.assignTask(created);
+        this.kanBoardRepository.save(board);
+
         mockMvc.perform(get("/task/" + created.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Task A"));
+                .andExpect(jsonPath("$.task.title").value("Task A"));
 
     }
 
@@ -111,6 +125,14 @@ public class TaskControllerIntegrationTests {
                         .build()
         );
 
+        KanBoard board = kanBoardRepository.save(new KanBoard.Builder()
+                .name("Persistent Board")
+                .userId(savedUser.getId())
+                .color("#00000")
+                .build());
+        board.assignTask(saved);
+        this.kanBoardRepository.save(board);
+
         TaskDto updateDto = new TaskDto(
                 saved.getId(),
 //                "board-1",
@@ -118,7 +140,7 @@ public class TaskControllerIntegrationTests {
                 "new desc",
                 Task.TaskStatus.DONE,
                 5,
-                "user-2",
+                savedUser.getId(),
                 true,
                 null,
                 null
@@ -128,9 +150,9 @@ public class TaskControllerIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated"))
-                .andExpect(jsonPath("$.status").value("DONE"))
-                .andExpect(jsonPath("$.archived").value(true));
+                .andExpect(jsonPath("$.task.title").value("Updated"))
+                .andExpect(jsonPath("$.task.status").value("DONE"))
+                .andExpect(jsonPath("$.task.archived").value(true));
     }
 
     @Test

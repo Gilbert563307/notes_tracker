@@ -1,5 +1,8 @@
 package com.notes_tracker.backend.kanboard.application;
 
+import com.notes_tracker.backend.kanboard.application.dto.TaskInformationDto;
+import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
+import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.security.application.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +19,12 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final KanBoardRepository kanBoardRepository;
     private final UserService userService;
 
-    public TaskService(TaskRepository taskRepository, UserService userService) {
+    public TaskService(TaskRepository taskRepository, KanBoardRepository kanBoardRepository, UserService userService) {
         this.taskRepository = taskRepository;
+        this.kanBoardRepository = kanBoardRepository;
         this.userService = userService;
     }
 
@@ -43,16 +48,23 @@ public class TaskService {
         return TaskDto.from(task);
     }
 
-    public TaskDto getTask(String taskId) {
+    public TaskInformationDto getTask(String taskId) {
         Task task = this.getTaskById(taskId);
-        return TaskDto.from(task);
+        KanBoard kanBoard = this.kanBoardRepository.findKanBoardByTasksContains(List.of(task));
+
+        String assignee = this.userService.getAssigneeOrReporterById(task.getAssigneId());
+
+        //TODO for now the reporter is always you
+        String reporter =  this.userService.getAssigneeOrReporterById(this.userService.getUserIdByAuthentication());
+        return TaskInformationDto.from(TaskDto.from(task), kanBoard.getName(), assignee, reporter);
+
     }
 
     private Task getTaskById(String taskId) {
         return this.taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task not found. No task exists with the provided ID: " + taskId));
     }
 
-    public TaskDto updateTask(TaskDto taskDto) {
+    public TaskInformationDto updateTask(TaskDto taskDto) {
         Task task = this.getTaskById(taskDto.id());
         task.updateTask(
                 taskDto.title(),
@@ -63,7 +75,12 @@ public class TaskService {
                 taskDto.archived()
         );
         this.taskRepository.save(task);
-        return TaskDto.from(task);
+
+        KanBoard kanBoard = this.kanBoardRepository.findKanBoardByTasksContains(List.of(task));
+        String assignee = this.userService.getAssigneeOrReporterById(task.getAssigneId());
+        //TODO for now the reporter is always you
+        String reporter =  this.userService.getAssigneeOrReporterById(this.userService.getUserIdByAuthentication());
+        return TaskInformationDto.from(TaskDto.from(task), kanBoard.getName(), assignee, reporter);
     }
 
     public void deleteTask(String taskId) {

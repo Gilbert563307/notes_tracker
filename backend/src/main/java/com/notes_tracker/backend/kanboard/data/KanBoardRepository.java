@@ -3,6 +3,7 @@ package com.notes_tracker.backend.kanboard.data;
 import java.util.List;
 import java.util.Optional;
 
+import com.notes_tracker.backend.kanboard.domain.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -22,4 +23,6 @@ public interface KanBoardRepository extends MongoRepository<KanBoard, String> {
 
     //https://www.baeldung.com/spring-jpa-like-queries
     Optional<List<KanBoard>> findKanBoardByNameContainingAndColorContaining(String name, String color);
+
+    KanBoard findKanBoardByTasksContains(List<Task> tasks);
 }

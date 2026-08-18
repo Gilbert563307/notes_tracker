@@ -91,4 +91,15 @@ public class UserService {
         User user = this.getUserByEmail(email);
         return user.getId();
     }
+
+    public String getUserNameById(String assigneId) {
+        User user = this.getUserById(assigneId);
+        return  user.getDisplayName();
+    }
+
+    public  String getAssigneeOrReporterById(String id){
+        User user = this.userRepository.findById(id).orElse(null);
+        if(user == null) return  "None";
+        return user.getDisplayName();
+    }
 }

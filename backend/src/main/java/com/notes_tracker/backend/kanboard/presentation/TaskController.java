@@ -2,6 +2,7 @@ package com.notes_tracker.backend.kanboard.presentation;
 
 import com.notes_tracker.backend.kanboard.application.TaskService;
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.dto.TaskInformationDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -33,15 +34,15 @@ public class TaskController {
 
     @GetMapping("{taskId}")
     @PreAuthorize("@taskService.isTaskOwner(#taskId)")
-    ResponseEntity<TaskDto> getTask(@PathVariable String taskId) {
-        TaskDto task = this.taskService.getTask(taskId);
+    ResponseEntity<TaskInformationDto> getTask(@PathVariable String taskId) {
+        TaskInformationDto task = this.taskService.getTask(taskId);
         return ResponseEntity.ok(task);
     }
 
     @PutMapping()
     @PreAuthorize("@taskService.isTaskOwner(#taskDto.id())")
-    ResponseEntity<TaskDto> updateTask(@RequestBody TaskDto taskDto) {
-        TaskDto game = this.taskService.updateTask(taskDto);
+    ResponseEntity<TaskInformationDto> updateTask(@RequestBody TaskDto taskDto) {
+        TaskInformationDto game = this.taskService.updateTask(taskDto);
         return ResponseEntity.ok(game);
     }
 

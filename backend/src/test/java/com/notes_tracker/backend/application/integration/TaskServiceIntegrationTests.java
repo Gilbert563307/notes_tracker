@@ -2,7 +2,10 @@ package com.notes_tracker.backend.application.integration;
 
 import com.notes_tracker.backend.kanboard.application.TaskService;
 import com.notes_tracker.backend.kanboard.application.dto.TaskDto;
+import com.notes_tracker.backend.kanboard.application.dto.TaskInformationDto;
+import com.notes_tracker.backend.kanboard.data.KanBoardRepository;
 import com.notes_tracker.backend.kanboard.data.TaskRepository;
+import com.notes_tracker.backend.kanboard.domain.KanBoard;
 import com.notes_tracker.backend.kanboard.domain.Task;
 import com.notes_tracker.backend.kanboard.presentation.exception.ResourceNotFoundException;
 import com.notes_tracker.backend.security.data.UserRepository;
@@ -16,6 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,10 +36,14 @@ public class TaskServiceIntegrationTests {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    KanBoardRepository kanBoardRepository;
+
     @AfterEach
     void cleanup() {
         this.taskRepository.deleteAll();
         this.userRepository.deleteAll();
+        this.kanBoardRepository.deleteAll();
     }
 
     User savedUser;
@@ -90,8 +98,16 @@ public class TaskServiceIntegrationTests {
                         .build()
         );
 
+        KanBoard board = new KanBoard.Builder()
+                .name("default Kanboard")
+                .userId(this.savedUser.getId())
+                .build();
+        board.assignTask(created);
+        this.kanBoardRepository.save(board);
 
-        TaskDto fetched = taskService.getTask(created.getId());
+        TaskInformationDto response = taskService.getTask(created.getId());
+
+        TaskDto fetched = response.task();
 
         assertEquals(created.getId(), fetched.id());
 
@@ -116,25 +132,34 @@ public class TaskServiceIntegrationTests {
                         .build()
         );
 
+        KanBoard board = new KanBoard.Builder()
+                .name("default Kanboard")
+                .userId(this.savedUser.getId())
+                .build();
+        board.assignTask(created);
+        this.kanBoardRepository.save(board);
+
         taskService.updateTask(new TaskDto(
                 created.getId(),
                 "Updated",
                 "new desc",
                 Task.TaskStatus.DONE,
                 5,
-                "user-2",
+                savedUser.getId(),
                 true,
                 null,
                 null
         ));
 
-        TaskDto fetched = taskService.getTask(created.getId());
+        TaskInformationDto response = taskService.getTask(created.getId());
+
+        TaskDto fetched = response.task();
 
         assertEquals("Updated", fetched.title());
         assertEquals("new desc", fetched.description());
         assertEquals(Task.TaskStatus.DONE, fetched.status());
         assertEquals(5, fetched.priority());
-        assertEquals("user-2", fetched.assigneId());
+        assertEquals(savedUser.getId(), fetched.assigneId());
         assertTrue(fetched.archived());
 
         assertNotNull(fetched.createdAt());
@@ -153,7 +178,15 @@ public class TaskServiceIntegrationTests {
                         .build()
         );
 
-        TaskDto fetched = taskService.getTask(created.getId());
+        KanBoard board = new KanBoard.Builder()
+                .name("default Kanboard")
+                .userId(this.savedUser.getId())
+                .build();
+        board.assignTask(created);
+        this.kanBoardRepository.save(board);
+
+        TaskInformationDto response = taskService.getTask(created.getId());
+        TaskDto fetched = response.task();
 
         assertNotNull(fetched);
 
