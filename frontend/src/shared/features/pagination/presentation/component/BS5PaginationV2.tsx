@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Show } from "../../../show/Show";
 import ReactPaginate from "react-paginate";
-import { PAGE_CHANGED_EVENT, PAGE_NUMBER } from "../../../../../config";
+import { PAGE_CHANGED_EVENT, PAGE_NUMBER } from "../../../../../config/config";
 
 export default function BS5PaginationV2({
   totalItems = 0,

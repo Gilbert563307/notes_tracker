@@ -12,16 +12,33 @@ export class TaskController {
 
   async getTaskById(id: string) {
     try {
-      return this.#taskService.getTaskById(id);
+      return await this.#taskService.getTaskById(id);
     } catch (error) {
-      this.#setMessageToUserV2(error);
+      this.notifyErrorToUser(error);
     }
   }
 
-  #setMessageToUserV2(error: unknown) {
+  async deleteTaskById(taskId: string): Promise<boolean> {
+    try {
+      const response = await this.#taskService.deleteTaskById(taskId);
+      this.notifyUser(response);
+      return true;
+    } catch (error) {
+      this.notifyErrorToUser(error);
+      return false;
+    }
+  }
+
+  protected notifyErrorToUser(error: unknown) {
     const err = error instanceof BaseException ? error : null;
     if (!err) return;
     notificationObserver.add(new NotificationDto.Builder().message(err.message).type(err.type).build());
+    return;
+  }
+
+  protected notifyUser(message: string) {
+    if (!message) return;
+    notificationObserver.add(new NotificationDto.Builder().message(message).type(0).build());
     return;
   }
 }

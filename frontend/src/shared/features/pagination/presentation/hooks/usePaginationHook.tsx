@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { PAGE_CHANGED_EVENT } from "../../../../../config";
+import { PAGE_CHANGED_EVENT } from "../../../../../config/config";
 
 type PageChangedEvent = CustomEvent<{ page?: number }>;
 

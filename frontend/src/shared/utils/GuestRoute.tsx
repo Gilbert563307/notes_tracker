@@ -1,7 +1,7 @@
 import { Navigate } from "react-router";
 import { useAuthProvider } from "../context/AuthProviderConfig";
 import type { JSX } from "react";
-import { LANDING_PAGE_ROUTE } from "../../config";
+import { LANDING_PAGE_ROUTE } from "../../config/config";
 
 export default function GuestRoute({ children }: { children: JSX.Element }) {
   const { auth, loading } = useAuthProvider();

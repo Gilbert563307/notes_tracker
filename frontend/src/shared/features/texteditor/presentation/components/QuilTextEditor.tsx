@@ -18,8 +18,8 @@ const TOOLBAR_OPTIONS = [
   [{ color: [] }, { background: [] }], // dropdown with defaults from theme
   [{ script: "sub" }, { script: "super" }], // superscript/subscript
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-  [{ direction: "rtl" }],  // text direction
-  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ direction: "rtl" }], // text direction
+  [{ size: ["small", false, "large", "huge"] }], // custom dropdown
   [{ align: [] }],
   ["image", "blockquote", "code-block", "link", "video"],
   ["clean"], // remove formatting button
@@ -53,7 +53,7 @@ const QuilTextEditor: React.FC<QuilTextEditorProps> = ({ content = "", saveText 
     return () => {
       quill.off("text-change", handler);
     };
-  }, [quill, saveText]);
+  }, [quill]);
 
   /**
    * Update editor content when `content` prop changes
@@ -64,29 +64,26 @@ const QuilTextEditor: React.FC<QuilTextEditorProps> = ({ content = "", saveText 
     }
   }, [content, quill]);
 
-  const wrapperRef = useCallback(
-    (wrapper: HTMLDivElement | null) => {
-      if (!wrapper) return;
+  const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
+    if (!wrapper) return;
 
-      wrapper.innerHTML = "";
+    wrapper.innerHTML = "";
 
-      const editor = document.createElement("div");
-      wrapper.append(editor);
+    const editor = document.createElement("div");
+    wrapper.append(editor);
 
-      const quillEditor = new Quill(editor, {
-        theme: "snow",
-        modules: {
-          toolbar: TOOLBAR_OPTIONS,
-        },
-        readOnly,
-      });
+    const quillEditor = new Quill(editor, {
+      theme: "snow",
+      modules: {
+        toolbar: TOOLBAR_OPTIONS,
+      },
+      readOnly,
+    });
 
-      quillEditor.root.innerHTML = content;
+    quillEditor.root.innerHTML = content;
 
-      setQuill(quillEditor);
-    },
-    [content, readOnly],
-  );
+    setQuill(quillEditor);
+  }, []);
 
   return (
     <article className="quil-text-editor">

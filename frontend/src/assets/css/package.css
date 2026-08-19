@@ -353,7 +353,7 @@ html.dark .add-task-button {
 .notes-tracker-btn {
   /* Reduced vertical and horizontal padding */
   padding: 6px 16px !important;
-  height: 32px;
+  height: 31px;
   font-size: smaller;
   border-radius: 6px; /* Slightly tighter corner radius for the smaller height */
   cursor: pointer;
@@ -391,6 +391,25 @@ html.dark .add-task-button {
 
 .notes-tracker-btn-secondary:active {
   background-color: #f1f3f4;
+}
+
+/* Danger Button */
+.notes-tracker-btn-danger {
+  background-color: #ffffff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.notes-tracker-btn-danger:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+  border-color: #dc3545;
+}
+
+.notes-tracker-btn-danger:active {
+  background-color: #bb2d3b;
+  color: #ffffff;
+  border-color: #bb2d3b;
 }
 
 .kanboard-options-header{

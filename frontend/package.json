@@ -14,7 +14,7 @@
     "quill": "^2.0.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-hook-form": "^7.72.1",
+    "react-hook-form": "^7.85.0",
     "react-paginate": "^8.3.0",
     "react-router": "^7.14.0"
   },

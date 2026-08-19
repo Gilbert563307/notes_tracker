@@ -5,13 +5,12 @@ import { ALERT_TYPES } from "../../constants";
 import type { NotificationDto } from "../../domain/dto/NotificationDto";
 import { notificationObserver } from "../../observers/NotificationObserver";
 
-
 export default function NotificationV4() {
   const typeMap = {
-    [ALERT_TYPES.INFO]: "text-info border-info",
-    [ALERT_TYPES.DANGER]: "text-danger border-danger",
-    [ALERT_TYPES.SUCCESS]: "text-success border-success",
-    [ALERT_TYPES.PRIMARY]: "text-primary border-primary",
+    [ALERT_TYPES.INFO]: " border-info",
+    [ALERT_TYPES.DANGER]: " border-danger",
+    [ALERT_TYPES.SUCCESS]: " border-success",
+    [ALERT_TYPES.PRIMARY]: " border-primary",
   };
 
   const [notification, setNotification] = useState<{ message: string; type: number }>({ message: "", type: 0 });

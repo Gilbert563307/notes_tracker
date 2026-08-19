@@ -81,8 +81,7 @@ export class KanBoardService extends OAuth2ResourceService {
     const response = await super.read(id);
 
     if (!response.ok) {
-      const data: ApiErrorResponse = await response.json();
-      throw new FailedToFindYourKanBoardException(data.message);
+      throw new FailedToFindYourKanBoardException();
     }
 
     try {

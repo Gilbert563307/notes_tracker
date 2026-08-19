@@ -3,7 +3,7 @@ import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceServi
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import type { ApiErrorResponse } from "../../../types";
 import type { Task } from "../domain/Task";
-import { FailedToFindYourTaskException } from "../presentation/exceptions/exceptions";
+import { FailedToDeleteTaskException, FailedToFindYourTaskException } from "../presentation/exceptions/exceptions";
 import { TaskMapper } from "./mapper/TaskMapper";
 import type { TaskInformationResponse } from "./response/response";
 
@@ -13,7 +13,7 @@ export class TaskService extends OAuth2ResourceService {
     super(resource, requestHandler);
   }
 
-  async getTaskById(id: string) : Promise<Task> {
+  async getTaskById(id: string): Promise<Task> {
     if (!id) {
       throw new FailedToFindYourTaskException();
     }
@@ -26,7 +26,7 @@ export class TaskService extends OAuth2ResourceService {
 
     try {
       const data: TaskInformationResponse = await response.json();
-      const task =  TaskMapper.toTask(data.task);
+      const task = TaskMapper.toTask(data.task);
       task.updateProjectName(data.projectName);
       task.updateAssignee(data.assignee);
       task.updateReporter(data.reporter);
@@ -34,6 +34,17 @@ export class TaskService extends OAuth2ResourceService {
     } catch (error) {
       throw new JsonParsingError(error?.message);
     }
+  }
+
+  async deleteTaskById(taskId: string): Promise<string> {
+    if (!taskId) {
+      throw new FailedToFindYourTaskException();
+    }
+    const response = await super.delete(taskId);
+    if (!response.ok) {
+      throw new FailedToDeleteTaskException();
+    }
+    return "Your task has been successfully been deleted";
   }
 }
 
