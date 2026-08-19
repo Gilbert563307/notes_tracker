@@ -22,6 +22,12 @@ export class Task {
   private priority: number;
   private assigneId?: string;
   private archived: boolean;
+
+  //these come from the api
+  private projectName: string;
+  private reporterName: string;
+  private assigneeName: string;
+
   private createdAt: string;
   private updatedAt: string;
 
@@ -84,7 +90,7 @@ export class Task {
   }
 
   getProjectName(): string {
-    return "";
+    return this.projectName;
   }
 
   getProjectId(): string {
@@ -92,11 +98,21 @@ export class Task {
   }
 
   getAssigneeName(): string {
-    return "";
+    return this.assigneeName;
   }
 
   getReporterName(): string {
-    return "";
+    return this.reporterName;
+  }
+
+  updateReporter(reporter: string) {
+    this.reporterName = reporter;
+  }
+  updateAssignee(assignee: string) {
+    this.assigneeName = assignee;
+  }
+  updateProjectName(projectName: string) {
+    this.projectName = projectName;
   }
 
   toJson() {

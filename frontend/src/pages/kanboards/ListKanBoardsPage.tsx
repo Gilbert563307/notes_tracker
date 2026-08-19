@@ -22,8 +22,13 @@ export default function ListKanBoardsPage() {
   }, [debouncedSearchTerm]);
 
   function handleSearch(e: Event) {
-    setSearchTerm(e.target.value);
-    setFiltersActive(true);
+    const value: string = e.target.value;
+    //TODO WORKS A LITTLT BIT BUGGY BUT NO big deal
+    if (value === "" || value === undefined) {
+      resetOptions();
+      return;
+    }
+    setSearchTerm(value);
   }
 
   async function resetOptions() {
@@ -57,14 +62,11 @@ export default function ListKanBoardsPage() {
         </div>
       </article>
 
-      <article className="kanboard-options">
+      {/* <article className="kanboard-options">
         <article className="kanboard-options-header">
-          {/* <FilterButton filtersActive={filtersActive}></FilterButton> */}
-          <button className="notes-tracker-btn notes-tracker-btn-secondary" onClick={resetOptions}>
-            Reset
-          </button>
+         <FilterButton filtersActive={filtersActive}></FilterButton>
         </article>
-      </article>
+      </article> */}
 
       <article className="kanboard-list">
         {boards.map((item: KanBoard) => {

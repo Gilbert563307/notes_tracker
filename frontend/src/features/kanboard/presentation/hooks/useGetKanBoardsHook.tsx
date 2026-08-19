@@ -30,15 +30,9 @@ export default function useGetKanBoardsHook() {
   async function searchProject(value: string) {
     const results = await kanBoardController.searchKanBoard(value);
 
-    console.log(results);
-    if (results != undefined && results?.length > 0) {
+    if (results != undefined) {
       //TODO FIX IN FUTURE THIS SEARCH ENDPOINT NEEDS SOME PAGINATION
-      // setData((prevData) => {
-      //   return { total: 0, pages: 0, boards: results };
-      // });
       setData({ total: 0, pages: 0, boards: results });
-
-      console.log(data);
     }
   }
 

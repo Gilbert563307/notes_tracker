@@ -2,8 +2,10 @@ import { JsonParsingError } from "../../../shared/exceptions/exceptions";
 import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import type { ApiErrorResponse } from "../../../types";
+import type { Task } from "../domain/Task";
 import { FailedToFindYourTaskException } from "../presentation/exceptions/exceptions";
 import { TaskMapper } from "./mapper/TaskMapper";
+import type { TaskInformationResponse } from "./response/response";
 
 export const TASK_RESOURCE = "task";
 export class TaskService extends OAuth2ResourceService {
@@ -11,7 +13,7 @@ export class TaskService extends OAuth2ResourceService {
     super(resource, requestHandler);
   }
 
-  async getTaskById(id: string) {
+  async getTaskById(id: string) : Promise<Task> {
     if (!id) {
       throw new FailedToFindYourTaskException();
     }
@@ -23,8 +25,12 @@ export class TaskService extends OAuth2ResourceService {
     }
 
     try {
-      const data = await response.json();
-      return TaskMapper.toTask(data);
+      const data: TaskInformationResponse = await response.json();
+      const task =  TaskMapper.toTask(data.task);
+      task.updateProjectName(data.projectName);
+      task.updateAssignee(data.assignee);
+      task.updateReporter(data.reporter);
+      return task;
     } catch (error) {
       throw new JsonParsingError(error?.message);
     }
