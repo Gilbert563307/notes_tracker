@@ -18,11 +18,11 @@ export default function DownloadTaskButton({ downloadTask }: { downloadTask: (p:
           Microsoft Word
         </a>
       </li>
-      <li>
+      {/* <li>
         <a className="link" href="#" onClick={() => downloadTask("PDF")}>
           PDF
         </a>
-      </li>
+      </li> */}
     </ul>
   );
 
