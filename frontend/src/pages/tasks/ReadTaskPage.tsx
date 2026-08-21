@@ -2,11 +2,13 @@ import React from "react";
 import useGetTaskHook from "../../features/kanboard/presentation/hooks/useGetTaskHook";
 import SimpleTextEditor from "../../shared/features/texteditor/presentation/components/SimpleTextEditor";
 import { Link } from "react-router";
-import TaskStatusBadge from "../../features/kanboard/presentation/components/TaskStatusBadge";
+import TaskStatusBadge from "../../features/kanboard/presentation/components/task/TaskStatusBadge";
 import "../../features/kanboard/presentation/css/readtaskpage.css";
 import "../../features/kanboard/presentation/css/tasktable.css";
+import useSetPageTitleHook from "../../shared/hooks/useSetPageTitleHook";
 
 export default function ReadTaskPage() {
+  useSetPageTitleHook({ title: "Tasks" });
   const { task } = useGetTaskHook();
 
   return (
@@ -27,7 +29,7 @@ export default function ReadTaskPage() {
           <div className="read-task-actions">
             <div>{<TaskStatusBadge status={task.getStatus()} />}</div>
             <div>
-              <Link to={`/tasks/update/${task.getId()}`}>
+              <Link to={`/tasks/update/${task.getId()}`} className="notes-tracker-btn notes-tracker-btn-secondary">
                 <i className="fa-solid fa-pencil"></i> Change
               </Link>
             </div>

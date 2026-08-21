@@ -360,6 +360,7 @@ html.dark .add-task-button {
   transition: all 0.2s ease-in-out;
   outline: none;
   line-height: 1.4; /* Ensures predictable height across different browsers */
+  text-decoration: none;
 }
 
 /* Primary Button */
@@ -412,17 +413,23 @@ html.dark .add-task-button {
   border-color: #bb2d3b;
 }
 
-.kanboard-options-header{
+.notes-tracker-badge {
+  height: 31px;
+  font-size: smaller;
+  border: none;
+}
+
+.kanboard-options-header {
   display: flex;
   gap: 0.5em;
 }
 
-.filter-btn{
+.filter-btn {
   display: flex;
   gap: 0.2em;
 }
 
-.filter-button-numbers{
+.filter-button-numbers {
   background-color: #e9efff;
   border-radius: 50%;
   width: 20px;

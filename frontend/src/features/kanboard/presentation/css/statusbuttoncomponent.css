@@ -1,0 +1,19 @@
+.selected-status-item-BACKLOG {
+    background-color: #343a40 ;
+}
+
+.selected-status-item-TODO {
+    background-color: #E9F2FF;
+}
+
+.selected-status-item-DOING {
+    background-color: #E4E6EA;
+}
+
+.selected-status-item-REVIEW {
+    background-color: #ffc720;
+}
+
+.selected-status-item-DONE {
+    background-color: #DCFFF1;
+}

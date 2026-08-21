@@ -1,5 +1,5 @@
 import React from "react";
-import type { TaskStatus } from "../../domain/Task";
+import type { TaskStatus } from "../../../domain/Task";
 
 export default function TaskStatusBadge({ status }: { status: TaskStatus }) {
   const statusBadgeMap = {

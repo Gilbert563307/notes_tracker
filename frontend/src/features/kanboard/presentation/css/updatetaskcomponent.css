@@ -1,10 +1,10 @@
-.options-buttons{
-    display: flex;
-    justify-content: space-between;
-    align-content: baseline;
+.options-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-content: baseline;
 }
 
-.options-buttons > .options-first-div{
-    display: flex;
-    gap: 0.3em;
+.options-buttons > .options-first-div {
+  display: flex;
+  gap: 0.3em;
 }

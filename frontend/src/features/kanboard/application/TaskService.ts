@@ -1,12 +1,20 @@
 import { JsonParsingError } from "../../../shared/exceptions/exceptions";
 import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
-import type { ApiErrorResponse } from "../../../types";
+import type { ApiErrorResponse, DownloadTaskOption } from "../../../types";
 import type { Task } from "../domain/Task";
-import { FailedToDeleteTaskException, FailedToFindYourTaskException } from "../presentation/exceptions/exceptions";
+import {
+  FailedToDeleteTaskException,
+  FailedToFindYourTaskException,
+  FailedToUpdateTaskException,
+} from "../presentation/exceptions/exceptions";
 import { TaskMapper } from "./mapper/TaskMapper";
 import type { TaskInformationResponse } from "./response/response";
 
+import { asBlob } from "html-docx-js-typescript";
+import { saveAs } from "file-saver";
+
+//TODO METHODS NEED TESTING
 export const TASK_RESOURCE = "task";
 export class TaskService extends OAuth2ResourceService {
   constructor(resource: string, requestHandler: RequestHandler) {
@@ -45,6 +53,48 @@ export class TaskService extends OAuth2ResourceService {
       throw new FailedToDeleteTaskException();
     }
     return "Your task has been successfully been deleted";
+  }
+
+  async updateTask(updateTaskData: Task): Promise<string> {
+    if (!updateTaskData.getId()) {
+      throw new FailedToFindYourTaskException();
+    }
+    const response = await super.update(updateTaskData.toJson());
+    if (!response.ok) {
+      throw new FailedToUpdateTaskException();
+    }
+    return "Your task has been successfully been updated";
+  }
+
+  async downloadTask(description: string | undefined, option: DownloadTaskOption, filename: string) {
+    if (option === "Microsoft Word") {
+      await this.convertHtmlToDocx({ description: description, filename: filename });
+    }
+
+    if (option === "Markdown") {
+      this.convertHTMLToMarkdown({ description: description, filename: filename });
+    }
+  }
+
+  //TODO make a better fix for all this a some resuable class
+  protected async convertHTMLToMarkdown(payload: { description: string; filename: string }) {
+    const data = new Blob([payload.description], {
+      type: "text/markdown",
+    }); 
+
+    saveAs(data, this.#convertToValidFilename(payload.filename));
+  }
+
+  protected async convertHtmlToDocx(payload: { description: string; filename: string }) {
+    const { description, filename } = payload;
+
+    const data = await asBlob(description);
+    const correct_filename = this.#convertToValidFilename(filename);
+    saveAs(data, correct_filename);
+  }
+
+  #convertToValidFilename(string: string) {
+    return string.replace(/[\/|\\:*?"<>]/g, " ");
   }
 }
 

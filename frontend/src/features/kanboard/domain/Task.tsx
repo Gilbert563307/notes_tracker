@@ -115,6 +115,11 @@ export class Task {
     this.projectName = projectName;
   }
 
+  getTaskAsFileName() {
+    const localDateString = new Date().toLocaleDateString().replaceAll("/", "_");
+    return `${this.getTitle()}_${this.getReporterName()}_${localDateString}`;
+  }
+
   toJson() {
     return {
       id: this.id,

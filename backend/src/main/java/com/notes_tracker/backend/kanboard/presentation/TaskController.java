@@ -39,11 +39,12 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    //TODO CHANGE FUTURE TO UPDATE TASK REQUEST
     @PutMapping()
     @PreAuthorize("@taskService.isTaskOwner(#taskDto.id())")
     ResponseEntity<TaskInformationDto> updateTask(@RequestBody TaskDto taskDto) {
-        TaskInformationDto game = this.taskService.updateTask(taskDto);
-        return ResponseEntity.ok(game);
+        TaskInformationDto task = this.taskService.updateTask(taskDto);
+        return ResponseEntity.ok(task);
     }
 
     @DeleteMapping("{taskId}")

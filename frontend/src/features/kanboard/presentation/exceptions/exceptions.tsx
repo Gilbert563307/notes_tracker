@@ -74,6 +74,12 @@ export class FailedToDeleteTaskException extends BaseException {
   }
 }
 
+export class FailedToUpdateTaskException extends BaseException{
+  constructor() {
+    super("We couldn't update that task. Something went wrong.", 1);
+  }
+}
+
 export class EmptySearchTermException extends BaseException{
   constructor(){
     super("Please fill in a value.", 0)

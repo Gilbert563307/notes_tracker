@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Task, type TaskStatus } from "../../domain/Task";
-import QuilTextEditor from "../../../../shared/features/texteditor/presentation/components/QuilTextEditor";
-import "../css/updatetaskcomponent.css";
-import DeleteTaskButton from "./DeleteTaskButton";
+import { Task, type TaskStatus } from "../../../domain/Task";
+import QuilTextEditor from "../../../../../shared/features/texteditor/presentation/components/QuilTextEditor";
+import "../../css/updatetaskcomponent.css";
+import DeleteTaskButton from "../DeleteTaskButton";
+import TaskDetails from "./TaskDetails";
+import DownloadTaskButton from "./DownloadTaskButton";
+import type { DownloadTaskOption } from "../../../../../types";
+import { taskController } from "../../TaskController";
 
 type props = {
   task: Task;
   deleteTask: () => void;
+  updateTask: (t: Task) => void;
 };
 
-type customFieldsType = {
+export type customFieldsType = {
   status: TaskStatus;
   priority: number;
   description: string;
 };
 
-export default function UpdateTaskComponent({ task, deleteTask }: props) {
+export default function UpdateTaskComponent({ task, deleteTask, updateTask }: props) {
   const [customFields, setCustomFields] = useState<customFieldsType>({
     status: "BACKLOG",
     priority: 0,
@@ -34,7 +39,7 @@ export default function UpdateTaskComponent({ task, deleteTask }: props) {
     formState: { errors },
   } = useForm({});
 
-  function onSubmit(data: { title: string }) {
+  async function onSubmit(data: { title: string }) {
     const { title } = data;
 
     const updatedTask = new Task.Builder()
@@ -49,11 +54,12 @@ export default function UpdateTaskComponent({ task, deleteTask }: props) {
       .createdAt(task.getCreatedAt())
       .updatedAt(task.getUpdatedAt())
       .build();
-
-    console.log(updatedTask.toJson());
+    await updateTask(updatedTask);
   }
 
-  function downloadTask() {}
+  async function downloadTask(option: DownloadTaskOption) {
+    await taskController.downloadTask(task.getDescription(), option, task.getTaskAsFileName());
+  }
 
   useEffect(() => {
     reset({
@@ -113,19 +119,17 @@ export default function UpdateTaskComponent({ task, deleteTask }: props) {
                       <i className="fa-regular fa-floppy-disk"></i> Save
                     </button>
 
-                    <button
-                      type="button"
-                      // download-task-button task-btn-plain
-                      className="notes-tracker-btn notes-tracker-btn-secondary"
-                      name="save"
-                      onClick={downloadTask}
-                    >
-                      <i className="fa-solid fa-download"></i> Download
-                    </button>
+                    <DownloadTaskButton downloadTask={downloadTask} />
                   </div>
 
                   <DeleteTaskButton deleteTask={deleteTask} />
                 </div>
+                <TaskDetails
+                  task={task}
+                  customFields={customFields}
+                  setStatus={(value) => handleCustomFieldChange("status", value)}
+                  setPriority={(value) => handleCustomFieldChange("priority", value)}
+                />
               </div>
             </div>
           </div>
