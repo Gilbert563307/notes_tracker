@@ -16,6 +16,7 @@ import com.notes_tracker.backend.kanboard.application.dto.KanBoardDto;
 
 import java.util.List;
 
+//TODO update page to pagemodel
 
 @RestController
 @RequestMapping("/kanboard")

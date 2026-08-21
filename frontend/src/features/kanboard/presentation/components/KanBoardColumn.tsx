@@ -12,6 +12,7 @@ type componentProps = {
   kanBoardId: string;
   onDragEnter: () => void;
   handleDragStart: () => void;
+  handleOnDrop: () => void;
 };
 
 export default function KanBoardColumn({
@@ -21,6 +22,7 @@ export default function KanBoardColumn({
   kanBoardId,
   onDragEnter,
   handleDragStart,
+  handleOnDrop,
 }: componentProps) {
   const { dispatch } = useReadKanBoardPageContext();
 
@@ -40,7 +42,7 @@ export default function KanBoardColumn({
       </p>
 
       <div className="card-body-own">
-        <div className="board-tasks">
+        <div className="board-tasks" onDrop={handleOnDrop}>
           {tasks.length > 0 ? (
             tasks.map((task) => {
               const id = task.getId();

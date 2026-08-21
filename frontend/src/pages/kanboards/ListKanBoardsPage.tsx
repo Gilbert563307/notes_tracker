@@ -7,13 +7,13 @@ import KanBoardCard from "../../features/kanboard/presentation/components/Kanboa
 import useDebounceHook from "../../shared/hooks/useDebounceHook";
 import { useEffect, useState } from "react";
 
-const TWO_SECOND_DELAY = 1000;
+const ONE_SECOND_DELAY = 1000;
 export default function ListKanBoardsPage() {
   useSetPageTitleHook({ title: "Kanban" });
   const [searchTerm, setSearchTerm] = useState("");
 
   const { boards, searchProject, fetchKanBoards } = useGetKanBoardsHook();
-  const debouncedSearchTerm = useDebounceHook(searchTerm, TWO_SECOND_DELAY);
+  const debouncedSearchTerm = useDebounceHook(searchTerm, ONE_SECOND_DELAY);
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -59,6 +59,8 @@ export default function ListKanBoardsPage() {
               <i className="fa-solid fa-plus"></i> New Project
             </button>
           </Link>
+          <button className="notes-tracker-btn notes-tracker-btn-secondary" onClick={resetOptions}>
+            <i className="fa-solid fa-rotate-left"></i> Reset</button>
         </div>
       </article>
 

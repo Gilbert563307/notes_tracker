@@ -138,6 +138,11 @@ html.dark .mdx_editor_create > div:nth-child(2) > ._contentEditable_yms4a_379 {
   max-width: 1100px;
 }
 
+.read-task-description-parent > label{
+  margin-left: 0.7em;
+  font-size: large;
+}
+
 @media only screen and (max-width: 768px) {
   .read-task-div {
     display: flex;

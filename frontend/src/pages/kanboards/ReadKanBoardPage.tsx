@@ -15,9 +15,17 @@ export default function ReadKanBoardPage() {
   const { state, dispatch } = useReadKanBoardPageContext();
   const { kanBoardId } = useParams();
 
-  function handleDragEnter() {}
+  function handleDragEnter(event: DragEvent) {
+    console.log(event)
+  }
 
-  function handleDragStart() {}
+  function handleOnDrop(e){
+    console.log("drop", e)
+  }
+
+  function handleDragStart(taskId: string) {
+    console.log(taskId)
+  }
 
   function getTasksByHeaderId(tasks: Array<Task>, headerId: string) {
     return tasks.filter((task) => task.getStatus() === headerId);
@@ -38,8 +46,9 @@ export default function ReadKanBoardPage() {
               title={header.title}
               tasks={getTasksByHeaderId(state.tasks, header.id)}
               kanBoardId={kanBoardId}
-              onDragEnter={() => handleDragEnter()}
+              onDragEnter={handleDragEnter}
               handleDragStart={handleDragStart}
+              handleOnDrop={handleOnDrop}
             ></KanBoardColumn>
           ))}
         </article>
