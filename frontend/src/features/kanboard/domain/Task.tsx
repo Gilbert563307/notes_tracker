@@ -115,6 +115,11 @@ export class Task {
     this.projectName = projectName;
   }
 
+  updateStatus(status: string) {
+    if(!status) return;
+    this.status = status;
+  }
+
   getTaskAsFileName() {
     const localDateString = new Date().toLocaleDateString().replaceAll("/", "_");
     return `${this.getTitle()}_${this.getReporterName()}_${localDateString}`;

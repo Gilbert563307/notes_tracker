@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { KanBoard } from "../../features/kanboard/domain/KanBoard";
-import { Task } from "../../features/kanboard/domain/Task";
+import { Task, type TaskStatus } from "../../features/kanboard/domain/Task";
 import "../../features/kanboard/presentation/css/readkanboardpage.css";
 import KanBoardColumn from "../../features/kanboard/presentation/components/KanBoardColumn";
 import {
@@ -15,16 +15,13 @@ export default function ReadKanBoardPage() {
   const { state, dispatch } = useReadKanBoardPageContext();
   const { kanBoardId } = useParams();
 
-  function handleDragEnter(event: DragEvent) {
-    console.log(event)
+  function handleDragEnter(header: TaskStatus) {
+    console.log("handleDragEnter", header )
   }
 
-  function handleOnDrop(e){
-    console.log("drop", e)
-  }
 
-  function handleDragStart(taskId: string) {
-    console.log(taskId)
+  function handleDragStart(task) {
+    console.log(task)
   }
 
   function getTasksByHeaderId(tasks: Array<Task>, headerId: string) {
@@ -46,9 +43,9 @@ export default function ReadKanBoardPage() {
               title={header.title}
               tasks={getTasksByHeaderId(state.tasks, header.id)}
               kanBoardId={kanBoardId}
-              onDragEnter={handleDragEnter}
+              onDragEnter={ () => handleDragEnter(header.id)}
               handleDragStart={handleDragStart}
-              handleOnDrop={handleOnDrop}
+             
             ></KanBoardColumn>
           ))}
         </article>

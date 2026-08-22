@@ -11,8 +11,8 @@ type componentProps = {
   tasks: Array<Task>;
   kanBoardId: string;
   onDragEnter: () => void;
-  handleDragStart: () => void;
-  handleOnDrop: () => void;
+  handleDragStart: (t: Task) => void;
+ 
 };
 
 export default function KanBoardColumn({
@@ -22,7 +22,6 @@ export default function KanBoardColumn({
   kanBoardId,
   onDragEnter,
   handleDragStart,
-  handleOnDrop,
 }: componentProps) {
   const { dispatch } = useReadKanBoardPageContext();
 
@@ -42,7 +41,7 @@ export default function KanBoardColumn({
       </p>
 
       <div className="card-body-own">
-        <div className="board-tasks" onDrop={handleOnDrop}>
+        <div className="board-tasks">
           {tasks.length > 0 ? (
             tasks.map((task) => {
               const id = task.getId();
@@ -51,7 +50,7 @@ export default function KanBoardColumn({
               return (
                 <div
                   key={id}
-                  onDragStart={() => handleDragStart(id)}
+                  onDragStart={() => handleDragStart(task)}
                   draggable
                   className="board-card-item shadow-sm rounded"
                 >
