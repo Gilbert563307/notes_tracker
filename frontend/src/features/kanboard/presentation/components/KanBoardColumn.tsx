@@ -12,7 +12,6 @@ type componentProps = {
   kanBoardId: string;
   onDragEnter: () => void;
   handleDragStart: (t: Task) => void;
- 
 };
 
 export default function KanBoardColumn({
@@ -51,7 +50,7 @@ export default function KanBoardColumn({
                 <div
                   key={id}
                   onDragStart={() => handleDragStart(task)}
-                  draggable
+                  draggable={true}
                   className="board-card-item shadow-sm rounded"
                 >
                   <Link
@@ -63,11 +62,11 @@ export default function KanBoardColumn({
                     {task.getTitle()}
                   </Link>
                   {/* TODO */}
-                  {/* <div className="board-card-information">
+                  <div className="board-card-information">
                     <span className="badge text-bg-light">
-                      {task.created_at.toLocaleString()}
+                      {task.getReadAbleCreatedAt()}
                     </span>
-                  </div> */}
+                  </div>
                 </div>
               );
             })

@@ -48,6 +48,8 @@
     display: flex;
     background-image: url("../../../../assets/images/land_scape.png");
     min-height: 60dvh;
+    max-width: auto;
+    overflow-x: scroll;
 }
 
 /* add border so that the items do not bounce when hover */

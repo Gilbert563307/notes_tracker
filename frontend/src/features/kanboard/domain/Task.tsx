@@ -12,6 +12,57 @@ export type TaskProps = {
   updatedAt: string;
 };
 
+export class TaskMetaData {
+  #reporter: string;
+  #assignee: string;
+  #projectName: string;
+  #status: TaskStatus;
+
+  constructor(reporter: string, assignee: string, projectName: string, status: TaskStatus) {
+    this.#reporter = reporter;
+    this.#assignee = assignee;
+    this.#projectName = projectName;
+    this.#status = status;
+  }
+
+  getReporter() {
+    return this.#reporter;
+  }
+  getAssignee() {
+    return this.#assignee;
+  }
+  getProjectName() {
+    return this.#projectName;
+  }
+  getStatus() {
+    return this.#status;
+  }
+
+  static Builder = class {
+    #reporter: string = "";
+    #assignee: string = "";
+    #projectName: string = "";
+    #status: TaskStatus = "BACKLOG";
+
+    reporter(r: string) {
+      this.#reporter = r;
+    }
+    assignee(a: string) {
+      this.#reporter = a;
+    }
+    projectName(p: string) {
+      this.#projectName = p;
+    }
+    status(s: TaskStatus) {
+      this.#status = s;
+    }
+
+    build(): TaskMetaData {
+      return new TaskMetaData(this.#reporter, this.#assignee, this.#projectName, this.#status);
+    }
+  };
+}
+
 export class Task {
   public static MIN_TITLE_LENGTH = 4;
 
@@ -85,6 +136,12 @@ export class Task {
     return this.createdAt;
   }
 
+  getReadAbleCreatedAt(): string {
+    if (!this.createdAt) return "";
+    const date = new Date(this.createdAt);
+    return date.toLocaleDateString();
+  }
+
   getUpdatedAt(): string {
     return this.updatedAt;
   }
@@ -105,6 +162,22 @@ export class Task {
     return this.reporterName;
   }
 
+  /**
+   * can introduce bugs when not checking if old data is null orso
+   *
+   */
+  updateMetaData(metaData: TaskMetaData) {
+    this.reporterName = metaData.getReporter();
+    this.assigneeName = metaData.getAssignee();
+    this.projectName = metaData.getProjectName();
+    this.status = metaData.getStatus();
+  }
+
+  shouldTaskBeUpdated(newStatus: string) {
+    if (this.status === newStatus) return false;
+    return true;
+  }
+
   updateReporter(reporter: string) {
     this.reporterName = reporter;
   }
@@ -115,8 +188,9 @@ export class Task {
     this.projectName = projectName;
   }
 
-  updateStatus(status: string) {
-    if(!status) return;
+  updateStatus(status: TaskStatus) {
+    if (!status) return;
+    if (status === this.status) return;
     this.status = status;
   }
 
