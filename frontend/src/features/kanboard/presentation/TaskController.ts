@@ -48,6 +48,14 @@ export class TaskController {
     }
   }
 
+  async getTasksByCurrentUser() {
+    try {
+      return await this.#taskService.getTasksByCurrentUser();
+    } catch (error) {
+      this.notifyErrorToUser(error);
+    }
+  }
+  
   private notifyErrorToUser(error: unknown) {
     const err = error instanceof BaseException ? error : null;
     if (!err) return;
@@ -57,7 +65,7 @@ export class TaskController {
 
   private notifyUser(message: string) {
     if (!message) return;
-    notificationObserver.add(new NotificationDto.Builder().message(message).type(0).build());
+    notificationObserver.add(new NotificationDto.Builder().message(message).type(3).build());
     return;
   }
 }

@@ -2,14 +2,14 @@ import { JsonParsingError } from "../../../shared/exceptions/exceptions";
 import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
 import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import type { ApiErrorResponse, DownloadTaskOption } from "../../../types";
-import type { Task } from "../domain/Task";
+import type { Task, TaskProps } from "../domain/Task";
 import {
   FailedToDeleteTaskException,
   FailedToFindYourTaskException,
   FailedToUpdateTaskException,
 } from "../presentation/exceptions/exceptions";
 import { TaskMapper } from "./mapper/TaskMapper";
-import type { TaskInformationResponse } from "./response/response";
+import type { findAllResponse, TaskInformationResponse } from "./response/response";
 
 import { asBlob } from "html-docx-js-typescript";
 import { saveAs } from "file-saver";
@@ -75,6 +75,13 @@ export class TaskService extends OAuth2ResourceService {
       this.convertHTMLToMarkdown({ description: description, filename: filename });
     }
   }
+
+  async getTasksByCurrentUser() {
+    const request = await super.findAll();
+    const response: findAllResponse<TaskProps> = await request.json();
+    return TaskMapper.toPageAbleTaskList(response);
+  }
+
 
   //TODO make a better fix for all this a some resuable class
   protected async convertHTMLToMarkdown(payload: { description: string; filename: string }) {

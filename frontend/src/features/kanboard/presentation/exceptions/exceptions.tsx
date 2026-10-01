@@ -74,22 +74,27 @@ export class FailedToDeleteTaskException extends BaseException {
   }
 }
 
-export class FailedToUpdateTaskException extends BaseException{
+export class FailedToUpdateTaskException extends BaseException {
   constructor() {
     super("We couldn't update that task. Something went wrong.", 1);
   }
 }
 
-export class EmptySearchTermException extends BaseException{
-  constructor(){
-    super("Please fill in a value.", 0)
+export class EmptySearchTermException extends BaseException {
+  constructor() {
+    super("Please fill in a value.", 0);
   }
 }
-
 
 //TASK exceptions
 export class FailedToFindYourTaskException extends BaseException {
   constructor(message = "") {
     super(message || "We couldn't find that task. It may have been deleted or you may not have access to it.", 0);
+  }
+}
+
+export class MissingIdException extends BaseException {
+  constructor() {
+    super("Missing the required id", 1);
   }
 }

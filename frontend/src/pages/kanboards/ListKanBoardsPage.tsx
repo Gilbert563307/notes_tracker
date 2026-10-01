@@ -4,36 +4,32 @@ import { Link } from "react-router";
 import "../../features/kanboard/presentation/css/listkanboardspage.css";
 import type { KanBoard } from "../../features/kanboard/domain/KanBoard";
 import KanBoardCard from "../../features/kanboard/presentation/components/KanboardCard";
-import useDebounceHook from "../../shared/hooks/useDebounceHook";
-import { useEffect, useState } from "react";
+
+import { useDebounce, } from "use-debounce";
+import { useState } from "react";
 
 const ONE_SECOND_DELAY = 1000;
 export default function ListKanBoardsPage() {
   useSetPageTitleHook({ title: "Kanban" });
+
+  const { boards, mutation, isPending, error, reset } = useGetKanBoardsHook();
   const [searchTerm, setSearchTerm] = useState("");
-
-  const { boards, searchProject, fetchKanBoards } = useGetKanBoardsHook();
-  const debouncedSearchTerm = useDebounceHook(searchTerm, ONE_SECOND_DELAY);
-
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      searchProject(debouncedSearchTerm);
-    }
-  }, [debouncedSearchTerm]);
+  const [debounceValue] = useDebounce(searchTerm, ONE_SECOND_DELAY);
 
   function handleSearch(e: Event) {
-    const value: string = e.target.value;
-    //TODO WORKS A LITTLT BIT BUGGY BUT NO big deal
-    if (value === "" || value === undefined) {
-      resetOptions();
-      return;
-    }
-    setSearchTerm(value);
+    setSearchTerm(e.target.value);
+    console.log(debounceValue)
+    // mutation.mutate(debounceValue);
+    // //TODO WORKS A LITTLT BIT BUGGY BUT NO big deal
+    // if (value === "" || value === undefined) {
+    //   resetOptions();
+    //   return;
+    // }
+    // setSearchTerm(value);
   }
 
-  async function resetOptions() {
-    await fetchKanBoards();
-  }
+  if (isPending) return "Loading...";
+  if (error) return "An error has occurred: " + error.message;
 
   return (
     <article className="kanboard-page">
@@ -59,8 +55,9 @@ export default function ListKanBoardsPage() {
               <i className="fa-solid fa-plus"></i> New Project
             </button>
           </Link>
-          <button className="notes-tracker-btn notes-tracker-btn-secondary" onClick={resetOptions}>
-            <i className="fa-solid fa-rotate-left"></i> Reset</button>
+          <button className="notes-tracker-btn notes-tracker-btn-secondary" onClick={reset}>
+            <i className="fa-solid fa-rotate-left"></i> Reset
+          </button>
         </div>
       </article>
 
@@ -71,9 +68,10 @@ export default function ListKanBoardsPage() {
       </article> */}
 
       <article className="kanboard-list">
-        {boards.map((item: KanBoard) => {
-          return <KanBoardCard key={item.getId()} kanBoard={item}></KanBoardCard>;
-        })}
+        {boards &&
+          boards.map((item: KanBoard) => {
+            return <KanBoardCard key={item.getId()} kanBoard={item}></KanBoardCard>;
+          })}
       </article>
     </article>
   );

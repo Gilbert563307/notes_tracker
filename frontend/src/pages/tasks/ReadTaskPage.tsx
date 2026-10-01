@@ -9,8 +9,11 @@ import useSetPageTitleHook from "../../shared/hooks/useSetPageTitleHook";
 
 export default function ReadTaskPage() {
   useSetPageTitleHook({ title: "Tasks" });
-  const { task } = useGetTaskHook();
+  const { task, isPending, error } = useGetTaskHook();
 
+  if (isPending) return "Loading...";
+  if (error) return "An error has occurred: " + error.message;
+  if (!task) return "Task not found";
   return (
     <article className="read-task">
       <div className="read-task-title-div">

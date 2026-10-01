@@ -19,6 +19,7 @@ import AuthVerifyPage from "./pages/auth/AuthVerifyPage";
 import ReadKanBoardPageContext from "./features/kanboard/presentation/context/ReadKanBoardPageContext";
 import ReadTaskPage from "./pages/tasks/ReadTaskPage";
 import UpdateTaskPage from "./pages/tasks/UpdateTaskPage";
+import path from "path";
 
 const routes = [
   {
@@ -127,6 +128,10 @@ const routes = [
             <AuthLoginPage />
           </GuestRoute>
         ),
+      },
+      {
+        path: "/auth/policy",
+        element: <div>...</div>
       },
       {
         path: "/auth/verify",

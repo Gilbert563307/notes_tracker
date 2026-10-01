@@ -1,4 +1,5 @@
-import { Task, type TaskProps } from "../../domain/Task";
+import { Task, type PageAbleTaskJson, type TaskProps } from "../../domain/Task";
+import type { findAllResponse } from "../response/response";
 
 //TODO NEEDS VI TESTING
 export class TaskMapper {
@@ -21,5 +22,18 @@ export class TaskMapper {
       .createdAt(task.createdAt)
       .updatedAt(task.updatedAt)
       .build();
+  }
+
+  static toPageAbleTask(task: TaskProps) {
+    return TaskMapper.toTask(task).toPageAbleTaskJson();
+  }
+
+  static toPageAbleTaskList(data: findAllResponse<TaskProps>): {
+    tasks: Array<Task>;
+    totalElements: number;
+    totalPages: number;
+  } {
+    const tasks = data.content.map((task) => TaskMapper.toTask(task));
+    return { tasks: tasks, totalElements: data.totalElements, totalPages: data.totalPages };
   }
 }

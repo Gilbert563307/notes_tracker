@@ -58,7 +58,7 @@ public class KanBoardController {
     }
 
     @PatchMapping("/task")
-    @PreAuthorize("@kanBoardService.isKanBoardOwner(#boardId)")  //TODO FUTURE THINK ABOUT MULTIPLT PEOPLE ALLOWED TO ADD TASKS IN PROJECT
+    @PreAuthorize("@kanBoardService.isKanBoardOwner(#request.kanBoardId())")  //TODO FUTURE THINK ABOUT MULTIPLE PEOPLE ALLOWED TO ADD TASKS IN PROJECT
     public ResponseEntity<List<TaskDto>> addTaskToKanBoard(@RequestBody AddTaskToKanBoardRequest request) {
         return ResponseEntity.ok(kanBoardService.addTaskToKanBoard(request));
     }

@@ -12,6 +12,14 @@ export type TaskProps = {
   updatedAt: string;
 };
 
+export type PageAbleTaskJson = {
+  title: string;
+  status: string;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export class TaskMetaData {
   #reporter: string;
   #assignee: string;
@@ -221,6 +229,16 @@ export class Task {
       priority: this.priority,
       assigneId: this.assigneId,
       archived: this.archived,
+    };
+  }
+
+  toPageAbleTaskJson(): PageAbleTaskJson {
+    return {
+      title: this.title,
+      status: this.status,
+      priority: this.priority,
+      createdAt: new Date(this.createdAt).toLocaleDateString(),
+      updatedAt:  new Date(this.updatedAt).toLocaleDateString(),
     };
   }
 

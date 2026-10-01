@@ -1,46 +1,34 @@
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { kanBoardController } from "../KanBoardController";
-import type { KanBoard } from "../../domain/KanBoard";
 
 export default function useGetKanBoardsHook() {
-  const [data, setData] = useState<{
-    total: number;
-    pages: number;
-    boards: KanBoard[];
-  }>({ total: 0, pages: 0, boards: [] });
-
-  useEffect(() => {
-    let isMounted: boolean = true;
-
-    async function fetchBoards() {
-      const response = await kanBoardController.getKanBoards();
-      if (!isMounted) return;
-      if (!response) return;
-      if (response.total === 0) return;
-      setData(response);
-    }
-
-    fetchBoards();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  // Access the client
+  const queryClient = useQueryClient();
 
   async function searchProject(value: string) {
-    const results = await kanBoardController.searchKanBoard(value);
-
-    if (results != undefined) {
-      //TODO FIX IN FUTURE THIS SEARCH ENDPOINT NEEDS SOME PAGINATION
-      setData({ total: 0, pages: 0, boards: results });
-    }
+    return await kanBoardController.searchKanBoard(value);
   }
 
   async function fetchKanBoards() {
-    const response = await kanBoardController.getKanBoards();
-    if (!response) return;
-    if (response.total === 0) return;
-    setData(response);
+    return await kanBoardController.getKanBoards();
   }
-  return { boards: data.boards, total: data.total, pages: data.pages, searchProject, fetchKanBoards };
+
+  // Mutations TODO fix bug when search project is empty the list stays null
+  const mutation = useMutation({
+    mutationFn: searchProject,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["kanBoards"], data);
+    },
+  });
+
+  function reset() {
+    queryClient.invalidateQueries({ queryKey: ["kanBoards"] });
+  }
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ["kanBoards"],
+    queryFn: fetchKanBoards,
+  });
+
+  return { isPending, error, boards: data?.boards, mutation, reset };
 }

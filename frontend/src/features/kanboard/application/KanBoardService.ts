@@ -17,6 +17,7 @@ import {
   FailedToFindYourKanBoardException,
   FailedToLoadKanBoardsException,
   FailedToUpdateKanBoardException,
+  MissingIdException,
 } from "../presentation/exceptions/exceptions";
 import { OAuth2ResourceService } from "../../../shared/utils/OAuth2ResourceService";
 import { JsonParsingError } from "../../../shared/exceptions/exceptions";
@@ -78,6 +79,9 @@ export class KanBoardService extends OAuth2ResourceService {
   }
 
   async getKanBoardById(id: string): Promise<KanBoard> {
+    if (!id) {
+      throw new MissingIdException();
+    }
     const response = await super.read(id);
 
     if (!response.ok) {
@@ -180,8 +184,8 @@ export class KanBoardService extends OAuth2ResourceService {
     return true;
   }
 
-  //TODO NEEDS TESTING
-  async searchKanBoard(value: string) : Promise<Array<KanBoard>> {
+ 
+  async searchKanBoard(value: string): Promise<{ boards: Array<KanBoard> }> {
     if (!value) {
       throw new EmptySearchTermException();
     }
@@ -194,7 +198,7 @@ export class KanBoardService extends OAuth2ResourceService {
     }
 
     const data: Array<KanBoard> = await response.json();
-    return KanBoardMapper.toKanBoardList(data);
+    return { boards: KanBoardMapper.toKanBoardList(data) };
   }
 }
 

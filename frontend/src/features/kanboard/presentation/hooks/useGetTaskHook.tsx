@@ -1,23 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Task } from "../../domain/Task";
 import { taskController } from "../TaskController";
+import { useQuery } from "@tanstack/react-query";
 
 export default function useGetTaskHook() {
   const { taskId } = useParams();
-  const [task, setTask] = useState(new Task.Builder().skipValidation().build());
 
-  useEffect(() => {
-    const fetchTaskById = async (taskId: string) => {
-      if (!taskId) return;
+  async function fetchTaskById(id: string) {
+    if (!id) return new Task.Builder().skipValidation().build();
+    return await taskController.getTaskById(id);
+  }
 
-      const response = await taskController.getTaskById(taskId);
-      if (!response) return;
-      setTask(response);
-    };
-
-    fetchTaskById(taskId);
-  }, [taskId]);
-
-  return { task };
+  const { isPending, error, data } = useQuery({ queryKey: ["task"], queryFn: () => fetchTaskById(taskId) });
+  return { isPending, error, task: data };
 }

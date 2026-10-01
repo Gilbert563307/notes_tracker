@@ -1,27 +1,10 @@
-import { useEffect, useState } from "react";
-import type { Task } from "../../domain/Task";
 import { kanBoardController } from "../KanBoardController";
+import { useQuery } from "@tanstack/react-query";
 
 export default function useGetKanBoardTasksHook({ kanBoardId }: { kanBoardId: string }) {
-  const [tasks, setTasks] = useState<Task[]>([]);
-
-  useEffect(() => {
-    let isMounted: boolean = true;
-
-    async function fetchTasks() {
-      if (!kanBoardId) return;
-      const response = await kanBoardController.getTasksByKanBoardId(kanBoardId);
-      if (!isMounted) return;
-      if (!response) return;
-      if (response.length === 0) return;
-      setTasks(response);
-    }
-
-    fetchTasks();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-  return { tasks };
+  async function fetchTasks() {
+    return await kanBoardController.getTasksByKanBoardId(kanBoardId);
+  }
+  const { isPending, error, data } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
+  return { isPending, error, tasks: data };
 }
