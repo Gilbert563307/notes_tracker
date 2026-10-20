@@ -5,8 +5,9 @@ import "../../features/kanboard/presentation/css/listkanboardspage.css";
 import type { KanBoard } from "../../features/kanboard/domain/KanBoard";
 import KanBoardCard from "../../features/kanboard/presentation/components/KanboardCard";
 
-import { useDebounce, } from "use-debounce";
+import { useDebounce } from "use-debounce";
 import { useEffect, useState } from "react";
+import { Button, Input } from "antd";
 
 const FIVE_HUNDRED_MIL_SECOND_DELAY = 500;
 export default function ListKanBoardsPage() {
@@ -17,17 +18,17 @@ export default function ListKanBoardsPage() {
   const [debounceValue] = useDebounce(searchTerm, FIVE_HUNDRED_MIL_SECOND_DELAY);
 
   function handleSearch(search: string) {
-    if (search){
-      mutation.mutate(search)
+    if (search) {
+      mutation.mutate(search);
     }
-    if (search == ""){
-      reset()
+    if (search == "") {
+      reset();
     }
   }
 
   useEffect(() => {
-    handleSearch(debounceValue)
-  }, [debounceValue])
+    handleSearch(debounceValue);
+  }, [debounceValue]);
 
   if (isPending) return "Loading...";
   if (error) return "An error has occurred: " + error.message;
@@ -42,23 +43,17 @@ export default function ListKanBoardsPage() {
           <label htmlFor="search-project" className="form-label d-none">
             Search
           </label>
-          <input
-            type="text"
-            className="form-control"
-            id="search-project"
-            onChange={(e: Event) => setSearchTerm(e.target.value)}
-            aria-describedby="Search project bar"
-          ></input>
+          <Input.Search placeholder="Filled"  onChange={(e: Event) => setSearchTerm(e.target.value)} />
         </div>
         <div className="notes-tracker-btn-group">
           <Link to="/kanboards/create">
-            <button className="notes-tracker-btn notes-tracker-btn-primary">
+            <Button type="primary">
               <i className="fa-solid fa-plus"></i> New Project
-            </button>
+            </Button>
           </Link>
-          <button className="notes-tracker-btn notes-tracker-btn-secondary" onClick={reset}>
+          <Button onClick={reset}>
             <i className="fa-solid fa-rotate-left"></i> Reset
-          </button>
+          </Button>
         </div>
       </article>
 

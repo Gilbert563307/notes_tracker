@@ -3,7 +3,7 @@ import { NotificationDto } from "../../../shared/features/notification/domain/dt
 import { notificationObserver } from "../../../shared/features/notification/observers/NotificationObserver";
 import type { DownloadTaskOption } from "../../../types";
 import { TaskService, taskService } from "../application/TaskService";
-import type { Task } from "../domain/Task";
+import type { Task, TaskProps } from "../domain/Task";
 
 export class TaskController {
   #taskService: TaskService;
@@ -55,7 +55,23 @@ export class TaskController {
       this.notifyErrorToUser(error);
     }
   }
-  
+
+  async getTasksByCurrentUserAsJsonObjects() {
+    try {
+      return await this.#taskService.getTasksByCurrentUserAsJsonObjects();
+    } catch (error) {
+      this.notifyErrorToUser(error);
+    }
+  }
+
+  async archiveTask(taskProps: TaskProps) {
+     try {
+      return await this.#taskService.archiveTask(taskProps);
+    } catch (error) {
+      this.notifyErrorToUser(error);
+    }
+  }
+
   private notifyErrorToUser(error: unknown) {
     const err = error instanceof BaseException ? error : null;
     if (!err) return;

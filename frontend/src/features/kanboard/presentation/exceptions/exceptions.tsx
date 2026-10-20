@@ -98,3 +98,18 @@ export class MissingIdException extends BaseException {
     super("Missing the required id", 1);
   }
 }
+
+export class EmptyTaskDescriptionException extends BaseException{
+  constructor() {
+    super("Please fill in a description.", 0);
+  }
+}
+
+export class FailedToArchiveYourTaskBecauseTaskIsMissingException extends BaseException {
+  constructor() {
+    super(
+      "We couldn't archive that task. It may have been deleted or you may not have access to it.",
+      0
+    );
+  }
+}

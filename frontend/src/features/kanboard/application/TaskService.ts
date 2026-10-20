@@ -4,6 +4,7 @@ import { RequestHandler } from "../../../shared/utils/RequestHandler";
 import type { ApiErrorResponse, DownloadTaskOption } from "../../../types";
 import type { Task, TaskProps } from "../domain/Task";
 import {
+  FailedToArchiveYourTaskBecauseTaskIsMissingException,
   FailedToDeleteTaskException,
   FailedToFindYourTaskException,
   FailedToUpdateTaskException,
@@ -66,6 +67,19 @@ export class TaskService extends OAuth2ResourceService {
     return "Your task has been successfully been updated";
   }
 
+  async archiveTask(taskProps: TaskProps){
+    if (!taskProps){
+      throw new FailedToArchiveYourTaskBecauseTaskIsMissingException();
+    }
+    const task = TaskMapper.toTask(taskProps);
+    task.archive();
+    const response = await super.update(task.toJson());
+    if (!response.ok) {
+      throw new FailedToUpdateTaskException();
+    }
+    return "Your task has been successfully been archived";
+  }
+
   async downloadTask(description: string | undefined, option: DownloadTaskOption, filename: string) {
     if (option === "Microsoft Word") {
       await this.convertHtmlToDocx({ description: description, filename: filename });
@@ -79,15 +93,21 @@ export class TaskService extends OAuth2ResourceService {
   async getTasksByCurrentUser() {
     const request = await super.findAll();
     const response: findAllResponse<TaskProps> = await request.json();
+    
     return TaskMapper.toPageAbleTaskList(response);
   }
 
+   async getTasksByCurrentUserAsJsonObjects() {
+    const request = await super.findAll();
+    const response: findAllResponse<TaskProps> = await request.json();
+    return TaskMapper.toPageAbleTaskListJson(response);
+  }
 
   //TODO make a better fix for all this a some resuable class
   protected async convertHTMLToMarkdown(payload: { description: string; filename: string }) {
     const data = new Blob([payload.description], {
       type: "text/markdown",
-    }); 
+    });
 
     saveAs(data, this.#convertToValidFilename(payload.filename));
   }

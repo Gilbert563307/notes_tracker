@@ -242,6 +242,10 @@ export class Task {
     };
   }
 
+  archive(){
+    this.archived = true;
+  }
+
   static from({
     id,
     title,

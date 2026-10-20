@@ -3,6 +3,7 @@ import type { KanBoard } from "../../domain/KanBoard";
 import { useForm } from "react-hook-form";
 import DeleteKanBoardButton from "./DeleteKanBoardButton";
 import "../css/kanboardform.css";
+import { Button, ColorPicker, Form, Input } from "antd";
 
 type KanBoardFormType = {
   onSubmit: (data: { name: string; color: string }) => void;
@@ -37,10 +38,35 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue, delet
     });
   }, [board, reset]);
 
+  function save(){
+
+  }
+
   return (
     <article className="container py-4">
       <div style={{ maxWidth: "910px" }}>
         <h1 className="fs-5 mb-4 fw-normal">Project settings</h1>
+
+        <Form layout="vertical">
+          <Form.Item label="Project name">
+            <Input
+              placeholder="input placeholder"
+              {...register("name", {
+                required: "Project name is required",
+                maxLength: {
+                  value: 255,
+                  message: "Maximum 255 characters",
+                },
+              })}
+            />
+          </Form.Item>
+          <Form.Item label="Colour">
+            <ColorPicker defaultValue="#ffff" {...register("color")} />
+          </Form.Item>
+          <Form.Item>
+            <Button onClick={save} type="primary">create</Button>
+          </Form.Item>
+        </Form>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Project name */}
@@ -81,9 +107,7 @@ export default function KanBoardForm({ onSubmit, board, submitButtonValue, delet
           </div>
 
           <div className="kanboard-form-options">
-            <button type="submit" className="notes-tracker-btn notes-tracker-btn-primary">
-              {submitButtonValue}
-            </button>
+            <Button type="primary">{submitButtonValue}</Button>
             <DeleteKanBoardButton kanBoardId={board.getId()} deleteKanBoard={deleteKanBoard} />
           </div>
         </form>

@@ -28,6 +28,16 @@ export class TaskMapper {
     return TaskMapper.toTask(task).toPageAbleTaskJson();
   }
 
+  static toPageAbleTaskListJson(data: findAllResponse<TaskProps>): {
+    tasks: Array<TaskProps>;
+    totalElements: number;
+    totalPages: number;
+  } {
+    const tasks = data.content.map((task) => TaskMapper.toTask(task));
+    const jsonArray = tasks.map((task) => task.toJson());
+    return { tasks: jsonArray, totalElements: data.totalElements, totalPages: data.totalPages };
+  }
+
   static toPageAbleTaskList(data: findAllResponse<TaskProps>): {
     tasks: Array<Task>;
     totalElements: number;

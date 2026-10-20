@@ -11,6 +11,7 @@ import type { CreateKanBoardTaskRequest } from "../presentation/request/CreateKa
 import { CreateTaskRequest } from "../presentation/request/CreateTaskRequest";
 import {
   EmptySearchTermException,
+  EmptyTaskDescriptionException,
   FailedToCreateTaskIntoProjectException,
   FailedToDeleteKanBoardException,
   FailedToFindTasksException,
@@ -97,6 +98,10 @@ export class KanBoardService extends OAuth2ResourceService {
   }
 
   async createNewTaskInKanBoard(request: CreateKanBoardTaskRequest): Promise<Array<Task>> {
+    if (!request.getDescription()){
+      throw new EmptyTaskDescriptionException();
+    }
+
     request.validate();
     //TODO MAKE URL CONSTRUCT EASIER
     const url = `${super.getRequestHandler().getBaseUrl()}${super.getResource()}/${request.getKanBoardId()}/task`;
