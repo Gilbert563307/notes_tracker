@@ -6,27 +6,28 @@ import type { KanBoard } from "../../features/kanboard/domain/KanBoard";
 import KanBoardCard from "../../features/kanboard/presentation/components/KanboardCard";
 
 import { useDebounce, } from "use-debounce";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const ONE_SECOND_DELAY = 1000;
+const FIVE_HUNDRED_MIL_SECOND_DELAY = 500;
 export default function ListKanBoardsPage() {
   useSetPageTitleHook({ title: "Kanban" });
 
   const { boards, mutation, isPending, error, reset } = useGetKanBoardsHook();
   const [searchTerm, setSearchTerm] = useState("");
-  const [debounceValue] = useDebounce(searchTerm, ONE_SECOND_DELAY);
+  const [debounceValue] = useDebounce(searchTerm, FIVE_HUNDRED_MIL_SECOND_DELAY);
 
-  function handleSearch(e: Event) {
-    setSearchTerm(e.target.value);
-    console.log(debounceValue)
-    // mutation.mutate(debounceValue);
-    // //TODO WORKS A LITTLT BIT BUGGY BUT NO big deal
-    // if (value === "" || value === undefined) {
-    //   resetOptions();
-    //   return;
-    // }
-    // setSearchTerm(value);
+  function handleSearch(search: string) {
+    if (search){
+      mutation.mutate(search)
+    }
+    if (search == ""){
+      reset()
+    }
   }
+
+  useEffect(() => {
+    handleSearch(debounceValue)
+  }, [debounceValue])
 
   if (isPending) return "Loading...";
   if (error) return "An error has occurred: " + error.message;
@@ -45,7 +46,7 @@ export default function ListKanBoardsPage() {
             type="text"
             className="form-control"
             id="search-project"
-            onChange={(e) => handleSearch(e)}
+            onChange={(e: Event) => setSearchTerm(e.target.value)}
             aria-describedby="Search project bar"
           ></input>
         </div>
